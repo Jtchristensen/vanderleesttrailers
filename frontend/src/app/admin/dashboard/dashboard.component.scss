@@ -1,0 +1,63 @@
+@import '../admin.styles';
+
+.dash {
+  &__section-title {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-lg);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-md);
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--duration-fast);
+
+    &:hover {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 20px var(--color-accent-glow);
+      transform: translateY(-2px);
+    }
+
+    h4 {
+      color: var(--color-text);
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+
+    p {
+      font-size: 0.82rem;
+      color: var(--color-text-muted);
+    }
+
+    svg {
+      margin-left: auto;
+      flex-shrink: 0;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__card-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent-glow);
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+}

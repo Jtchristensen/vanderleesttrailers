@@ -1,0 +1,82 @@
+<div class="admin-page">
+  <div class="container">
+    <a routerLink="/admin" class="admin-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back to Dashboard
+    </a>
+
+    <div class="admin-header">
+      <h1>Inventory Manager</h1>
+      <div class="admin-header__actions">
+        <a routerLink="/admin/inventory/new" class="btn btn--primary btn--sm">+ Add Trailer</a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="inv-filters">
+      <div class="admin-field" style="margin-bottom: 0; flex: 1;">
+        <input type="text" placeholder="Search trailers..." [(ngModel)]="searchQuery" (ngModelChange)="applyFilters()" />
+      </div>
+      <div class="admin-field" style="margin-bottom: 0;">
+        <select [(ngModel)]="categoryFilter" (ngModelChange)="applyFilters()">
+          <option value="">All Categories</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    @if (loading) {
+      <p style="color: var(--color-text-muted)">Loading trailers...</p>
+    } @else {
+      <div class="admin-card" style="padding: 0; overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Brand</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (trailer of filteredTrailers; track trailer.slug) {
+              <tr>
+                <td>
+                  <strong style="color: var(--color-text)">{{ trailer.name }}</strong>
+                </td>
+                <td>{{ trailer.category }}</td>
+                <td>{{ trailer.brand }}</td>
+                <td>{{ trailer.price ? ('$' + trailer.price) : '—' }}</td>
+                <td>
+                  <div class="admin-actions">
+                    <a [routerLink]="'/admin/inventory/edit/' + trailer.slug" class="btn btn--outline btn--sm">Edit</a>
+                    <button class="btn btn--danger btn--sm" (click)="deleteTrailer(trailer.slug, trailer.name)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (filteredTrailers.length === 0) {
+              <tr>
+                <td colspan="5" style="text-align: center; padding: var(--space-xl); color: var(--color-text-muted);">
+                  No trailers found. <a routerLink="/admin/inventory/new" style="color: var(--color-accent)">Add one.</a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-top: var(--space-md);">
+        {{ filteredTrailers.length }} trailer(s)
+      </p>
+    }
+  </div>
+</div>
+
+@if (toast) {
+  <div class="admin-toast" [class.admin-toast--error]="toastError">{{ toast }}</div>
+}

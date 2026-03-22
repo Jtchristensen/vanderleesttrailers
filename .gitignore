@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.npm
+
+# Build output
+frontend/dist/
+cdk/cdk.out/
+cdk/*.js
+cdk/*.d.ts
+
+# Environment / secrets
+frontend/src/environments/environment.ts
+frontend/src/environments/environment.prod.ts
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Angular
+.angular/
+frontend/.angular/
+
+# CDK
+cdk/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.tgz
+*.zip

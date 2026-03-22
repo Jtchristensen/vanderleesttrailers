@@ -1,0 +1,18 @@
+@import '../admin.styles';
+
+.editor-raw {
+  margin-top: var(--space-xl);
+
+  summary {
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    transition: color var(--duration-fast);
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+}

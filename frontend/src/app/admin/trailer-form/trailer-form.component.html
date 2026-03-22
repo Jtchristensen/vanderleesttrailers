@@ -1,0 +1,121 @@
+<div class="admin-page">
+  <div class="container">
+    <a routerLink="/admin/inventory" class="admin-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back to Inventory
+    </a>
+
+    <div class="admin-header">
+      <h1>{{ isEdit ? 'Edit Trailer' : 'Add New Trailer' }}</h1>
+      <div class="admin-header__actions">
+        <button class="btn btn--primary btn--sm" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save Trailer' }}
+        </button>
+      </div>
+    </div>
+
+    @if (!loading) {
+      <div class="admin-card">
+        <div class="admin-card__header">
+          <h3>Basic Information</h3>
+        </div>
+
+        <div class="admin-field">
+          <label>Trailer Name *</label>
+          <input type="text" [(ngModel)]="trailer.name" placeholder="e.g. MAXX-D 83x22 EHX Equipment Trailer 14K GVWR" />
+        </div>
+
+        <div class="admin-field--inline">
+          <div class="admin-field">
+            <label>Category *</label>
+            <select [(ngModel)]="trailer.category">
+              <option value="">Select category</option>
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="admin-field">
+            <label>Brand *</label>
+            <select [(ngModel)]="trailer.brand">
+              <option value="">Select brand</option>
+              @for (brand of brands; track brand) {
+                <option [value]="brand">{{ brand }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-field--inline">
+          <div class="admin-field">
+            <label>Price</label>
+            <input type="text" [(ngModel)]="trailer.price" placeholder="e.g. 14500" />
+          </div>
+
+          <div class="admin-field">
+            <label>GVWR</label>
+            <input type="text" [(ngModel)]="trailer.gvwr" placeholder="e.g. 14000" />
+          </div>
+        </div>
+
+        <div class="admin-field">
+          <label>Description</label>
+          <textarea [(ngModel)]="trailer.description" rows="4" placeholder="Trailer description..."></textarea>
+        </div>
+
+        <div class="admin-field">
+          <label>Features (one per line)</label>
+          <textarea [(ngModel)]="trailer.features" rows="6" placeholder="LED lighting&#10;Electric brakes&#10;Tarp kit included"></textarea>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="admin-card">
+        <div class="admin-card__header">
+          <h3>Images</h3>
+        </div>
+
+        <div class="trailer-images">
+          @for (img of trailer.images; track img; let i = $index) {
+            <div class="trailer-images__item">
+              <img [src]="img" [alt]="'Image ' + (i + 1)" />
+              <button class="trailer-images__remove" (click)="removeImage(i)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="trailer-upload">
+          <label class="trailer-upload__btn">
+            <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" hidden />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Upload Images
+          </label>
+          <p>Click to select images. They'll be uploaded automatically.</p>
+        </div>
+
+        <div class="admin-field" style="margin-top: var(--space-md);">
+          <label>Or paste image URL</label>
+          <div style="display: flex; gap: var(--space-sm);">
+            <input type="text" #urlInput placeholder="https://example.com/image.jpg" />
+            <button class="btn btn--outline btn--sm" (click)="trailer.images.push(urlInput.value); urlInput.value = ''">Add</button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (toast) {
+  <div class="admin-toast" [class.admin-toast--error]="toastError">{{ toast }}</div>
+}

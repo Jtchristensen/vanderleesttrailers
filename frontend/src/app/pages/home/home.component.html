@@ -1,0 +1,207 @@
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="hero__bg" [style.background-image]="'url(' + content.hero.backgroundImage + ')'"></div>
+  <div class="hero__overlay"></div>
+  <div class="hero__grain"></div>
+
+  <div class="hero__content">
+    <div class="hero__badge animate-fade-up">
+      <span class="hero__badge-dot"></span>
+      {{ site.tagline }}
+    </div>
+    <h1 class="hero__heading animate-fade-up delay-1">{{ content.hero.heading }}</h1>
+    <p class="hero__sub animate-fade-up delay-2">{{ content.hero.subheading }}</p>
+    <div class="hero__actions animate-fade-up delay-3">
+      <a [routerLink]="content.hero.ctaLink" class="btn btn--primary">
+        {{ content.hero.ctaText }}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a [routerLink]="content.hero.secondaryCtaLink" class="btn btn--outline">
+        {{ content.hero.secondaryCtaText }}
+      </a>
+    </div>
+  </div>
+
+  <div class="hero__scroll">
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<!-- ==================== INTRO ==================== -->
+<section class="intro section">
+  <div class="container">
+    <div class="intro__grid">
+      <div class="intro__text">
+        <span class="intro__label">Who We Are</span>
+        <h2>{{ content.intro.heading }}</h2>
+        <p>{{ content.intro.text }}</p>
+        <p>{{ content.intro.text2 }}</p>
+        <a routerLink="/about" class="btn btn--ghost">
+          Learn Our Story
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+      <div class="intro__stats">
+        <div class="intro__stat">
+          <span class="intro__stat-number">2018</span>
+          <span class="intro__stat-label">Established</span>
+        </div>
+        <div class="intro__stat">
+          <span class="intro__stat-number">6+</span>
+          <span class="intro__stat-label">Premium Brands</span>
+        </div>
+        <div class="intro__stat">
+          <span class="intro__stat-number">100+</span>
+          <span class="intro__stat-label">Trailers In Stock</span>
+        </div>
+        <div class="intro__stat">
+          <span class="intro__stat-number">5.0</span>
+          <span class="intro__stat-label">Star Rating</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CATEGORIES ==================== -->
+<section class="categories section section--dark">
+  <div class="container">
+    <div class="categories__header">
+      <span class="intro__label">Browse Our Selection</span>
+      <h2>Trailer Categories</h2>
+      <div class="page-hero__accent-line" style="margin: var(--space-md) 0 0;"></div>
+    </div>
+
+    <div class="categories__grid">
+      @for (cat of categories; track cat.slug; let i = $index) {
+        <a [routerLink]="'/inventory/' + cat.slug" class="categories__card card">
+          <div class="categories__card-img">
+            <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
+            <div class="categories__card-overlay"></div>
+          </div>
+          <div class="categories__card-body">
+            <h3>{{ cat.name }}</h3>
+            <p>{{ cat.description }}</p>
+            <span class="categories__card-link">
+              View All
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ==================== BRANDS ==================== -->
+<section class="brands section">
+  <div class="container">
+    <div class="brands__header">
+      <span class="intro__label">Trusted Manufacturers</span>
+      <h2>Our Brands</h2>
+    </div>
+    <div class="brands__grid">
+      @for (brand of brands; track brand.slug) {
+        <div class="brands__item">
+          <span>{{ brand.name }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SERVICES ==================== -->
+<section class="home-services section section--dark">
+  <div class="container">
+    <div class="home-services__header">
+      <span class="intro__label">What We Offer</span>
+      <h2>{{ content.services.heading }}</h2>
+      <p>{{ content.services.subheading }}</p>
+    </div>
+
+    <div class="home-services__grid">
+      @for (service of services; track service.name) {
+        <div class="home-services__card">
+          <div class="home-services__icon">
+            <img [src]="service.icon" [alt]="service.name" />
+          </div>
+          <h4>{{ service.name }}</h4>
+          <p>{{ service.description }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="home-services__cta">
+      <a routerLink="/services" class="btn btn--outline">
+        {{ content.services.ctaText }}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== REVIEWS ==================== -->
+<section class="home-reviews section">
+  <div class="container">
+    <div class="home-reviews__header">
+      <span class="intro__label">What Our Customers Say</span>
+      <h2>Customer Reviews</h2>
+      <div class="page-hero__accent-line" style="margin: var(--space-md) 0 0;"></div>
+    </div>
+
+    <div class="home-reviews__grid">
+      @for (review of reviews; track review.text; let i = $index) {
+        <div class="home-reviews__card">
+          <div class="home-reviews__stars">
+            @for (star of [1,2,3,4,5]; track star) {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            }
+          </div>
+          <p class="home-reviews__text">"{{ review.text }}"</p>
+        </div>
+      }
+    </div>
+
+    <div class="home-reviews__cta">
+      <a routerLink="/reviews" class="btn btn--ghost">
+        View All Reviews
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section class="section--dark">
+  <app-faq />
+</section>
+
+<!-- ==================== CTA BANNER ==================== -->
+<section class="cta-banner">
+  <div class="cta-banner__bg" [style.background-image]="'url(' + images.hero.services + ')'"></div>
+  <div class="cta-banner__overlay"></div>
+  <div class="container cta-banner__content">
+    <h2>Ready to Find Your Perfect Trailer?</h2>
+    <p>Give us a call or stop by — we'd love to help you find exactly what you need.</p>
+    <div class="cta-banner__actions">
+      <a [href]="'tel:' + site.phone" class="btn btn--primary">
+        Call {{ site.phoneFormatted }}
+      </a>
+      <a routerLink="/contact" class="btn btn--outline">
+        Send a Message
+      </a>
+    </div>
+  </div>
+</section>

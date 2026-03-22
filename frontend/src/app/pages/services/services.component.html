@@ -1,0 +1,71 @@
+<!-- Hero -->
+<section class="page-hero">
+  <div class="page-hero__bg" [style.background-image]="'url(' + content.hero.backgroundImage + ')'"></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <h1 class="page-hero__heading animate-fade-up">{{ content.hero.heading }}</h1>
+    <p class="page-hero__subheading animate-fade-up delay-1">{{ content.hero.subheading }}</p>
+    <div class="page-hero__accent-line animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<!-- Intro -->
+<section class="svc-intro section">
+  <div class="container">
+    <div class="svc-intro__content">
+      <span class="section-label">Full-Service Trailer Care</span>
+      <h2>{{ content.hero.description }}</h2>
+      <p>Need service? Call us at <a [href]="'tel:' + site.phone" class="accent-link">{{ site.phoneFormatted }}</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- Services Grid -->
+<section class="svc-grid section section--dark">
+  <div class="container">
+    <div class="svc-grid__cards">
+      @for (service of content.services; track service.name; let i = $index) {
+        <div class="svc-card" [class.svc-card--featured]="service.link">
+          <div class="svc-card__icon">
+            <img [src]="service.icon" [alt]="service.name" />
+          </div>
+          <div class="svc-card__content">
+            <h3>{{ service.name }}</h3>
+            <p>{{ service.description }}</p>
+            @if (service.link) {
+              <a [routerLink]="service.link" class="svc-card__link">
+                Learn More
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="svc-cta section">
+  <div class="container">
+    <div class="svc-cta__content">
+      <h2>Need Trailer Service?</h2>
+      <p>We service all makes and models. Give us a call to schedule your appointment.</p>
+      <div class="svc-cta__actions">
+        <a [href]="'tel:' + site.phone" class="btn btn--primary">
+          Call {{ site.phoneFormatted }}
+        </a>
+        <a routerLink="/contact" class="btn btn--outline">
+          Send a Message
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section--dark">
+  <app-faq />
+</section>

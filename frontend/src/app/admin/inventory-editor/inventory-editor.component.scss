@@ -1,0 +1,12 @@
+@import '../admin.styles';
+
+.inv-filters {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+
+  select {
+    min-width: 200px;
+  }
+}

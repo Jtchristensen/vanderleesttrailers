@@ -1,0 +1,69 @@
+<!-- Hero -->
+<section class="page-hero">
+  <div class="page-hero__bg" [style.background-image]="'url(' + content.hero.backgroundImage + ')'"></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <h1 class="page-hero__heading animate-fade-up">{{ content.hero.heading }}</h1>
+    <p class="page-hero__subheading animate-fade-up delay-1">{{ content.hero.subheading }}</p>
+    <div class="page-hero__accent-line animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<!-- Story -->
+<section class="about-story section">
+  <div class="container">
+    <div class="about-story__grid">
+      <div class="about-story__text">
+        <span class="section-label">Our Journey</span>
+        <h2>{{ content.story.heading }}</h2>
+        @for (p of content.story.paragraphs; track $index) {
+          <p>{{ p }}</p>
+        }
+      </div>
+      <div class="about-story__visual">
+        <div class="about-story__image-frame">
+          <img [src]="content.founder.image" [alt]="content.founder.name" />
+        </div>
+        <div class="about-story__badge">
+          <span class="about-story__badge-year">Since 2018</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Founder -->
+<section class="about-founder section section--dark">
+  <div class="container">
+    <div class="about-founder__content">
+      <span class="section-label">Meet The Owner</span>
+      <h2>{{ content.founder.name }}</h2>
+      <p class="about-founder__title">{{ content.founder.title }}</p>
+      @for (p of content.founder.bio; track $index) {
+        <p>{{ p }}</p>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Brands -->
+<section class="about-brands section">
+  <div class="container">
+    <div class="about-brands__header">
+      <span class="section-label">Our Partners</span>
+      <h2>Brands We Carry</h2>
+    </div>
+    <div class="about-brands__grid">
+      @for (brand of brands; track brand.slug) {
+        <div class="about-brands__item">
+          <span>{{ brand.name }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section--dark">
+  <app-faq />
+</section>

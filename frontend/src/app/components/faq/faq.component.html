@@ -1,0 +1,26 @@
+<section class="faq section">
+  <div class="container">
+    <div class="faq__header">
+      <h2>Frequently Asked Questions</h2>
+      <div class="page-hero__accent-line" style="margin: var(--space-md) 0 0 0;"></div>
+    </div>
+
+    <div class="faq__list">
+      @for (faq of faqs; track faq.question; let i = $index) {
+        <div class="faq__item" [class.is-open]="openIndex === i" (click)="toggle(i)">
+          <div class="faq__question">
+            <h4>{{ faq.question }}</h4>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          @if (openIndex === i) {
+            <div class="faq__answer">
+              <p>{{ faq.answer }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

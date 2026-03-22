@@ -1,0 +1,76 @@
+<!-- Hero -->
+<section class="page-hero">
+  <div class="page-hero__bg" [style.background-image]="'url(' + content.hero.backgroundImage + ')'"></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <h1 class="page-hero__heading animate-fade-up">{{ content.hero.heading }}</h1>
+    <p class="page-hero__subheading animate-fade-up delay-1">{{ content.hero.subheading }}</p>
+    <div class="page-hero__accent-line animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<!-- Intro -->
+<section class="fin-intro section">
+  <div class="container">
+    <span class="section-label">Easy Financing</span>
+    <h2>{{ content.intro.heading }}</h2>
+    <p>{{ content.intro.text }}</p>
+  </div>
+</section>
+
+<!-- Partners -->
+<section class="fin-partners section section--dark">
+  <div class="container">
+    <div class="fin-partners__grid">
+      @for (partner of content.partners; track partner.name; let i = $index) {
+        <div class="fin-partner card">
+          <div class="fin-partner__header">
+            @if (partner.logo) {
+              <img [src]="partner.logo" [alt]="partner.name" class="fin-partner__logo" />
+            }
+            <h3>{{ partner.name }}</h3>
+            <span class="fin-partner__credit">{{ partner.creditRequirement }}</span>
+          </div>
+          <div class="fin-partner__body">
+            <ul class="fin-partner__features">
+              @for (feature of partner.features; track feature) {
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {{ feature }}
+                </li>
+              }
+            </ul>
+            <a [href]="partner.applicationUrl" target="_blank" rel="noopener" class="btn btn--outline fin-partner__btn">
+              Apply Now
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="fin-cta section">
+  <div class="container">
+    <div class="fin-cta__content">
+      <h2>Questions About Financing?</h2>
+      <p>We're happy to help you understand your options and find the best fit for your budget.</p>
+      <a [href]="'tel:' + site.phone" class="btn btn--primary">
+        Call {{ site.phoneFormatted }}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section--dark">
+  <app-faq />
+</section>

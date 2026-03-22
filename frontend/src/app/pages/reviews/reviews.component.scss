@@ -1,0 +1,120 @@
+.reviews-rating {
+  text-align: center;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  &__score {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--color-accent);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  &__stars {
+    display: flex;
+    gap: 4px;
+  }
+
+  p {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+  }
+}
+
+.reviews-grid {
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-lg);
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.review-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  transition: all var(--duration-normal) var(--ease-out);
+
+  &:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  }
+
+  &__stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: var(--space-md);
+  }
+
+  &__text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+    max-width: none;
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+
+    span {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: #0c0f12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+}
+
+.reviews-cta {
+  text-align: center;
+
+  &__content {
+    max-width: 550px;
+    margin: 0 auto;
+
+    h2 {
+      color: var(--color-text);
+      margin-bottom: var(--space-md);
+    }
+
+    p {
+      margin: 0 auto var(--space-xl);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

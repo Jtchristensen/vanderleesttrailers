@@ -1,0 +1,95 @@
+<!-- Hero -->
+<section class="page-hero">
+  <div class="page-hero__bg" [style.background-image]="'url(' + images.hero.inventory + ')'"></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <h1 class="page-hero__heading animate-fade-up">
+      {{ activeCategoryData ? activeCategoryData.name : 'Our Inventory' }}
+    </h1>
+    <p class="page-hero__subheading animate-fade-up delay-1">
+      {{ activeCategoryData ? activeCategoryData.description : 'Browse our full selection of premium trailers' }}
+    </p>
+    <div class="page-hero__accent-line animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<!-- Category Filter -->
+<section class="inv-filter section">
+  <div class="container">
+    <div class="inv-filter__tabs">
+      <a routerLink="/inventory"
+         class="inv-filter__tab"
+         [class.is-active]="!activeCategory">
+        All Categories
+      </a>
+      @for (cat of categories; track cat.slug) {
+        <a [routerLink]="'/inventory/' + cat.slug"
+           class="inv-filter__tab"
+           [class.is-active]="activeCategory === cat.slug">
+          {{ cat.name }}
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Category Grid -->
+@if (!activeCategory) {
+  <section class="inv-grid section section--dark">
+    <div class="container">
+      <div class="inv-grid__cards">
+        @for (cat of categories; track cat.slug; let i = $index) {
+          <a [routerLink]="'/inventory/' + cat.slug" class="inv-card card">
+            <div class="inv-card__img">
+              <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
+              <div class="inv-card__overlay"></div>
+            </div>
+            <div class="inv-card__body">
+              <h3>{{ cat.name }}</h3>
+              <p>{{ cat.description }}</p>
+              <span class="inv-card__link">
+                Browse
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Specific Category View -->
+@if (activeCategoryData) {
+  <section class="inv-category section section--dark">
+    <div class="container">
+      <div class="inv-category__header">
+        <h2>{{ activeCategoryData.name }}</h2>
+        <p>{{ activeCategoryData.description }}</p>
+        <p class="inv-category__note">
+          For the most up-to-date inventory and pricing, please give us a call at
+          <a href="tel:920-471-9076" class="inv-category__phone">920.471.9076</a>
+          or visit our
+          <a href="https://vanderleesttrailers.com/inventory/" target="_blank" rel="noopener" class="inv-category__phone">current inventory</a>.
+        </p>
+      </div>
+
+      <div class="inv-category__featured">
+        <div class="inv-category__image-large">
+          <img [src]="activeCategoryData.image" [alt]="activeCategoryData.name" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="inv-category__cta">
+        <a href="tel:920-471-9076" class="btn btn--primary">
+          Call for Pricing & Availability
+        </a>
+        <a routerLink="/contact" class="btn btn--outline">
+          Request Information
+        </a>
+      </div>
+    </div>
+  </section>
+}

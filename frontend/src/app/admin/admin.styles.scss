@@ -1,0 +1,187 @@
+/* ============================================================
+   ADMIN PANEL SHARED STYLES
+   ============================================================ */
+
+.admin-page {
+  min-height: calc(100vh - var(--header-height));
+  padding: var(--space-xl) 0;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+
+  h1 {
+    font-size: 1.8rem;
+    color: var(--color-text);
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--space-md);
+  }
+}
+
+.admin-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+  transition: color var(--duration-fast);
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+.admin-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+}
+
+.admin-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+
+  h3 {
+    font-size: 1.15rem;
+    color: var(--color-text);
+  }
+}
+
+.admin-field {
+  margin-bottom: var(--space-lg);
+
+  label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 0.75rem var(--space-md);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    transition: border-color var(--duration-fast);
+    outline: none;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+.admin-field--inline {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-md);
+
+  .admin-field {
+    margin-bottom: 0;
+  }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  th {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  td {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+
+  tr:hover td {
+    background: var(--color-bg-card);
+  }
+}
+
+.admin-actions {
+  display: flex;
+  gap: var(--space-sm);
+
+  button {
+    padding: var(--space-xs) var(--space-md);
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: all var(--duration-fast);
+  }
+}
+
+.btn--sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.82rem;
+}
+
+.btn--danger {
+  background: var(--color-error);
+  color: white;
+  opacity: 0.8;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.admin-toast {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--color-success);
+  color: white;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  animation: fadeInUp 0.3s ease both;
+  z-index: 9000;
+}
+
+.admin-toast--error {
+  background: var(--color-error);
+}

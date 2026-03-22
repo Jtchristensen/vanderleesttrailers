@@ -1,0 +1,121 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            frontend/package-lock.json
+            cdk/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Write environment config
+        working-directory: frontend/src/environments
+        run: |
+          cat > environment.ts << 'EOF'
+          export const environment = {
+            production: false,
+            apiUrl: '/api',
+            userPoolId: '${{ secrets.COGNITO_USER_POOL_ID }}',
+            userPoolClientId: '${{ secrets.COGNITO_CLIENT_ID }}',
+            region: '${{ env.AWS_REGION }}',
+          };
+          EOF
+          cat > environment.prod.ts << 'EOF'
+          export const environment = {
+            production: true,
+            apiUrl: '/api',
+            userPoolId: '${{ secrets.COGNITO_USER_POOL_ID }}',
+            userPoolClientId: '${{ secrets.COGNITO_CLIENT_ID }}',
+            region: '${{ env.AWS_REGION }}',
+          };
+          EOF
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npx ng build --configuration production
+
+      - name: Install CDK dependencies
+        working-directory: cdk
+        run: npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: CDK Deploy
+        working-directory: cdk
+        run: npx cdk deploy --require-approval never --outputs-file outputs.json
+
+      - name: Print outputs
+        working-directory: cdk
+        run: cat outputs.json
+
+  build-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Write stub environment config
+        working-directory: frontend/src/environments
+        run: |
+          cat > environment.ts << 'EOF'
+          export const environment = {
+            production: false,
+            apiUrl: '/api',
+            userPoolId: 'stub',
+            userPoolClientId: 'stub',
+            region: 'us-east-1',
+          };
+          EOF
+          cat > environment.prod.ts << 'EOF'
+          export const environment = {
+            production: true,
+            apiUrl: '/api',
+            userPoolId: 'stub',
+            userPoolClientId: 'stub',
+            region: 'us-east-1',
+          };
+          EOF
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npx ng build --configuration production

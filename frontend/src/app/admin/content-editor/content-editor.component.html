@@ -1,0 +1,99 @@
+<div class="admin-page">
+  <div class="container">
+    <a routerLink="/admin" class="admin-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back to Dashboard
+    </a>
+
+    <div class="admin-header">
+      <h1>Edit: {{ contentLabel }}</h1>
+      <div class="admin-header__actions">
+        <button class="btn btn--primary btn--sm" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </div>
+
+    @if (loading) {
+      <p style="color: var(--color-text-muted)">Loading content...</p>
+    } @else {
+      <!-- Visual editor for object data -->
+      @if (!isArrayData) {
+        <!-- Top-level string fields -->
+        @for (field of getFields(data); track field.path) {
+          <div class="admin-card">
+            <div class="admin-field">
+              <label>{{ field.label }}</label>
+              @if (field.type === 'textarea') {
+                <textarea [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" rows="3"></textarea>
+              } @else if (field.type === 'number') {
+                <input type="number" [ngModel]="field.value" (ngModelChange)="updateField(field.path, +$event)" />
+              } @else {
+                <input type="text" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Nested sections -->
+        @for (section of getNestedSections(data); track section.key) {
+          <div class="admin-card">
+            <div class="admin-card__header">
+              <h3>{{ section.key }}</h3>
+            </div>
+            @for (field of getFields(section.value, section.key); track field.path) {
+              <div class="admin-field">
+                <label>{{ field.path }}</label>
+                @if (field.type === 'textarea') {
+                  <textarea [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" rows="3"></textarea>
+                } @else {
+                  <input type="text" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
+                }
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Array data editor (FAQ, Reviews, Brands, etc.) -->
+      @if (isArrayData) {
+        @for (item of data; track item; let i = $index) {
+          <div class="admin-card">
+            <div class="admin-card__header">
+              <h3>Item {{ i + 1 }}</h3>
+              <button class="btn btn--danger btn--sm" (click)="removeArrayItem(i)">Remove</button>
+            </div>
+            @for (field of getFields(item, '' + i); track field.path) {
+              <div class="admin-field">
+                <label>{{ field.label.substring(field.label.indexOf('.') + 1) }}</label>
+                @if (field.type === 'textarea') {
+                  <textarea [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" rows="3"></textarea>
+                } @else {
+                  <input type="text" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
+                }
+              </div>
+            }
+          </div>
+        }
+        <button class="btn btn--outline" (click)="addArrayItem()">+ Add Item</button>
+      }
+
+      <!-- Raw JSON editor -->
+      <details class="editor-raw">
+        <summary>Advanced: Raw JSON Editor</summary>
+        <div class="admin-card" style="margin-top: var(--space-md)">
+          <div class="admin-field">
+            <label>Raw JSON</label>
+            <textarea [(ngModel)]="jsonText" (ngModelChange)="onJsonChange()" rows="20" style="font-family: monospace; font-size: 0.82rem;"></textarea>
+          </div>
+        </div>
+      </details>
+    }
+  </div>
+</div>
+
+@if (toast) {
+  <div class="admin-toast" [class.admin-toast--error]="toastError">{{ toast }}</div>
+}

@@ -1,0 +1,28 @@
+<div class="login">
+  <div class="login__card">
+    <div class="login__header">
+      <h2>Admin Login</h2>
+      <p>VanderLeest Trailer Sales</p>
+    </div>
+
+    @if (error) {
+      <div class="login__error">{{ error }}</div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="admin-field">
+        <label for="email">Email</label>
+        <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="admin@example.com" autocomplete="email" />
+      </div>
+
+      <div class="admin-field">
+        <label for="password">Password</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="Enter password" autocomplete="current-password" />
+      </div>
+
+      <button type="submit" class="btn btn--primary login__btn" [disabled]="loading">
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="admin-page">
+  <div class="container">
+    <div class="admin-header">
+      <h1>Admin Dashboard</h1>
+      <div class="admin-header__actions">
+        <a routerLink="/admin/inventory" class="btn btn--primary btn--sm">
+          Manage Inventory
+        </a>
+        <button class="btn btn--ghost btn--sm" (click)="logout()">Logout</button>
+      </div>
+    </div>
+
+    <h3 class="dash__section-title">Edit Website Content</h3>
+    <div class="dash__grid">
+      @for (section of sections; track section.label) {
+        <a [routerLink]="section.route" class="dash__card">
+          <span class="dash__card-icon" [innerHTML]="section.icon"></span>
+          <div>
+            <h4>{{ section.label }}</h4>
+            <p>{{ section.description }}</p>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </a>
+      }
+    </div>
+  </div>
+</div>
