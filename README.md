@@ -523,43 +523,21 @@ Two workflows in `.github/workflows/`:
 
 | Secret | Description | Where to get it |
 |--------|-------------|-----------------|
-| `AWS_ROLE_ARN` | IAM role ARN for OIDC | Create in AWS IAM (see below) |
+| `AWS_ACCESS_KEY_ID` | IAM access key ID | AWS IAM console > Users > Security credentials |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret access key | Generated when creating the access key |
 | `COGNITO_USER_POOL_ID` | Cognito pool ID | CDK deploy output: `UserPoolId` |
 | `COGNITO_CLIENT_ID` | Cognito client ID | CDK deploy output: `UserPoolClientId` |
 
 Set these in **GitHub repo > Settings > Secrets and variables > Actions**.
 
-### Setting Up AWS OIDC for GitHub Actions
+### Creating an IAM User for Deployments
 
-This is the recommended approach — no AWS access keys stored in GitHub:
-
-1. **AWS Console > IAM > Identity providers > Add provider**
-   - Type: OpenID Connect
-   - URL: `https://token.actions.githubusercontent.com`
-   - Audience: `sts.amazonaws.com`
-
-2. **Create IAM Role** with this trust policy:
-   ```json
-   {
-     "Effect": "Allow",
-     "Principal": {
-       "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
-     },
-     "Action": "sts:AssumeRoleWithWebIdentity",
-     "Condition": {
-       "StringEquals": {
-         "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-       },
-       "StringLike": {
-         "token.actions.githubusercontent.com:sub": "repo:<your-org>/vanderleesttrailers:*"
-       }
-     }
-   }
-   ```
-
-3. **Attach policy** — `AdministratorAccess` or a scoped policy covering S3, CloudFront, DynamoDB, Lambda, API Gateway, Cognito, IAM, CloudFormation
-
-4. **Set** the role ARN as the `AWS_ROLE_ARN` GitHub secret
+1. Go to **AWS Console > IAM > Users > Create user**
+2. Name it something like `github-deployer`
+3. Attach the `AdministratorAccess` policy (or a scoped policy covering S3, CloudFront, DynamoDB, Lambda, API Gateway, Cognito, IAM, CloudFormation)
+4. Go to **Security credentials > Create access key**
+5. Choose "Third-party service", create the key
+6. Copy the Access Key ID and Secret Access Key into your GitHub Secrets
 
 ---
 
