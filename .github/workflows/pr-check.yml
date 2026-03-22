@@ -23,9 +23,9 @@ jobs:
         run: npm ci
 
       - name: Write stub environment config
-        working-directory: frontend/src/environments
         run: |
-          cat > environment.ts << 'EOF'
+          mkdir -p frontend/src/environments
+          cat > frontend/src/environments/environment.ts <<'EOF'
           export const environment = {
             production: false,
             apiUrl: '/api',
@@ -34,7 +34,7 @@ jobs:
             region: 'us-east-1',
           };
           EOF
-          cat > environment.prod.ts << 'EOF'
+          cat > frontend/src/environments/environment.prod.ts <<'EOF'
           export const environment = {
             production: true,
             apiUrl: '/api',
