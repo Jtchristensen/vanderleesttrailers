@@ -139,6 +139,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
 
     const api = new apigateway.RestApi(this, "ContentApiGateway", {
       restApiName: "VanderLeest Content API",
+      cloudWatchRole: false,
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
