@@ -32,16 +32,6 @@ jobs:
           mkdir -p frontend/src/environments
           cat > frontend/src/environments/environment.ts <<'EOF'
           export const environment = {
-            production: false,
-            apiUrl: '/api',
-            userPoolId: '${{ secrets.COGNITO_USER_POOL_ID }}',
-            userPoolClientId: '${{ secrets.COGNITO_CLIENT_ID }}',
-            region: '${{ env.AWS_REGION }}',
-          };
-          EOF
-          cat > frontend/src/environments/environment.prod.ts <<'EOF'
-          export const environment = {
-            production: true,
             apiUrl: '/api',
             userPoolId: '${{ secrets.COGNITO_USER_POOL_ID }}',
             userPoolClientId: '${{ secrets.COGNITO_CLIENT_ID }}',
@@ -93,16 +83,6 @@ jobs:
           mkdir -p frontend/src/environments
           cat > frontend/src/environments/environment.ts <<'EOF'
           export const environment = {
-            production: false,
-            apiUrl: '/api',
-            userPoolId: 'stub',
-            userPoolClientId: 'stub',
-            region: 'us-east-1',
-          };
-          EOF
-          cat > frontend/src/environments/environment.prod.ts <<'EOF'
-          export const environment = {
-            production: true,
             apiUrl: '/api',
             userPoolId: 'stub',
             userPoolClientId: 'stub',
