@@ -9,17 +9,21 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private userPool: CognitoUserPool;
+  private userPool: CognitoUserPool | null = null;
 
-  constructor() {
-    this.userPool = new CognitoUserPool({
-      UserPoolId: environment.userPoolId,
-      ClientId: environment.userPoolClientId,
-    });
+  private getPool(): CognitoUserPool {
+    if (!this.userPool) {
+      this.userPool = new CognitoUserPool({
+        UserPoolId: environment.userPoolId,
+        ClientId: environment.userPoolClientId,
+      });
+    }
+    return this.userPool;
   }
 
   login(email: string, password: string): Promise<CognitoUserSession> {
-    const user = new CognitoUser({ Username: email, Pool: this.userPool });
+    const pool = this.getPool();
+    const user = new CognitoUser({ Username: email, Pool: pool });
     const authDetails = new AuthenticationDetails({ Username: email, Password: password });
 
     return new Promise((resolve, reject) => {
@@ -27,7 +31,6 @@ export class AuthService {
         onSuccess: (session) => resolve(session),
         onFailure: (err) => reject(err),
         newPasswordRequired: (userAttributes) => {
-          // First-time login — force password change
           delete userAttributes.email_verified;
           delete userAttributes.email;
           user.completeNewPasswordChallenge(password, userAttributes, {
@@ -40,23 +43,31 @@ export class AuthService {
   }
 
   logout() {
-    const user = this.userPool.getCurrentUser();
-    if (user) user.signOut();
+    try {
+      const user = this.getPool().getCurrentUser();
+      if (user) user.signOut();
+    } catch {
+      // Pool not configured — nothing to do
+    }
   }
 
   getSession(): Promise<CognitoUserSession | null> {
-    const user = this.userPool.getCurrentUser();
-    if (!user) return Promise.resolve(null);
+    try {
+      const user = this.getPool().getCurrentUser();
+      if (!user) return Promise.resolve(null);
 
-    return new Promise((resolve) => {
-      user.getSession((err: any, session: CognitoUserSession | null) => {
-        if (err || !session?.isValid()) {
-          resolve(null);
-        } else {
-          resolve(session);
-        }
+      return new Promise((resolve) => {
+        user.getSession((err: any, session: CognitoUserSession | null) => {
+          if (err || !session?.isValid()) {
+            resolve(null);
+          } else {
+            resolve(session);
+          }
+        });
       });
-    });
+    } catch {
+      return Promise.resolve(null);
+    }
   }
 
   async getToken(): Promise<string | null> {
