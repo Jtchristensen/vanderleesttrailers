@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { ContentService } from '../../services/content.service';
 
 @Component({
-  selector: 'app-services',
-  standalone: true,
-  imports: [CommonModule, RouterLink, FaqComponent],
-  templateUrl: './services.component.html',
-  styleUrls: ['./services.component.scss'],
+    selector: 'app-services',
+    imports: [RouterLink, FaqComponent],
+    templateUrl: './services.component.html',
+    styleUrls: ['./services.component.scss']
 })
 export class ServicesComponent implements OnInit {
   content: any = {};

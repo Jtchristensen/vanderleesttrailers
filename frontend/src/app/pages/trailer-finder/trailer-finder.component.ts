@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
@@ -17,11 +17,10 @@ interface Recommendation {
 }
 
 @Component({
-  selector: 'app-trailer-finder',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './trailer-finder.component.html',
-  styleUrls: ['./trailer-finder.component.scss'],
+    selector: 'app-trailer-finder',
+    imports: [FormsModule, RouterLink],
+    templateUrl: './trailer-finder.component.html',
+    styleUrls: ['./trailer-finder.component.scss']
 })
 export class TrailerFinderComponent {
   step = 0;

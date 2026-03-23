@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-loan-calculator',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './loan-calculator.component.html',
-  styleUrls: ['./loan-calculator.component.scss'],
+    selector: 'app-loan-calculator',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './loan-calculator.component.html',
+    styleUrls: ['./loan-calculator.component.scss']
 })
 export class LoanCalculatorComponent implements OnInit {
   @Input() price: number = 0;

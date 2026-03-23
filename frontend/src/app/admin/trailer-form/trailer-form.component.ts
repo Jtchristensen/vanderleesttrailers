@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminApiService } from '../../services/admin-api.service';
 import { ContentService } from '../../services/content.service';
 
 @Component({
-  selector: 'app-trailer-form',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './trailer-form.component.html',
-  styleUrls: ['./trailer-form.component.scss'],
+    selector: 'app-trailer-form',
+    imports: [FormsModule, RouterLink],
+    templateUrl: './trailer-form.component.html',
+    styleUrls: ['./trailer-form.component.scss']
 })
 export class TrailerFormComponent implements OnInit {
   isEdit = false;

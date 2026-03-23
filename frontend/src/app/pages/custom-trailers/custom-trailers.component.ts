@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 
 @Component({
-  selector: 'app-custom-trailers',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './custom-trailers.component.html',
-  styleUrls: ['./custom-trailers.component.scss'],
+    selector: 'app-custom-trailers',
+    imports: [RouterLink],
+    templateUrl: './custom-trailers.component.html',
+    styleUrls: ['./custom-trailers.component.scss']
 })
 export class CustomTrailersComponent implements OnInit {
   content: any = {};

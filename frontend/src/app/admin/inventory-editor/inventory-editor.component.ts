@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminApiService } from '../../services/admin-api.service';
 
 @Component({
-  selector: 'app-inventory-editor',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './inventory-editor.component.html',
-  styleUrls: ['./inventory-editor.component.scss'],
+    selector: 'app-inventory-editor',
+    imports: [FormsModule, RouterLink],
+    templateUrl: './inventory-editor.component.html',
+    styleUrls: ['./inventory-editor.component.scss']
 })
 export class InventoryEditorComponent implements OnInit {
   trailers: any[] = [];

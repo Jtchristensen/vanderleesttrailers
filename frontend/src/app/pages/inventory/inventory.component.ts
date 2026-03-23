@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 
 @Component({
-  selector: 'app-inventory',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './inventory.component.html',
-  styleUrls: ['./inventory.component.scss'],
+    selector: 'app-inventory',
+    imports: [RouterLink],
+    templateUrl: './inventory.component.html',
+    styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent implements OnInit {
   categories: any[] = [];

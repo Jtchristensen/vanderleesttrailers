@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ContentService } from '../../services/content.service';
 
 @Component({
-  selector: 'app-reviews',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './reviews.component.html',
-  styleUrls: ['./reviews.component.scss'],
+    selector: 'app-reviews',
+    imports: [],
+    templateUrl: './reviews.component.html',
+    styleUrls: ['./reviews.component.scss']
 })
 export class ReviewsComponent implements OnInit {
   reviews: any[] = [];

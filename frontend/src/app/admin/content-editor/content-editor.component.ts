@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { AdminApiService } from '../../services/admin-api.service';
 
 @Component({
-  selector: 'app-content-editor',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './content-editor.component.html',
-  styleUrls: ['./content-editor.component.scss'],
+    selector: 'app-content-editor',
+    imports: [FormsModule, RouterLink],
+    templateUrl: './content-editor.component.html',
+    styleUrls: ['./content-editor.component.scss']
 })
 export class ContentEditorComponent implements OnInit {
   contentType = '';

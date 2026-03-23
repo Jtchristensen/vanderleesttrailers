@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 
 @Component({
-  selector: 'app-trailer-detail',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './trailer-detail.component.html',
-  styleUrls: ['./trailer-detail.component.scss'],
+    selector: 'app-trailer-detail',
+    imports: [RouterLink],
+    templateUrl: './trailer-detail.component.html',
+    styleUrls: ['./trailer-detail.component.scss']
 })
 export class TrailerDetailComponent implements OnInit {
   trailer: any = null;
