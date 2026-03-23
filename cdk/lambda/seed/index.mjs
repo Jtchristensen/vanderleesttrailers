@@ -48,8 +48,8 @@ export const handler = async (event) => {
             facebook: 'https://www.facebook.com/Vanderleesttrailers/',
             instagram: 'https://www.instagram.com/vanderleesttrailersales/',
           },
-          logo: 'https://vanderleesttrailers.com/wp-content/uploads/2024/02/VanderLeest-logo-FINAL-2-2.png',
-          logoHeader: 'https://vanderleesttrailers.com/wp-content/uploads/2024/02/VanderLeest-logo-FINAL-2-2.png',
+          logo: '/uploads/site/logos/vanderleest-logo.png',
+          logoHeader: '/uploads/site/logos/vanderleest-logo.png',
         },
       },
       {
@@ -58,7 +58,7 @@ export const handler = async (event) => {
           hero: {
             heading: 'Building Relationships Comes First. Selling Trailers Comes Second.',
             subheading: 'Offering the best customer relationship, while selling the best trailers.',
-            backgroundImage: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Hero-slide3.jpg',
+            backgroundImage: '/uploads/site/heroes/hero-slide3.jpg',
             ctaText: 'View Inventory',
             ctaLink: '/inventory',
             secondaryCtaText: 'Contact Us',
@@ -83,7 +83,7 @@ export const handler = async (event) => {
           hero: {
             heading: 'Our Story',
             subheading: 'Built on relationships since 2018',
-            backgroundImage: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Hero-slide3.jpg',
+            backgroundImage: '/uploads/site/heroes/hero-slide3.jpg',
           },
           story: {
             heading: 'How It All Started',
@@ -95,7 +95,7 @@ export const handler = async (event) => {
           founder: {
             name: 'Matt VanderLeest',
             title: 'Owner',
-            image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Matt-Grandfather.jpg',
+            image: '/uploads/site/founder/matt-grandfather.jpg',
             bio: [
               'Matt launched the business while maintaining other work, including firewood sales and full-time employment elsewhere. He transitioned to full-time trailer sales after recognizing his passion for personal growth and industry challenges.',
               'His grandfather has been instrumental in the business journey, accompanying him on manufacturer pickup trips. Outside work, Matt enjoys snowmobiling, ATV-ing, camping, and spending time with family and friends.',
@@ -110,14 +110,14 @@ export const handler = async (event) => {
             heading: 'Tow With Confidence',
             subheading: "We'll fix it even if we didn't sell it to you!",
             description: 'VanderLeest offers service for all makes and models of trailers.',
-            backgroundImage: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/services_header-2.jpg',
+            backgroundImage: '/uploads/site/heroes/services-header.jpg',
           },
           services: [
-            { name: 'Welding', icon: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Icons_welding-1.png', description: 'Structural repairs including minor frame damage restoration and component reinforcement. We get your trailer back to full strength.' },
-            { name: 'Painting', icon: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Icons_painting-1.png', description: 'Protection against rust, corrosion, UV damage, and customization options for trailer renewal. Keep your trailer looking great.' },
-            { name: 'Electrical', icon: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Icons_electrical-1.png', description: 'Trailer rewiring, light repair, and malfunctioning wiring corrections. Stay safe and road-legal.' },
-            { name: 'Bearings & Brakes', icon: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Icons_brakes-1.png', description: 'Bearing lubrication, repacking, replacement, and brake inspections and maintenance. Keeping you rolling safely.' },
-            { name: 'Customization', icon: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom.png', description: 'We build custom solutions to fit your specific requirements. From generator boxes to food trailers, we can make it happen.', link: '/custom-trailers' },
+            { name: 'Welding', icon: '/uploads/site/icons/welding.png', description: 'Structural repairs including minor frame damage restoration and component reinforcement. We get your trailer back to full strength.' },
+            { name: 'Painting', icon: '/uploads/site/icons/painting.png', description: 'Protection against rust, corrosion, UV damage, and customization options for trailer renewal. Keep your trailer looking great.' },
+            { name: 'Electrical', icon: '/uploads/site/icons/electrical.png', description: 'Trailer rewiring, light repair, and malfunctioning wiring corrections. Stay safe and road-legal.' },
+            { name: 'Bearings & Brakes', icon: '/uploads/site/icons/brakes.png', description: 'Bearing lubrication, repacking, replacement, and brake inspections and maintenance. Keeping you rolling safely.' },
+            { name: 'Customization', icon: '/uploads/site/icons/custom.png', description: 'We build custom solutions to fit your specific requirements. From generator boxes to food trailers, we can make it happen.', link: '/custom-trailers' },
           ],
         },
       },
@@ -127,19 +127,19 @@ export const handler = async (event) => {
           hero: {
             heading: 'Custom Trailers',
             subheading: 'Built to your exact specifications',
-            backgroundImage: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/services_header-2.jpg',
+            backgroundImage: '/uploads/site/heroes/services-header.jpg',
           },
           intro: {
             heading: 'Trailer Customizations',
             text: "Here are a few of the Trailer Customizations we've done for our customers to fit their specific requirements.",
           },
           gallery: [
-            { title: 'AC Unit Installation', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom-Genertator-Box-.jpg', description: 'Climate control system integration' },
-            { title: 'Custom Generator Box', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom-Genertator-Box-.jpg', description: 'Dedicated power generation enclosure' },
-            { title: 'Generator Box in V-Nose', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom-Genertator-Box-.jpg', description: 'Space-efficient generator placement in trailer front' },
-            { title: 'Food Trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom-Genertator-Box-.jpg', description: 'Mobile food service configurations' },
-            { title: 'Rear Spoiler LED', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom-Genertator-Box-.jpg', description: 'Aerodynamic enhancement with LED lighting' },
-            { title: 'Window Options', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Custom-Genertator-Box-.jpg', description: 'Various window configurations and styles' },
+            { title: 'AC Unit Installation', image: '/uploads/site/custom/generator-box.jpg', description: 'Climate control system integration' },
+            { title: 'Custom Generator Box', image: '/uploads/site/custom/generator-box.jpg', description: 'Dedicated power generation enclosure' },
+            { title: 'Generator Box in V-Nose', image: '/uploads/site/custom/generator-box.jpg', description: 'Space-efficient generator placement in trailer front' },
+            { title: 'Food Trailers', image: '/uploads/site/custom/generator-box.jpg', description: 'Mobile food service configurations' },
+            { title: 'Rear Spoiler LED', image: '/uploads/site/custom/generator-box.jpg', description: 'Aerodynamic enhancement with LED lighting' },
+            { title: 'Window Options', image: '/uploads/site/custom/generator-box.jpg', description: 'Various window configurations and styles' },
           ],
         },
       },
@@ -149,7 +149,7 @@ export const handler = async (event) => {
           hero: {
             heading: 'Financing Options',
             subheading: 'A seamless and stress-free trailer purchasing experience',
-            backgroundImage: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/financing_header.jpg',
+            backgroundImage: '/uploads/site/heroes/financing-header.jpg',
           },
           intro: {
             heading: 'Flexible Financing Solutions',
@@ -158,7 +158,7 @@ export const handler = async (event) => {
           partners: [
             { name: 'Marine Credit Union', creditRequirement: 'Good to Excellent Credit (640+)', features: ['Local and personalized service', 'Competitive rates', 'Easy process'], applicationUrl: 'https://marinecreditunion.my.site.com', logo: '' },
             { name: 'Trailer Solutions Financial', creditRequirement: 'Good to Excellent Credit', features: ['Wide range of lenders', 'More financing options', 'Competitive rates'], applicationUrl: 'https://get-started.trailersolutionsfl.com', logo: '' },
-            { name: 'ClickLease', creditRequirement: 'All Credit Scores Welcome', features: ['$500 - $30,000 range', 'Decision in seconds', 'No documents required', 'No time-in-business requirements', '5-month early purchase option'], applicationUrl: 'https://app.clicklease.com', logo: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/click-lease-logo.png' },
+            { name: 'ClickLease', creditRequirement: 'All Credit Scores Welcome', features: ['$500 - $30,000 range', 'Decision in seconds', 'No documents required', 'No time-in-business requirements', '5-month early purchase option'], applicationUrl: 'https://app.clicklease.com', logo: '/uploads/site/logos/clicklease-logo.png' },
           ],
         },
       },
@@ -168,7 +168,7 @@ export const handler = async (event) => {
           hero: {
             heading: 'Get In Touch',
             subheading: "We'd love to hear from you",
-            backgroundImage: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/contact_header-1.jpg',
+            backgroundImage: '/uploads/site/heroes/contact-header.jpg',
           },
           form: {
             heading: 'Send Us a Message',
@@ -210,25 +210,25 @@ export const handler = async (event) => {
       {
         pk: 'CATEGORIES', sk: '_',
         data: [
-          { name: 'Aluminum Trailers', slug: 'aluminum-trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2026/03/IMG_5552-scaled-e1773243644670.jpeg', description: 'Lightweight and durable aluminum trailers for every need.' },
-          { name: 'Aluminum Enclosed', slug: 'aluminum-enclosed-trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2026/02/IMG_5229-scaled.jpeg', description: 'Protected cargo hauling with premium aluminum construction.' },
-          { name: 'Car & Equipment Haulers', slug: 'car-equipment-haulers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/08/IMG_3816-scaled.jpeg', description: 'Heavy-duty flatbed trailers for vehicles and equipment.' },
-          { name: 'Dump Trailers', slug: 'dump-trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/10/IMG_4349-scaled-e1761789247583.jpeg', description: 'Hydraulic dump trailers from 10K to 18K GVWR.' },
-          { name: 'Enclosed Trailers', slug: 'enclosed-trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2026/02/IMG_5169-scaled.jpeg', description: 'Rock Solid Cargo enclosed trailers with premium features.' },
-          { name: 'Gooseneck Trailers', slug: 'gooseneck-trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2025/10/IMG_4360-scaled.jpeg', description: 'High-capacity gooseneck trailers for serious hauling.' },
-          { name: 'Steel Utility Trailers', slug: 'steel-utility-trailers', image: 'https://vanderleesttrailers.com/wp-content/uploads/2026/01/IMG_5289-scaled.jpeg', description: 'Versatile utility trailers starting at $1,490.' },
+          { name: 'Aluminum Trailers', slug: 'aluminum-trailers', image: '/uploads/site/categories/aluminum-trailers.jpeg', description: 'Lightweight and durable aluminum trailers for every need.' },
+          { name: 'Aluminum Enclosed', slug: 'aluminum-enclosed-trailers', image: '/uploads/site/categories/aluminum-enclosed.jpeg', description: 'Protected cargo hauling with premium aluminum construction.' },
+          { name: 'Car & Equipment Haulers', slug: 'car-equipment-haulers', image: '/uploads/site/categories/car-equipment-haulers.jpeg', description: 'Heavy-duty flatbed trailers for vehicles and equipment.' },
+          { name: 'Dump Trailers', slug: 'dump-trailers', image: '/uploads/site/categories/dump-trailers.jpeg', description: 'Hydraulic dump trailers from 10K to 18K GVWR.' },
+          { name: 'Enclosed Trailers', slug: 'enclosed-trailers', image: '/uploads/site/categories/enclosed-trailers.jpeg', description: 'Rock Solid Cargo enclosed trailers with premium features.' },
+          { name: 'Gooseneck Trailers', slug: 'gooseneck-trailers', image: '/uploads/site/categories/gooseneck-trailers.jpeg', description: 'High-capacity gooseneck trailers for serious hauling.' },
+          { name: 'Steel Utility Trailers', slug: 'steel-utility-trailers', image: '/uploads/site/categories/steel-utility.jpeg', description: 'Versatile utility trailers starting at $1,490.' },
         ],
       },
       {
         pk: 'IMAGES', sk: '_',
         data: {
           hero: {
-            home: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Hero-slide3.jpg',
-            services: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/services_header-2.jpg',
-            inventory: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/Inventory-header.jpg',
-            financing: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/financing_header.jpg',
-            contact: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/contact_header-1.jpg',
-            faq: 'https://vanderleesttrailers.com/wp-content/uploads/2025/03/faq-photo.jpg',
+            home: '/uploads/site/heroes/hero-slide3.jpg',
+            services: '/uploads/site/heroes/services-header.jpg',
+            inventory: '/uploads/site/heroes/inventory-header.jpg',
+            financing: '/uploads/site/heroes/financing-header.jpg',
+            contact: '/uploads/site/heroes/contact-header.jpg',
+            faq: '/uploads/site/heroes/faq-photo.jpg',
           },
         },
       },
