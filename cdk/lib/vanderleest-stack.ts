@@ -265,6 +265,17 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     });
 
     // ============================================================
+    // IAM: Grant deployer user access to DynamoDB
+    // ============================================================
+
+    const deployerUser = iam.User.fromUserName(
+      this,
+      "GitHubActionsDeployer",
+      "github-actions-deployer"
+    );
+    contentTable.grantReadWriteData(deployerUser);
+
+    // ============================================================
     // DEPLOY SITE
     // ============================================================
 
