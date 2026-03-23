@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+package-lock.json
 .npm
 
 # Build output
@@ -10,7 +11,6 @@ cdk/*.d.ts
 
 # Environment / secrets
 frontend/src/environments/environment.ts
-frontend/src/environments/environment.prod.ts
 .env
 .env.*
 
