@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { ContentService } from './services/content.service';
 
 @Component({
   selector: 'app-root',
@@ -22,4 +23,17 @@ import { FooterComponent } from './components/footer/footer.component';
     }
   `],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  constructor(private contentService: ContentService) {}
+
+  ngOnInit() {
+    // Preload all content into cache so page navigation is instant
+    const types = [
+      'SITE_INFO', 'PAGE_HOME', 'PAGE_ABOUT', 'SERVICES',
+      'CUSTOM_TRAILERS', 'FINANCING', 'CONTACT', 'FAQ',
+      'REVIEWS', 'BRANDS', 'CATEGORIES', 'IMAGES',
+    ];
+    types.forEach(type => this.contentService.getContent(type));
+    this.contentService.getTrailers();
+  }
+}
