@@ -1,7 +1,8 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { SITE_INFO, NAV_LINKS } from '../../data/site-content';
+import { ContentService } from '../../services/content.service';
+import { NAV_LINKS } from '../../data/site-content';
 
 @Component({
   selector: 'app-header',
@@ -10,12 +11,18 @@ import { SITE_INFO, NAV_LINKS } from '../../data/site-content';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent {
-  site = SITE_INFO;
+export class HeaderComponent implements OnInit {
+  site: any = {};
   navLinks = NAV_LINKS;
   isScrolled = false;
   isMobileMenuOpen = false;
   activeDropdown: string | null = null;
+
+  constructor(private contentService: ContentService) {}
+
+  async ngOnInit() {
+    this.site = await this.contentService.getContent('SITE_INFO');
+  }
 
   @HostListener('window:scroll')
   onScroll() {
@@ -24,11 +31,7 @@ export class HeaderComponent {
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    if (this.isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = this.isMobileMenuOpen ? 'hidden' : '';
   }
 
   closeMobileMenu() {

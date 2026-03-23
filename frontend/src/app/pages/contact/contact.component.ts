@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CONTACT_CONTENT, SITE_INFO } from '../../data/site-content';
+import { ContentService } from '../../services/content.service';
 
 @Component({
   selector: 'app-contact',
@@ -10,9 +10,10 @@ import { CONTACT_CONTENT, SITE_INFO } from '../../data/site-content';
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
 })
-export class ContactComponent {
-  content = CONTACT_CONTENT;
-  site = SITE_INFO;
+export class ContactComponent implements OnInit {
+  content: any = {};
+  site: any = {};
+  loaded = false;
 
   formData = {
     name: '',
@@ -24,9 +25,20 @@ export class ContactComponent {
   isSubmitted = false;
   isSubmitting = false;
 
+  constructor(private contentService: ContentService) {}
+
+  async ngOnInit() {
+    const [content, site] = await Promise.all([
+      this.contentService.getContent('CONTACT'),
+      this.contentService.getContent('SITE_INFO'),
+    ]);
+    this.content = content;
+    this.site = site;
+    this.loaded = true;
+  }
+
   onSubmit() {
     this.isSubmitting = true;
-    // Simulate form submission - replace with actual API call
     setTimeout(() => {
       this.isSubmitting = false;
       this.isSubmitted = true;

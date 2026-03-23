@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FaqComponent } from '../../components/faq/faq.component';
-import { SERVICES_CONTENT, SITE_INFO } from '../../data/site-content';
+import { ContentService } from '../../services/content.service';
 
 @Component({
   selector: 'app-services',
@@ -11,7 +11,20 @@ import { SERVICES_CONTENT, SITE_INFO } from '../../data/site-content';
   templateUrl: './services.component.html',
   styleUrls: ['./services.component.scss'],
 })
-export class ServicesComponent {
-  content = SERVICES_CONTENT;
-  site = SITE_INFO;
+export class ServicesComponent implements OnInit {
+  content: any = {};
+  site: any = {};
+  loaded = false;
+
+  constructor(private contentService: ContentService) {}
+
+  async ngOnInit() {
+    const [content, site] = await Promise.all([
+      this.contentService.getContent('SERVICES'),
+      this.contentService.getContent('SITE_INFO'),
+    ]);
+    this.content = content;
+    this.site = site;
+    this.loaded = true;
+  }
 }

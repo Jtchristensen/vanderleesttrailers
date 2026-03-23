@@ -76,11 +76,38 @@
         </p>
       </div>
 
-      <div class="inv-category__featured">
-        <div class="inv-category__image-large">
-          <img [src]="activeCategoryData.image" [alt]="activeCategoryData.name" loading="lazy" />
+      <!-- Trailers in this category -->
+      @if (filteredTrailers.length > 0) {
+        <div class="inv-grid__cards" style="margin-bottom: var(--space-2xl);">
+          @for (trailer of filteredTrailers; track trailer.slug) {
+            <div class="inv-card card">
+              <div class="inv-card__img">
+                @if (trailer.images?.length) {
+                  <img [src]="trailer.images[0]" [alt]="trailer.name" loading="lazy" />
+                } @else {
+                  <img [src]="activeCategoryData.image" [alt]="trailer.name" loading="lazy" />
+                }
+                <div class="inv-card__overlay"></div>
+              </div>
+              <div class="inv-card__body">
+                <h3>{{ trailer.name }}</h3>
+                @if (trailer.price) {
+                  <p class="inv-card__price">${{ trailer.price }}</p>
+                }
+                @if (trailer.gvwr) {
+                  <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>
+                }
+              </div>
+            </div>
+          }
         </div>
-      </div>
+      } @else {
+        <div class="inv-category__featured">
+          <div class="inv-category__image-large">
+            <img [src]="activeCategoryData.image" [alt]="activeCategoryData.name" loading="lazy" />
+          </div>
+        </div>
+      }
 
       <div class="inv-category__cta">
         <a href="tel:920-471-9076" class="btn btn--primary">

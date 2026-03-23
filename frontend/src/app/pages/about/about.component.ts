@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FaqComponent } from '../../components/faq/faq.component';
-import { ABOUT_CONTENT, TRAILER_BRANDS, REVIEWS } from '../../data/site-content';
+import { ContentService } from '../../services/content.service';
 
 @Component({
   selector: 'app-about',
@@ -11,8 +11,20 @@ import { ABOUT_CONTENT, TRAILER_BRANDS, REVIEWS } from '../../data/site-content'
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
-export class AboutComponent {
-  content = ABOUT_CONTENT;
-  brands = TRAILER_BRANDS;
-  reviews = REVIEWS;
+export class AboutComponent implements OnInit {
+  content: any = {};
+  brands: any[] = [];
+  loaded = false;
+
+  constructor(private contentService: ContentService) {}
+
+  async ngOnInit() {
+    const [content, brands] = await Promise.all([
+      this.contentService.getContent('PAGE_ABOUT'),
+      this.contentService.getContent('BRANDS'),
+    ]);
+    this.content = content;
+    this.brands = brands;
+    this.loaded = true;
+  }
 }

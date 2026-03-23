@@ -1,16 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FaqComponent } from '../../components/faq/faq.component';
-import {
-  HOME_CONTENT,
-  TRAILER_CATEGORIES,
-  TRAILER_BRANDS,
-  SERVICES_CONTENT,
-  REVIEWS,
-  SITE_INFO,
-  IMAGES,
-} from '../../data/site-content';
+import { ContentService } from '../../services/content.service';
 
 @Component({
   selector: 'app-home',
@@ -19,12 +11,35 @@ import {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
-  content = HOME_CONTENT;
-  categories = TRAILER_CATEGORIES;
-  brands = TRAILER_BRANDS;
-  services = SERVICES_CONTENT.services;
-  reviews = REVIEWS;
-  site = SITE_INFO;
-  images = IMAGES;
+export class HomeComponent implements OnInit {
+  content: any = {};
+  categories: any[] = [];
+  brands: any[] = [];
+  services: any[] = [];
+  reviews: any[] = [];
+  site: any = {};
+  images: any = {};
+  loaded = false;
+
+  constructor(private contentService: ContentService) {}
+
+  async ngOnInit() {
+    const [site, home, categories, brands, services, reviews, images] = await Promise.all([
+      this.contentService.getContent('SITE_INFO'),
+      this.contentService.getContent('PAGE_HOME'),
+      this.contentService.getContent('CATEGORIES'),
+      this.contentService.getContent('BRANDS'),
+      this.contentService.getContent('SERVICES'),
+      this.contentService.getContent('REVIEWS'),
+      this.contentService.getContent('IMAGES'),
+    ]);
+    this.site = site;
+    this.content = home;
+    this.categories = categories;
+    this.brands = brands;
+    this.services = (services as any).services || [];
+    this.reviews = reviews;
+    this.images = images;
+    this.loaded = true;
+  }
 }

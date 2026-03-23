@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { SITE_INFO, NAV_LINKS, TRAILER_CATEGORIES } from '../../data/site-content';
+import { ContentService } from '../../services/content.service';
 
 @Component({
   selector: 'app-footer',
@@ -10,9 +10,19 @@ import { SITE_INFO, NAV_LINKS, TRAILER_CATEGORIES } from '../../data/site-conten
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
 })
-export class FooterComponent {
-  site = SITE_INFO;
-  navLinks = NAV_LINKS;
-  categories = TRAILER_CATEGORIES;
+export class FooterComponent implements OnInit {
+  site: any = {};
+  categories: any[] = [];
   currentYear = new Date().getFullYear();
+
+  constructor(private contentService: ContentService) {}
+
+  async ngOnInit() {
+    const [site, categories] = await Promise.all([
+      this.contentService.getContent('SITE_INFO'),
+      this.contentService.getContent('CATEGORIES'),
+    ]);
+    this.site = site;
+    this.categories = categories;
+  }
 }
