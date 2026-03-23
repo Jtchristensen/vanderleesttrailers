@@ -1,0 +1,164 @@
+@if (loaded) {
+  @if (notFound) {
+    <section class="section">
+      <div class="container" style="text-align: center; padding: var(--space-4xl) 0;">
+        <h2>Trailer Not Found</h2>
+        <p>The trailer you're looking for doesn't exist or has been removed.</p>
+        <a routerLink="/inventory" class="btn btn--primary" style="margin-top: var(--space-xl);">Browse Inventory</a>
+      </div>
+    </section>
+  } @else {
+    <!-- Breadcrumb -->
+    <section class="detail-breadcrumb">
+      <div class="container">
+        <a routerLink="/inventory" class="detail-breadcrumb__link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back to Inventory
+        </a>
+        @if (trailer.category) {
+          <span class="detail-breadcrumb__sep">/</span>
+          <a [routerLink]="'/inventory/' + trailer.category" class="detail-breadcrumb__link">
+            {{ trailer.category }}
+          </a>
+        }
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="detail section">
+      <div class="container">
+        <div class="detail__grid">
+          <!-- Image Gallery -->
+          <div class="detail__gallery">
+            @if (trailer.images?.length) {
+              <div class="detail__main-image">
+                <img [src]="trailer.images[activeImage]" [alt]="trailer.name" />
+                @if (trailer.images.length > 1) {
+                  <button class="detail__nav detail__nav--prev" (click)="prevImage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                  </button>
+                  <button class="detail__nav detail__nav--next" (click)="nextImage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                  </button>
+                  <div class="detail__counter">{{ activeImage + 1 }} / {{ trailer.images.length }}</div>
+                }
+              </div>
+              @if (trailer.images.length > 1) {
+                <div class="detail__thumbs">
+                  @for (img of trailer.images; track img; let i = $index) {
+                    <button class="detail__thumb" [class.is-active]="i === activeImage" (click)="setActiveImage(i)">
+                      <img [src]="img" [alt]="'Photo ' + (i + 1)" />
+                    </button>
+                  }
+                </div>
+              }
+            } @else {
+              <div class="detail__no-image">
+                <p>No images available</p>
+              </div>
+            }
+          </div>
+
+          <!-- Info Panel -->
+          <div class="detail__info">
+            <h1>{{ trailer.name }}</h1>
+
+            @if (trailer.brand) {
+              <span class="detail__brand">{{ trailer.brand }}</span>
+            }
+
+            @if (trailer.price) {
+              <div class="detail__price">${{ trailer.price }}</div>
+            }
+
+            <!-- Specs -->
+            <div class="detail__specs">
+              @if (trailer.gvwr) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">GVWR</span>
+                  <span class="detail__spec-value">{{ trailer.gvwr }} lbs</span>
+                </div>
+              }
+              @if (trailer.emptyWeight) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Empty Weight</span>
+                  <span class="detail__spec-value">{{ trailer.emptyWeight }} lbs</span>
+                </div>
+              }
+              @if (trailer.payload) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Payload</span>
+                  <span class="detail__spec-value">{{ trailer.payload }} lbs</span>
+                </div>
+              }
+              @if (trailer.siding) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Siding</span>
+                  <span class="detail__spec-value">{{ trailer.siding }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- CTA -->
+            <div class="detail__cta">
+              <a [href]="'tel:' + site.phone" class="btn btn--primary">
+                Call {{ site.phoneFormatted }}
+              </a>
+              <a routerLink="/contact" class="btn btn--outline">
+                Request Info
+              </a>
+            </div>
+
+            <!-- Standard Features -->
+            @if (trailer.features?.length) {
+              <div class="detail__features">
+                <h3>Standard Features</h3>
+                <ul>
+                  @for (feature of trailer.features; track feature) {
+                    <li>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      {{ feature }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Upgraded Features -->
+            @if (trailer.upgradedFeatures?.length) {
+              <div class="detail__features detail__features--upgraded">
+                <h3>Upgrades Included</h3>
+                <ul>
+                  @for (feature of trailer.upgradedFeatures; track feature) {
+                    <li>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                      {{ feature }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Description -->
+            @if (trailer.description) {
+              <div class="detail__description">
+                <h3>Description</h3>
+                <p>{{ trailer.description }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+}

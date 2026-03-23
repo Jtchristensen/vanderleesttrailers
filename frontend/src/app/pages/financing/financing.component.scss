@@ -96,6 +96,23 @@
   }
 }
 
+.fin-calculator {
+  &__header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+
+    h2 {
+      color: var(--color-text);
+      margin-bottom: var(--space-sm);
+    }
+
+    p {
+      color: var(--color-text-secondary);
+      margin: 0 auto;
+    }
+  }
+}
+
 .fin-cta {
   text-align: center;
 

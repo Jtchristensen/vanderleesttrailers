@@ -80,7 +80,7 @@
       @if (filteredTrailers.length > 0) {
         <div class="inv-grid__cards" style="margin-bottom: var(--space-2xl);">
           @for (trailer of filteredTrailers; track trailer.slug) {
-            <div class="inv-card card">
+            <a [routerLink]="'/trailer/' + trailer.slug" class="inv-card card">
               <div class="inv-card__img">
                 @if (trailer.images?.length) {
                   <img [src]="trailer.images[0]" [alt]="trailer.name" loading="lazy" />
@@ -97,8 +97,14 @@
                 @if (trailer.gvwr) {
                   <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>
                 }
+                <span class="inv-card__link">
+                  View Details
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </span>
               </div>
-            </div>
+            </a>
           }
         </div>
       } @else {

@@ -1,0 +1,117 @@
+<div class="calc">
+  <div class="calc__header">
+    <svg class="calc__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5">
+      <rect x="4" y="2" width="16" height="20" rx="2"/>
+      <line x1="8" y1="6" x2="16" y2="6"/>
+      <line x1="8" y1="10" x2="10" y2="10"/>
+      <line x1="12" y1="10" x2="16" y2="10"/>
+      <line x1="8" y1="14" x2="10" y2="14"/>
+      <line x1="12" y1="14" x2="16" y2="14"/>
+      <line x1="8" y1="18" x2="10" y2="18"/>
+      <line x1="12" y1="18" x2="16" y2="18"/>
+    </svg>
+    <h3>Payment Calculator</h3>
+    <p>Estimate your monthly trailer payment</p>
+  </div>
+
+  <div class="calc__body">
+    <div class="calc__fields">
+      <!-- Vehicle Price -->
+      <div class="calc__field">
+        <label for="calcPrice">Vehicle Price</label>
+        <div class="calc__input-wrap">
+          <span class="calc__prefix">$</span>
+          <input
+            id="calcPrice"
+            type="number"
+            [(ngModel)]="vehiclePrice"
+            (ngModelChange)="calculate()"
+            min="0"
+            step="100"
+            placeholder="0"
+          />
+        </div>
+      </div>
+
+      <!-- Down Payment -->
+      <div class="calc__field">
+        <label for="calcDown">Down Payment</label>
+        <div class="calc__input-wrap">
+          <span class="calc__prefix">$</span>
+          <input
+            id="calcDown"
+            type="number"
+            [(ngModel)]="downPayment"
+            (ngModelChange)="calculate()"
+            min="0"
+            step="100"
+            placeholder="0"
+          />
+        </div>
+      </div>
+
+      <!-- Interest Rate -->
+      <div class="calc__field">
+        <label for="calcRate">Interest Rate (APR)</label>
+        <div class="calc__input-wrap">
+          <input
+            id="calcRate"
+            type="number"
+            [(ngModel)]="interestRate"
+            (ngModelChange)="calculate()"
+            min="0"
+            max="30"
+            step="0.1"
+            placeholder="0"
+          />
+          <span class="calc__suffix">%</span>
+        </div>
+      </div>
+
+      <!-- Loan Term -->
+      <div class="calc__field">
+        <label>Loan Term</label>
+        <div class="calc__terms">
+          @for (term of termOptions; track term) {
+            <button
+              class="calc__term"
+              [class.calc__term--active]="loanTerm === term"
+              (click)="loanTerm = term; calculate()"
+            >
+              {{ term }} mo
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="calc__results" [class.calc__results--active]="monthlyPayment > 0">
+      <div class="calc__payment">
+        <span class="calc__payment-label">Estimated Monthly Payment</span>
+        <span class="calc__payment-amount">
+          {{ monthlyPayment | currency:'USD':'symbol':'1.2-2' }}
+          <span class="calc__payment-per">/mo</span>
+        </span>
+      </div>
+      <div class="calc__breakdown">
+        <div class="calc__breakdown-item">
+          <span>Loan Amount</span>
+          <span>{{ (vehiclePrice - downPayment) | currency:'USD':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="calc__breakdown-item">
+          <span>Total Interest</span>
+          <span>{{ totalInterest | currency:'USD':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="calc__breakdown-item calc__breakdown-item--total">
+          <span>Total Cost</span>
+          <span>{{ totalPayment | currency:'USD':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="calc__disclaimer">
+    * This calculator provides estimates only. Actual rates, terms, and payments may vary based on creditworthiness and lender terms. Contact us for personalized financing options.
+  </p>
+</div>
