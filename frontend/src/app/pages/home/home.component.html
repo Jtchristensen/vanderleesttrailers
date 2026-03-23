@@ -4,6 +4,17 @@
   <div class="hero__overlay"></div>
   <div class="hero__grain"></div>
 
+  <!-- Wisconsin watermark -->
+  <div class="hero__wisconsin">
+    <svg viewBox="0 0 500 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M58 2L50 5L42 3L35 8L28 6L18 12L10 18L5 28L2 42L5 58L3 72L8 85L6 98L10 115L8 128L12 142L15 158L18 172L22 185L20 198L25 212L28 228L32 242L35 255L38 268L42 282L45 295L50 308L55 318L62 325L70 330L78 332L88 330L98 335L108 338L118 342L128 340L140 345L152 350L165 348L178 352L190 355L202 358L215 362L228 365L242 368L255 365L268 370L282 372L295 375L308 378L320 382L332 380L345 385L358 388L370 392L382 395L392 390L402 385L410 378L418 370L422 358L428 345L432 332L438 318L442 305L445 290L448 275L450 260L452 245L450 228L448 212L445 198L442 185L438 170L435 158L430 145L425 132L420 120L415 108L408 98L400 88L392 80L382 72L372 65L360 60L348 55L335 52L322 48L308 45L295 42L282 40L268 38L255 35L242 32L228 30L215 28L202 25L188 22L175 20L162 18L148 15L135 12L122 10L108 8L95 6L82 5L68 3L58 2Z"
+        stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.08"/>
+      <!-- Pin for Oconto Falls (NE Wisconsin) -->
+      <circle cx="368" cy="120" r="5" fill="var(--color-accent)" opacity="0.4"/>
+      <circle cx="368" cy="120" r="2.5" fill="var(--color-accent)" opacity="0.8"/>
+    </svg>
+  </div>
+
   <div class="hero__content">
     <div class="hero__badge animate-fade-up">
       <span class="hero__badge-dot"></span>
@@ -45,22 +56,44 @@
           </svg>
         </a>
       </div>
-      <div class="intro__stats">
-        <div class="intro__stat">
-          <span class="intro__stat-number">2018</span>
-          <span class="intro__stat-label">Established</span>
+      <div class="intro__right">
+        <!-- Wisconsin Map -->
+        <div class="intro__map">
+          <svg viewBox="0 0 500 450" fill="none" xmlns="http://www.w3.org/2000/svg" class="intro__wisconsin-svg">
+            <path d="M58 2L50 5L42 3L35 8L28 6L18 12L10 18L5 28L2 42L5 58L3 72L8 85L6 98L10 115L8 128L12 142L15 158L18 172L22 185L20 198L25 212L28 228L32 242L35 255L38 268L42 282L45 295L50 308L55 318L62 325L70 330L78 332L88 330L98 335L108 338L118 342L128 340L140 345L152 350L165 348L178 352L190 355L202 358L215 362L228 365L242 368L255 365L268 370L282 372L295 375L308 378L320 382L332 380L345 385L358 388L370 392L382 395L392 390L402 385L410 378L418 370L422 358L428 345L432 332L438 318L442 305L445 290L448 275L450 260L452 245L450 228L448 212L445 198L442 185L438 170L435 158L430 145L425 132L420 120L415 108L408 98L400 88L392 80L382 72L372 65L360 60L348 55L335 52L322 48L308 45L295 42L282 40L268 38L255 35L242 32L228 30L215 28L202 25L188 22L175 20L162 18L148 15L135 12L122 10L108 8L95 6L82 5L68 3L58 2Z"
+              stroke="var(--color-accent)" stroke-width="2" fill="rgba(46,163,242,0.03)"/>
+            <!-- Oconto Falls pin with pulse -->
+            <circle cx="368" cy="120" r="16" fill="var(--color-accent)" opacity="0.1" class="intro__pin-pulse"/>
+            <circle cx="368" cy="120" r="6" fill="var(--color-accent)" opacity="0.6"/>
+            <circle cx="368" cy="120" r="3" fill="white"/>
+          </svg>
+          <div class="intro__map-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span>Oconto Falls, WI</span>
+          </div>
         </div>
-        <div class="intro__stat">
-          <span class="intro__stat-number">6+</span>
-          <span class="intro__stat-label">Premium Brands</span>
-        </div>
-        <div class="intro__stat">
-          <span class="intro__stat-number">100+</span>
-          <span class="intro__stat-label">Trailers In Stock</span>
-        </div>
-        <div class="intro__stat">
-          <span class="intro__stat-number">5.0</span>
-          <span class="intro__stat-label">Star Rating</span>
+
+        <!-- Stats -->
+        <div class="intro__stats">
+          <div class="intro__stat">
+            <span class="intro__stat-number">2018</span>
+            <span class="intro__stat-label">Established</span>
+          </div>
+          <div class="intro__stat">
+            <span class="intro__stat-number">6+</span>
+            <span class="intro__stat-label">Premium Brands</span>
+          </div>
+          <div class="intro__stat">
+            <span class="intro__stat-number">100+</span>
+            <span class="intro__stat-label">Trailers In Stock</span>
+          </div>
+          <div class="intro__stat">
+            <span class="intro__stat-number">5.0</span>
+            <span class="intro__stat-label">Star Rating</span>
+          </div>
         </div>
       </div>
     </div>
