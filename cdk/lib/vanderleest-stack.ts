@@ -300,6 +300,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       "github-actions-deployer"
     );
     contentTable.grantReadWriteData(deployerUser);
+    imagesBucket.grantReadWrite(deployerUser);
 
     // ============================================================
     // DEPLOY SITE
