@@ -51,6 +51,7 @@ export const NAV_LINKS = [
       { label: 'Steel Utility Trailers', route: '/inventory/steel-utility-trailers' },
     ],
   },
+  { label: 'Trailer Finder', route: '/trailer-finder' },
   { label: 'Services', route: '/services' },
   { label: 'Custom Trailers', route: '/custom-trailers' },
   { label: 'Financing', route: '/financing' },

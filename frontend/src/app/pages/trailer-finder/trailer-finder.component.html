@@ -1,0 +1,202 @@
+<!-- Hero -->
+<section class="page-hero">
+  <div class="page-hero__bg" style="background-image: url('https://vanderleesttrailers.com/wp-content/uploads/2025/03/Inventory-header.jpg')"></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <h1 class="page-hero__heading animate-fade-up">Trailer Finder</h1>
+    <p class="page-hero__subheading animate-fade-up delay-1">Answer a few questions and we'll recommend the perfect trailer for you</p>
+    <div class="page-hero__accent-line animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<section class="finder section">
+  <div class="container">
+    <!-- Show quiz if no results yet -->
+    @if (recommendations.length === 0 && !loading) {
+      <!-- Progress bar -->
+      <div class="finder__progress">
+        @for (s of [0,1,2,3,4]; track s) {
+          <div class="finder__progress-step" [class.is-active]="step >= s" [class.is-current]="step === s"></div>
+        }
+      </div>
+
+      <div class="finder__card">
+        <!-- Step 1: What are you hauling? -->
+        @if (step === 0) {
+          <div class="finder__step animate-fade-up">
+            <span class="finder__step-count">Question 1 of 5</span>
+            <h2>What will you be hauling?</h2>
+            <div class="finder__options finder__options--grid">
+              @for (opt of haulingOptions; track opt.value) {
+                <button class="finder__option"
+                        [class.is-selected]="answers.hauling === opt.value"
+                        (click)="selectHauling(opt.value)">
+                  <span class="finder__option-icon" [innerHTML]="opt.icon"></span>
+                  <span>{{ opt.label }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Weight -->
+        @if (step === 1) {
+          <div class="finder__step animate-fade-up">
+            <span class="finder__step-count">Question 2 of 5</span>
+            <h2>How heavy is your typical load?</h2>
+            <div class="finder__options">
+              @for (opt of weightOptions; track opt.value) {
+                <button class="finder__option finder__option--wide"
+                        [class.is-selected]="answers.weight === opt.value"
+                        (click)="selectWeight(opt.value)">
+                  {{ opt.label }}
+                </button>
+              }
+            </div>
+            <button class="finder__back" (click)="back()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
+          </div>
+        }
+
+        <!-- Step 3: Enclosed or open -->
+        @if (step === 2) {
+          <div class="finder__step animate-fade-up">
+            <span class="finder__step-count">Question 3 of 5</span>
+            <h2>Enclosed or open trailer?</h2>
+            <div class="finder__options">
+              @for (opt of enclosureOptions; track opt.value) {
+                <button class="finder__option finder__option--wide"
+                        [class.is-selected]="answers.enclosure === opt.value"
+                        (click)="selectEnclosure(opt.value)">
+                  <span>{{ opt.label }}</span>
+                  <span class="finder__option-desc">{{ opt.desc }}</span>
+                </button>
+              }
+            </div>
+            <button class="finder__back" (click)="back()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
+          </div>
+        }
+
+        <!-- Step 4: Budget -->
+        @if (step === 3) {
+          <div class="finder__step animate-fade-up">
+            <span class="finder__step-count">Question 4 of 5</span>
+            <h2>What's your budget?</h2>
+            <div class="finder__options">
+              @for (opt of budgetOptions; track opt.value) {
+                <button class="finder__option finder__option--wide"
+                        [class.is-selected]="answers.budget === opt.value"
+                        (click)="selectBudget(opt.value)">
+                  {{ opt.label }}
+                </button>
+              }
+            </div>
+            <button class="finder__back" (click)="back()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
+          </div>
+        }
+
+        <!-- Step 5: Special requirements -->
+        @if (step === 4) {
+          <div class="finder__step animate-fade-up">
+            <span class="finder__step-count">Question 5 of 5</span>
+            <h2>Any special requirements?</h2>
+            <p class="finder__hint">Optional — mention things like gooseneck, aluminum, tilt deck, ramps, tarp kit, etc.</p>
+            <textarea class="finder__textarea"
+                      [(ngModel)]="answers.special"
+                      placeholder="e.g. I need a gooseneck with hydraulic dovetail for moving skid steers..."
+                      rows="4"></textarea>
+            <div class="finder__actions">
+              <button class="finder__back" (click)="back()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn--primary" (click)="submit()">
+                Find My Trailer
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Loading -->
+    @if (loading) {
+      <div class="finder__loading">
+        <div class="finder__spinner"></div>
+        <h3>Analyzing your requirements...</h3>
+        <p>Our AI is searching through the inventory to find your perfect match</p>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error && !loading) {
+      <div class="finder__error">
+        <p>{{ error }}</p>
+        <div class="finder__error-actions">
+          <button class="btn btn--primary" (click)="restart()">Try Again</button>
+          <a href="tel:920-471-9076" class="btn btn--outline">Call 920.471.9076</a>
+        </div>
+      </div>
+    }
+
+    <!-- Results -->
+    @if (recommendations.length > 0 && !loading) {
+      <div class="finder__results animate-fade-up">
+        <div class="finder__results-header">
+          <h2>Your Top Matches</h2>
+          <p>Based on your requirements, here are the trailers we recommend</p>
+        </div>
+
+        <div class="finder__results-grid">
+          @for (rec of recommendations; track rec.slug; let i = $index) {
+            <a [routerLink]="'/trailer/' + rec.slug" class="finder__result card">
+              <div class="finder__result-rank">#{{ i + 1 }}</div>
+              @if (rec.image) {
+                <div class="finder__result-img">
+                  <img [src]="rec.image" [alt]="rec.name" loading="lazy" />
+                </div>
+              }
+              <div class="finder__result-body">
+                <h3>{{ rec.name }}</h3>
+                <div class="finder__result-specs">
+                  @if (rec.price) {
+                    <span class="finder__result-price">${{ rec.price }}</span>
+                  }
+                  @if (rec.gvwr) {
+                    <span>{{ rec.gvwr }} lbs GVWR</span>
+                  }
+                  @if (rec.brand) {
+                    <span>{{ rec.brand }}</span>
+                  }
+                </div>
+                <p class="finder__result-reason">{{ rec.reason }}</p>
+                <span class="finder__result-link">
+                  View Details
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </span>
+              </div>
+            </a>
+          }
+        </div>
+
+        <div class="finder__results-footer">
+          <button class="btn btn--ghost" (click)="restart()">Start Over</button>
+          <a href="tel:920-471-9076" class="btn btn--primary">Call to Discuss</a>
+        </div>
+      </div>
+    }
+  </div>
+</section>

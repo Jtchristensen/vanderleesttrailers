@@ -133,6 +133,27 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     });
     contentTable.grantReadWriteData(seedLambda);
 
+    // Recommend Lambda (Bedrock)
+    const recommendLambda = new lambda.Function(this, "RecommendApi", {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, "../lambda/recommend")
+      ),
+      environment: {
+        TABLE_NAME: contentTable.tableName,
+      },
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
+    });
+    contentTable.grantReadData(recommendLambda);
+    recommendLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["bedrock:InvokeModel"],
+        resources: ["arn:aws:bedrock:*::foundation-model/amazon.nova-micro-v1:0"],
+      })
+    );
+
     // ============================================================
     // API GATEWAY
     // ============================================================
@@ -178,6 +199,11 @@ export class VanderLeestTrailersStack extends cdk.Stack {
 
     const trailerSlugResource = trailersResource.addResource("{slug}");
     trailerSlugResource.addMethod("GET", contentIntegration);
+
+    // Recommend route (public)
+    const recommendIntegration = new apigateway.LambdaIntegration(recommendLambda);
+    const recommendResource = apiResource.addResource("recommend");
+    recommendResource.addMethod("POST", recommendIntegration);
 
     // Admin routes (Cognito-protected)
     const adminResource = apiResource.addResource("admin");
