@@ -1,0 +1,27 @@
+<section class="brands-intro section">
+  <div class="container">
+    <div class="brands-intro__content">
+      <span class="section-label">Our Partners</span>
+      <h1>Brands We Carry</h1>
+      <p>We've partnered with the industry's most trusted trailer manufacturers so you get quality you can count on. Visit their sites to explore their full lineups.</p>
+    </div>
+  </div>
+</section>
+
+<section class="brands-grid section section--dark">
+  <div class="container">
+    <div class="brands-grid__cards">
+      @for (brand of brands; track brand.slug) {
+        <a [href]="brand.website" target="_blank" rel="noopener noreferrer" class="brands-card">
+          <span class="brands-card__name">{{ brand.name }}</span>
+          <span class="brands-card__link">
+            Visit Website
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M7 17L17 7M17 7H7M17 7v10"/>
+            </svg>
+          </span>
+        </a>
+      }
+    </div>
+  </div>
+</section>

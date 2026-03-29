@@ -46,19 +46,14 @@
   </div>
 </section>
 
-<!-- Brands -->
-<section class="about-brands section">
+<!-- Brands CTA -->
+<section class="about-brands-cta section">
   <div class="container">
-    <div class="about-brands__header">
+    <div class="about-brands-cta__content">
       <span class="section-label">Our Partners</span>
       <h2>Brands We Carry</h2>
-    </div>
-    <div class="about-brands__grid">
-      @for (brand of brands; track brand.slug) {
-        <div class="about-brands__item">
-          <span>{{ brand.name }}</span>
-        </div>
-      }
+      <p>We partner with the industry's most trusted trailer manufacturers to bring you quality you can count on.</p>
+      <a routerLink="/brands" class="btn btn--primary">View Our Brands</a>
     </div>
   </div>
 </section>

@@ -105,46 +105,20 @@
   }
 }
 
-.about-brands {
-  &__header {
-    text-align: center;
-    margin-bottom: var(--space-2xl);
+.about-brands-cta {
+  text-align: center;
+
+  &__content {
+    max-width: 600px;
+    margin: 0 auto;
 
     h2 {
       color: var(--color-text);
-    }
-  }
-
-  &__grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-md);
-  }
-
-  &__item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-lg) var(--space-2xl);
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    transition: all var(--duration-normal) var(--ease-out);
-    min-width: 180px;
-
-    span {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--color-text-secondary);
+      margin-bottom: var(--space-md);
     }
 
-    &:hover {
-      border-color: var(--color-accent);
-      box-shadow: 0 0 30px var(--color-accent-glow);
-
-      span { color: var(--color-accent); }
+    p {
+      margin-bottom: var(--space-xl);
     }
   }
 }

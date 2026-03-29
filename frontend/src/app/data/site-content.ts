@@ -51,6 +51,7 @@ export const NAV_LINKS = [
       { label: 'Steel Utility Trailers', route: '/inventory/steel-utility-trailers' },
     ],
   },
+  { label: 'Brands', route: '/brands' },
   { label: 'Trailer Finder', route: '/trailer-finder' },
   { label: 'Services', route: '/services' },
   { label: 'Custom Trailers', route: '/custom-trailers' },
@@ -268,12 +269,12 @@ export const FAQ_CONTENT = [
 ];
 
 export const TRAILER_BRANDS = [
-  { name: 'Black Rhino', slug: 'black-rhino' },
-  { name: 'Maxx-D', slug: 'maxx-d' },
-  { name: 'Gatormade', slug: 'gatormade' },
-  { name: 'Retco', slug: 'retco' },
-  { name: 'DuraBull', slug: 'durabull' },
-  { name: 'Rock Solid Cargo', slug: 'rock-solid-cargo' },
+  { name: 'Black Rhino', slug: 'black-rhino', website: 'https://blackrhinotrailer.com' },
+  { name: 'Maxx-D', slug: 'maxx-d', website: 'https://maxxdtrailers.com' },
+  { name: 'Gatormade', slug: 'gatormade', website: 'https://www.gatormade.com' },
+  { name: 'Retco', slug: 'retco', website: 'https://retcotrailers.wordpress.com' },
+  { name: 'DuraBull', slug: 'durabull', website: 'https://www.durabulltrailers.com' },
+  { name: 'Rock Solid Cargo', slug: 'rock-solid-cargo', website: 'https://rocksolidcargo.com' },
 ];
 
 export const TRAILER_CATEGORIES = [

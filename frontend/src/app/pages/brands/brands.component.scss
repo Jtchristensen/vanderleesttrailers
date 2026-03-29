@@ -1,0 +1,77 @@
+.section-label {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  margin-bottom: var(--space-md);
+}
+
+.brands-intro {
+  &__content {
+    max-width: 700px;
+
+    h1 {
+      color: var(--color-text);
+      margin-bottom: var(--space-md);
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.brands-grid {
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-lg);
+  }
+}
+
+.brands-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-xl) var(--space-2xl);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--duration-normal) var(--ease-out);
+  min-height: 140px;
+
+  &:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 40px var(--color-accent-glow);
+    transform: translateY(-4px);
+  }
+
+  &__name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: gap var(--duration-fast);
+  }
+
+  &:hover &__link {
+    gap: var(--space-sm);
+  }
+}
