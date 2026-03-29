@@ -11,9 +11,14 @@ import { AuthService } from '../../services/auth.service';
     styleUrls: ['./login.component.scss']
 })
 export class AdminLoginComponent {
+  view: 'login' | 'forgot' | 'reset' = 'login';
   email = '';
   password = '';
+  code = '';
+  newPassword = '';
+  confirmNewPassword = '';
   error = '';
+  success = '';
   loading = false;
 
   constructor(private auth: AuthService, private router: Router) {}
@@ -29,5 +34,56 @@ export class AdminLoginComponent {
     } finally {
       this.loading = false;
     }
+  }
+
+  async onForgotSubmit() {
+    this.loading = true;
+    this.error = '';
+    this.success = '';
+    try {
+      await this.auth.forgotPassword(this.email);
+      this.view = 'reset';
+      this.success = 'A verification code has been sent to your email.';
+    } catch (err: any) {
+      this.error = err.message || 'Could not send reset code. Please try again.';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async onResetSubmit() {
+    this.error = '';
+    this.success = '';
+
+    if (this.newPassword !== this.confirmNewPassword) {
+      this.error = 'Passwords do not match.';
+      return;
+    }
+
+    this.loading = true;
+    try {
+      await this.auth.confirmPassword(this.email, this.code, this.newPassword);
+      this.view = 'login';
+      this.success = 'Password reset successfully. You can now sign in.';
+      this.code = '';
+      this.newPassword = '';
+      this.confirmNewPassword = '';
+    } catch (err: any) {
+      this.error = err.message || 'Could not reset password. Please try again.';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  showForgot() {
+    this.view = 'forgot';
+    this.error = '';
+    this.success = '';
+  }
+
+  backToLogin() {
+    this.view = 'login';
+    this.error = '';
+    this.success = '';
   }
 }

@@ -1,7 +1,13 @@
 <div class="login">
   <div class="login__card">
     <div class="login__header">
-      <h2>Admin Login</h2>
+      @if (view === 'login') {
+        <h2>Admin Login</h2>
+      } @else if (view === 'forgot') {
+        <h2>Forgot Password</h2>
+      } @else {
+        <h2>Reset Password</h2>
+      }
       <p>VanderLeest Trailer Sales</p>
     </div>
 
@@ -9,20 +15,73 @@
       <div class="login__error">{{ error }}</div>
     }
 
-    <form (ngSubmit)="onSubmit()">
-      <div class="admin-field">
-        <label for="email">Email</label>
-        <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="admin@example.com" autocomplete="email" />
-      </div>
+    @if (success) {
+      <div class="login__success">{{ success }}</div>
+    }
 
-      <div class="admin-field">
-        <label for="password">Password</label>
-        <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="Enter password" autocomplete="current-password" />
-      </div>
+    <!-- Login Form -->
+    @if (view === 'login') {
+      <form (ngSubmit)="onSubmit()">
+        <div class="admin-field">
+          <label for="email">Email</label>
+          <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="admin@example.com" autocomplete="email" />
+        </div>
 
-      <button type="submit" class="btn btn--primary login__btn" [disabled]="loading">
-        {{ loading ? 'Signing in...' : 'Sign In' }}
-      </button>
-    </form>
+        <div class="admin-field">
+          <label for="password">Password</label>
+          <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="Enter password" autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn btn--primary login__btn" [disabled]="loading">
+          {{ loading ? 'Signing in...' : 'Sign In' }}
+        </button>
+      </form>
+
+      <button class="login__forgot" (click)="showForgot()">Forgot password?</button>
+    }
+
+    <!-- Forgot Password Form -->
+    @if (view === 'forgot') {
+      <form (ngSubmit)="onForgotSubmit()">
+        <p class="login__hint">Enter your email and we'll send you a verification code to reset your password.</p>
+
+        <div class="admin-field">
+          <label for="forgot-email">Email</label>
+          <input id="forgot-email" type="email" [(ngModel)]="email" name="email" required placeholder="admin@example.com" autocomplete="email" />
+        </div>
+
+        <button type="submit" class="btn btn--primary login__btn" [disabled]="loading">
+          {{ loading ? 'Sending...' : 'Send Reset Code' }}
+        </button>
+      </form>
+
+      <button class="login__forgot" (click)="backToLogin()">Back to login</button>
+    }
+
+    <!-- Reset Password Form -->
+    @if (view === 'reset') {
+      <form (ngSubmit)="onResetSubmit()">
+        <div class="admin-field">
+          <label for="code">Verification Code</label>
+          <input id="code" type="text" [(ngModel)]="code" name="code" required placeholder="Enter code from email" autocomplete="one-time-code" />
+        </div>
+
+        <div class="admin-field">
+          <label for="new-password">New Password</label>
+          <input id="new-password" type="password" [(ngModel)]="newPassword" name="newPassword" required placeholder="Enter new password" autocomplete="new-password" />
+        </div>
+
+        <div class="admin-field">
+          <label for="confirm-password">Confirm Password</label>
+          <input id="confirm-password" type="password" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" required placeholder="Confirm new password" autocomplete="new-password" />
+        </div>
+
+        <button type="submit" class="btn btn--primary login__btn" [disabled]="loading">
+          {{ loading ? 'Resetting...' : 'Reset Password' }}
+        </button>
+      </form>
+
+      <button class="login__forgot" (click)="backToLogin()">Back to login</button>
+    }
   </div>
 </div>

@@ -41,9 +41,42 @@
     margin-bottom: var(--space-lg);
   }
 
+  &__success {
+    padding: var(--space-md);
+    background: rgba(46, 163, 242, 0.1);
+    border: 1px solid rgba(46, 163, 242, 0.3);
+    border-radius: var(--radius-sm);
+    color: var(--color-accent);
+    font-size: 0.88rem;
+    margin-bottom: var(--space-lg);
+  }
+
+  &__hint {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+  }
+
   &__btn {
     width: 100%;
     justify-content: center;
     margin-top: var(--space-md);
+  }
+
+  &__forgot {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: var(--space-md);
+    text-align: center;
+    padding: var(--space-sm);
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

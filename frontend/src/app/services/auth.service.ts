@@ -42,6 +42,27 @@ export class AuthService {
     });
   }
 
+  forgotPassword(email: string): Promise<void> {
+    const user = new CognitoUser({ Username: email, Pool: this.getPool() });
+    return new Promise((resolve, reject) => {
+      user.forgotPassword({
+        onSuccess: () => resolve(),
+        onFailure: (err) => reject(err),
+        inputVerificationCode: () => resolve(),
+      });
+    });
+  }
+
+  confirmPassword(email: string, code: string, newPassword: string): Promise<void> {
+    const user = new CognitoUser({ Username: email, Pool: this.getPool() });
+    return new Promise((resolve, reject) => {
+      user.confirmPassword(code, newPassword, {
+        onSuccess: () => resolve(),
+        onFailure: (err) => reject(err),
+      });
+    });
+  }
+
   logout() {
     try {
       const user = this.getPool().getCurrentUser();
