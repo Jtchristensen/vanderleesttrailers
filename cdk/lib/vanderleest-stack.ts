@@ -314,8 +314,9 @@ export class VanderLeestTrailersStack extends cdk.Stack {
         ),
       ],
       destinationBucket: websiteBucket,
-      distribution,
-      distributionPaths: ["/*"],
+      // TODO: re-enable after CloudFront distribution is recreated
+      // distribution,
+      // distributionPaths: ["/*"],
     });
 
     // ============================================================
