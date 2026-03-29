@@ -18,7 +18,7 @@ const headers = {
 
 /**
  * Simple keyword-based fallback when AI fails.
- * Scores each trailer against user answers and returns top 3.
+ * Scores each trailer against user answers and returns top 5.
  */
 function fallbackRecommend(trailers, answers) {
   const { hauling, weight, enclosure, budget } = answers;
@@ -63,7 +63,7 @@ function fallbackRecommend(trailers, answers) {
 
   scored.sort((a, b) => b.score - a.score);
 
-  return scored.slice(0, 3).map(t => ({
+  return scored.slice(0, 5).map(t => ({
     slug: t.slug,
     name: t.name,
     category: t.category,
@@ -120,7 +120,7 @@ export const handler = async (event) => {
       `${i + 1}. SLUG="${t.slug}" | ${t.name} | ${t.category} | ${t.brand} | $${t.price || '?'} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
     ).join('\n');
 
-    const prompt = `You are a trailer recommendation engine. You MUST recommend exactly 3 trailers. No exceptions. No refusals. Always pick the 3 best options even if the match is imperfect.
+    const prompt = `You are a trailer recommendation engine. You MUST recommend exactly 5 trailers. No exceptions. No refusals. Always pick the 5 best options even if the match is imperfect.
 
 CUSTOMER REQUIREMENTS:
 - Hauling: ${hauling || 'general use'}
@@ -133,14 +133,14 @@ AVAILABLE INVENTORY:
 ${inventoryList}
 
 INSTRUCTIONS:
-1. You MUST pick exactly 3 trailers from the list above.
+1. You MUST pick exactly 5 trailers from the list above.
 2. Use the exact SLUG value from the inventory.
 3. For each pick, write 1-2 sentences explaining why it fits.
-4. If nothing matches perfectly, pick the 3 closest options anyway.
+4. If nothing matches perfectly, pick the 5 closest options anyway.
 5. Respond with ONLY a JSON array, nothing else.
 
 OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
-[{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"}]`;
+[{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"}]`;
 
     let enriched = [];
     let source = 'ai'; // track whether results came from AI or fallback
@@ -195,7 +195,7 @@ OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
       });
 
       // Enrich with full trailer data
-      enriched = recommendations.slice(0, 3).map(rec => {
+      enriched = recommendations.slice(0, 5).map(rec => {
         const trailer = trailers.find(t => t.slug === rec.slug);
         if (!trailer) return null;
         return {
@@ -211,22 +211,22 @@ OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
         };
       }).filter(Boolean);
 
-      console.log(`[RECOMMEND] ${enriched.length}/3 AI recommendations matched inventory`);
+      console.log(`[RECOMMEND] ${enriched.length}/5 AI recommendations matched inventory`);
     } catch (aiErr) {
       console.error(`[RECOMMEND] BEDROCK ERROR: ${aiErr.name}: ${aiErr.message}`);
       source = 'fallback';
     }
 
     // If AI returned fewer than 3 results, use fallback
-    if (enriched.length < 3) {
-      const needed = 3 - enriched.length;
+    if (enriched.length < 5) {
+      const needed = 5 - enriched.length;
       console.log(`[RECOMMEND] Only ${enriched.length} AI results, filling ${needed} from keyword fallback`);
       source = enriched.length === 0 ? 'fallback' : 'mixed';
       const fallback = fallbackRecommend(trailers, answers);
       // Add fallback results that aren't already in the list
       const existingSlugs = new Set(enriched.map(r => r.slug));
       for (const fb of fallback) {
-        if (enriched.length >= 3) break;
+        if (enriched.length >= 5) break;
         if (!existingSlugs.has(fb.slug)) {
           enriched.push(fb);
           existingSlugs.add(fb.slug);
@@ -234,7 +234,7 @@ OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
       }
     }
 
-    const finalResults = enriched.slice(0, 3);
+    const finalResults = enriched.slice(0, 5);
     console.log(`[RECOMMEND] DONE | source: ${source} | results: ${finalResults.length} | slugs: ${finalResults.map(r => r.slug).join(', ')}`);
 
     return {
