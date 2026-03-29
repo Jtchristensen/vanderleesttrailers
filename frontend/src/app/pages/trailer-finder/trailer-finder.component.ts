@@ -38,7 +38,7 @@ export class TrailerFinderComponent {
 
   haulingOptions = [
     { value: 'equipment', label: 'Equipment & Machinery', icon: '&#9881;' },
-    { value: 'vehicles', label: 'Cars & Vehicles', icon: '&#9951;' },
+    { value: 'vehicles', label: 'Cars', icon: '&#9951;' },
     { value: 'cargo', label: 'Enclosed Cargo', icon: '&#9634;' },
     { value: 'materials', label: 'Landscaping & Materials', icon: '&#9752;' },
     { value: 'dump', label: 'Dump Loads & Debris', icon: '&#9660;' },
