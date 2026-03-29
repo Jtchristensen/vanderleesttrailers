@@ -557,3 +557,4 @@ Set these in **GitHub repo > Settings > Secrets and variables > Actions**.
 | Infrastructure | AWS CDK v2 (TypeScript, single stack) |
 | CI/CD | GitHub Actions (OIDC auth, auto-deploy on main) |
 | Cognito SDK | `amazon-cognito-identity-js` |
+
