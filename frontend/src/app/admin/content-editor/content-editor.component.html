@@ -73,6 +73,17 @@
                 } @else {
                   <input type="text" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
                 }
+                @if (isImageField(field.label)) {
+                  <div class="admin-field__image-upload">
+                    @if (field.value) {
+                      <img [src]="field.value" alt="Preview" class="admin-field__image-preview" />
+                    }
+                    <label class="btn btn--outline btn--sm admin-field__upload-btn">
+                      Upload Image
+                      <input type="file" accept="image/*" (change)="onImageUpload($event, field.path)" hidden />
+                    </label>
+                  </div>
+                }
               </div>
             }
           </div>

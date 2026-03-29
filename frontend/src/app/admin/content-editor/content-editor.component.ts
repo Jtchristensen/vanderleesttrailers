@@ -128,6 +128,27 @@ export class ContentEditorComponent implements OnInit {
     this.saving = false;
   }
 
+  isImageField(label: string): boolean {
+    return label === 'image' || label.endsWith('.image');
+  }
+
+  async onImageUpload(event: Event, fieldPath: string) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    try {
+      this.showToast('Uploading...', false);
+      const imageUrl = await this.adminApi.uploadImage(file);
+      this.updateField(fieldPath, imageUrl);
+      this.showToast('Image uploaded!', false);
+    } catch (err: any) {
+      this.showToast(err.message || 'Upload failed', true);
+    }
+
+    input.value = '';
+  }
+
   // Array data helpers
   addArrayItem() {
     if (!Array.isArray(this.data)) return;

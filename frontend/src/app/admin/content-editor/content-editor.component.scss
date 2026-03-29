@@ -1,5 +1,25 @@
 @import '../admin.styles';
 
+.admin-field__image-upload {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.admin-field__image-preview {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.admin-field__upload-btn {
+  cursor: pointer;
+}
+
 .editor-raw {
   margin-top: var(--space-xl);
 
