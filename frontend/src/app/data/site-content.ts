@@ -269,12 +269,12 @@ export const FAQ_CONTENT = [
 ];
 
 export const TRAILER_BRANDS = [
-  { name: 'Black Rhino', slug: 'black-rhino', website: 'https://blackrhinotrailer.com' },
-  { name: 'Maxx-D', slug: 'maxx-d', website: 'https://maxxdtrailers.com' },
-  { name: 'Gatormade', slug: 'gatormade', website: 'https://www.gatormade.com' },
-  { name: 'Retco', slug: 'retco', website: 'https://retcotrailers.wordpress.com' },
-  { name: 'DuraBull', slug: 'durabull', website: 'https://www.durabulltrailers.com' },
-  { name: 'Rock Solid Cargo', slug: 'rock-solid-cargo', website: 'https://rocksolidcargo.com' },
+  { name: 'Black Rhino', slug: 'black-rhino', website: 'https://blackrhinotrailer.com', image: '/uploads/site/brands/black-rhino.png' },
+  { name: 'Maxx-D', slug: 'maxx-d', website: 'https://maxxdtrailers.com', image: '/uploads/site/brands/maxx-d.png' },
+  { name: 'Gatormade', slug: 'gatormade', website: 'https://www.gatormade.com', image: '/uploads/site/brands/gatormade.png' },
+  { name: 'Retco', slug: 'retco', website: 'https://retcotrailers.wordpress.com', image: '/uploads/site/brands/retco.png' },
+  { name: 'DuraBull', slug: 'durabull', website: 'https://www.durabulltrailers.com', image: '/uploads/site/brands/durabull.png' },
+  { name: 'Rock Solid Cargo', slug: 'rock-solid-cargo', website: 'https://rocksolidcargo.com', image: '/uploads/site/brands/rock-solid-cargo.png' },
 ];
 
 export const TRAILER_CATEGORIES = [

@@ -13,6 +13,11 @@
     <div class="brands-grid__cards">
       @for (brand of brands; track brand.slug) {
         <a [href]="brand.website" target="_blank" rel="noopener noreferrer" class="brands-card">
+          @if (brand.image) {
+            <div class="brands-card__logo">
+              <img [src]="brand.image" [alt]="brand.name + ' logo'" />
+            </div>
+          }
           <span class="brands-card__name">{{ brand.name }}</span>
           <span class="brands-card__link">
             Visit Website
