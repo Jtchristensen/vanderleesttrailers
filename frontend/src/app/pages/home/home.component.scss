@@ -64,13 +64,14 @@
   overflow: hidden;
   margin-top: calc(-1 * var(--header-height));
 
-  &__bg {
+  &__video {
     position: absolute;
     inset: -20px;
-    background-size: cover;
-    background-position: center;
-    filter: brightness(0.2) saturate(0.5);
-    transform: scale(1.1);
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    object-fit: cover;
+    filter: brightness(0.3) saturate(0.6);
+    transform: scale(1.05);
   }
 
   &__overlay {
