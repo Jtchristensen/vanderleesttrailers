@@ -10,6 +10,11 @@
     <div class="admin-header">
       <h1>Inventory Manager</h1>
       <div class="admin-header__actions">
+        @if (orderChanged) {
+          <button class="btn btn--primary btn--sm" (click)="saveOrder()" [disabled]="savingOrder">
+            {{ savingOrder ? 'Saving...' : 'Save Order' }}
+          </button>
+        }
         <a routerLink="/admin/inventory/new" class="btn btn--primary btn--sm">+ Add Trailer</a>
       </div>
     </div>
@@ -36,6 +41,9 @@
         <table class="admin-table">
           <thead>
             <tr>
+              @if (canReorder) {
+                <th style="width: 40px;"></th>
+              }
               <th>Name</th>
               <th>Category</th>
               <th>Brand</th>
@@ -44,8 +52,23 @@
             </tr>
           </thead>
           <tbody>
-            @for (trailer of filteredTrailers; track trailer.slug) {
-              <tr>
+            @for (trailer of filteredTrailers; track trailer.slug; let i = $index) {
+              <tr [attr.draggable]="canReorder ? 'true' : null"
+                  (dragstart)="onDragStart(i)"
+                  (dragover)="onDragOver($event, i)"
+                  (drop)="onDrop(i)"
+                  (dragend)="onDragEnd()"
+                  [class.drag-over]="dropIndex === i && dragIndex !== i"
+                  [class.dragging]="dragIndex === i">
+                @if (canReorder) {
+                  <td class="drag-handle">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                      <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                      <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                    </svg>
+                  </td>
+                }
                 <td>
                   <strong style="color: var(--color-text)">{{ trailer.name }}</strong>
                 </td>
@@ -62,7 +85,7 @@
             }
             @if (filteredTrailers.length === 0) {
               <tr>
-                <td colspan="5" style="text-align: center; padding: var(--space-xl); color: var(--color-text-muted);">
+                <td [attr.colspan]="canReorder ? 6 : 5" style="text-align: center; padding: var(--space-xl); color: var(--color-text-muted);">
                   No trailers found. <a routerLink="/admin/inventory/new" style="color: var(--color-accent)">Add one.</a>
                 </td>
               </tr>
@@ -72,6 +95,9 @@
       </div>
       <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-top: var(--space-md);">
         {{ filteredTrailers.length }} trailer(s)
+        @if (canReorder && filteredTrailers.length > 1) {
+          — Drag rows to reorder
+        }
       </p>
     }
   </div>

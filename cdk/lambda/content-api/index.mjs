@@ -52,7 +52,14 @@ export const handler = async (event) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(result.Items?.map(i => i.data) || []),
+        body: JSON.stringify(
+          (result.Items?.map(i => i.data) || []).sort((a, b) => {
+            const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            if (aOrder !== bOrder) return aOrder - bOrder;
+            return (a.name || '').localeCompare(b.name || '');
+          })
+        ),
       };
     }
 

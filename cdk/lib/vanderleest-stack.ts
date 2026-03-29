@@ -220,6 +220,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     const adminTrailersResource = adminResource.addResource("trailers");
     adminTrailersResource.addMethod("GET", adminIntegration, adminAuth);
     adminTrailersResource.addMethod("POST", adminIntegration, adminAuth);
+    adminTrailersResource.addMethod("PUT", adminIntegration, adminAuth);
 
     const adminTrailerSlugResource =
       adminTrailersResource.addResource("{slug}");

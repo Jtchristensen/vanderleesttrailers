@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand, DeleteCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, DeleteCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import crypto from 'crypto';
@@ -110,6 +110,24 @@ export const handler = async (event) => {
       };
     }
 
+    // PUT /api/admin/trailers — batch update sort order
+    if (resource === '/api/admin/trailers' && httpMethod === 'PUT') {
+      const { orders } = parsed;
+      if (!Array.isArray(orders)) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'orders array required' }) };
+      }
+      await Promise.all(orders.map(({ slug, sortOrder }) =>
+        ddb.send(new UpdateCommand({
+          TableName: TABLE,
+          Key: { pk: 'TRAILER', sk: slug },
+          UpdateExpression: 'SET #data.#so = :so, updatedAt = :now',
+          ExpressionAttributeNames: { '#data': 'data', '#so': 'sortOrder' },
+          ExpressionAttributeValues: { ':so': sortOrder, ':now': new Date().toISOString() },
+        }))
+      ));
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
+    }
+
     // GET /api/admin/trailers — list all trailers (admin view)
     if (resource === '/api/admin/trailers' && httpMethod === 'GET') {
       const result = await ddb.send(new QueryCommand({
@@ -120,7 +138,14 @@ export const handler = async (event) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(result.Items?.map(i => ({ ...i.data, _sk: i.sk, _updatedAt: i.updatedAt })) || []),
+        body: JSON.stringify(
+          (result.Items?.map(i => ({ ...i.data, _sk: i.sk, _updatedAt: i.updatedAt })) || []).sort((a, b) => {
+            const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            if (aOrder !== bOrder) return aOrder - bOrder;
+            return (a.name || '').localeCompare(b.name || '');
+          })
+        ),
       };
     }
 

@@ -10,3 +10,22 @@
     min-width: 200px;
   }
 }
+
+tr.dragging {
+  opacity: 0.4;
+}
+
+tr.drag-over {
+  border-top: 2px solid var(--color-accent);
+}
+
+.drag-handle {
+  cursor: grab;
+  text-align: center;
+  color: var(--color-text-muted);
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}

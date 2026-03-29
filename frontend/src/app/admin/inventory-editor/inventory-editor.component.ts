@@ -19,6 +19,11 @@ export class InventoryEditorComponent implements OnInit {
   toast = '';
   toastError = false;
 
+  dragIndex: number | null = null;
+  dropIndex: number | null = null;
+  orderChanged = false;
+  savingOrder = false;
+
   categories = [
     'aluminum-trailers', 'aluminum-enclosed-trailers', 'car-equipment-haulers',
     'dump-trailers', 'enclosed-trailers', 'gooseneck-trailers', 'steel-utility-trailers',
@@ -41,6 +46,10 @@ export class InventoryEditorComponent implements OnInit {
     this.loading = false;
   }
 
+  get canReorder(): boolean {
+    return !!this.categoryFilter && !this.searchQuery;
+  }
+
   applyFilters() {
     let result = [...this.trailers];
     if (this.searchQuery) {
@@ -52,7 +61,61 @@ export class InventoryEditorComponent implements OnInit {
     if (this.categoryFilter) {
       result = result.filter(t => t.category === this.categoryFilter);
     }
+    result.sort((a, b) => {
+      const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return (a.name || '').localeCompare(b.name || '');
+    });
     this.filteredTrailers = result;
+    this.orderChanged = false;
+  }
+
+  onDragStart(index: number) {
+    this.dragIndex = index;
+  }
+
+  onDragOver(event: DragEvent, index: number) {
+    event.preventDefault();
+    this.dropIndex = index;
+  }
+
+  onDrop(index: number) {
+    if (this.dragIndex === null || this.dragIndex === index) {
+      this.dragIndex = null;
+      this.dropIndex = null;
+      return;
+    }
+    const item = this.filteredTrailers.splice(this.dragIndex, 1)[0];
+    this.filteredTrailers.splice(index, 0, item);
+    this.dragIndex = null;
+    this.dropIndex = null;
+    this.orderChanged = true;
+  }
+
+  onDragEnd() {
+    this.dragIndex = null;
+    this.dropIndex = null;
+  }
+
+  async saveOrder() {
+    this.savingOrder = true;
+    try {
+      const orders = this.filteredTrailers.map((t, i) => ({
+        slug: t.slug,
+        sortOrder: i,
+      }));
+      await this.adminApi.reorderTrailers(orders);
+      for (const o of orders) {
+        const t = this.trailers.find(tr => tr.slug === o.slug);
+        if (t) t.sortOrder = o.sortOrder;
+      }
+      this.orderChanged = false;
+      this.showToast('Order saved!', false);
+    } catch {
+      this.showToast('Failed to save order', true);
+    }
+    this.savingOrder = false;
   }
 
   async deleteTrailer(slug: string, name: string) {

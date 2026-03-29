@@ -54,6 +54,16 @@ export class AdminApiService {
     if (!res.ok) throw new Error('Failed to update trailer');
   }
 
+  async reorderTrailers(orders: { slug: string; sortOrder: number }[]): Promise<void> {
+    const headers = await this.authHeaders();
+    const res = await fetch(`${this.apiUrl}/admin/trailers`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ orders }),
+    });
+    if (!res.ok) throw new Error('Failed to save order');
+  }
+
   async deleteTrailer(slug: string): Promise<void> {
     const headers = await this.authHeaders();
     const res = await fetch(`${this.apiUrl}/admin/trailers/${slug}`, {

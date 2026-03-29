@@ -34,7 +34,14 @@ export class InventoryComponent implements OnInit {
       this.activeCategory = params.get('category');
       if (this.activeCategory) {
         this.activeCategoryData = this.categories.find((c: any) => c.slug === this.activeCategory) || null;
-        this.filteredTrailers = this.trailers.filter((t: any) => t.category === this.activeCategory);
+        this.filteredTrailers = this.trailers
+          .filter((t: any) => t.category === this.activeCategory)
+          .sort((a: any, b: any) => {
+            const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            if (aOrder !== bOrder) return aOrder - bOrder;
+            return (a.name || '').localeCompare(b.name || '');
+          });
       } else {
         this.activeCategoryData = null;
         this.filteredTrailers = [];
