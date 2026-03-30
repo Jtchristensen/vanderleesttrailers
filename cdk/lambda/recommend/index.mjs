@@ -129,6 +129,34 @@ CUSTOMER REQUIREMENTS:
 - Budget: ${budget || 'flexible'}
 - Notes: ${special || 'none'}
 
+DEALER RECOMMENDATION GUIDE (use this expert knowledge to prioritize the best trailers for each use case):
+
+EQUIPMENT AND MACHINERY:
+  Under 3,000 lbs: Retco 7x14 Single Axle Utility, Retco 7x16 Tandem Utility, Black Rhino EXS 7x14, Black Rhino EXT 7x16 Tandem
+  3,000-7,000 lbs: Retco 7x14 Tandem Utility, Retco 7x16 Tandem Utility, Black Rhino EXT 7x16 Tandem, Maxx-D U4X 10K Utility
+  7,000-14,000 lbs: Maxx-D G6X 20', Maxx-D G8X 22' 17.5K, Maxx-D TOX 22' 17.5K, Retco 82"x22' Split Tilt Deck, Maxx-D C6X 20' 14K, Maxx-D EHX 20' 14K, Maxx-D EXH 17.5K
+  14,000+ lbs: Maxx-D H9X 22K Equipment Hauler, Maxx-D LKX 30' Gooseneck 25K, Maxx-D LDX 30' Gooseneck 25.9K, Maxx-D YDX Hydraulic Dovetail, Gatormade 30' Gooseneck 24.9K
+
+VEHICLES:
+  Under 5,000 lbs: 82"x20' Retco 7K Car Hauler, 82"x18 Black Rhino 7K Car Hauler
+  Over 5,000 lbs: Maxx-D C6X 83"x20' 14K Car Hauler, Retco 10K 22' Car Hauler
+
+DUMP LOADS AND DEBRIS:
+  Up to 7,000 lbs: Maxx-D D6X 5x10 Dump 10K, Maxx-D D7X 6x12 Dump 10K
+  Up to 10,000 lbs: Maxx-D DKX 83"x14' Dump 14K GVWR, Maxx-D DJX 83"x14 Dump 14K GVWR, Maxx-D DJX 83"x16 Dump 14K GVWR
+  Up to 12,000 lbs: Maxx-D DJX 83"x16' 8K Axles 17.5K GVWR, Maxx-D DTX 83"x16' 3' Sides 8K Axles 16K, Maxx-D DJX 83"x16' 3' Sides 8K Axles Gooseneck Dump
+
+UTV OR ATV:
+  All trailers in the 7x12 to 7x16 range (steel or aluminum utilities)
+
+LANDSCAPING:
+  Retco 7x14 Single Axle Utility, Retco 7x16 Tandem Utility, Black Rhino EXS 7x14 Single Axle Aluminum, Black Rhino EXT 7x16 Tandem, Black Rhino LSS 7x14 Single Axle, Black Rhino LST 7x16 Tandem Utility, Black Rhino EXT 7x20 Tandem Utility
+
+GENERAL UTILITY:
+  Retco 7x12 Single Axle Utility, Retco 7x14 Single Axle Utility, Gatormade 6'4"x12 Single Axle Utility, Gatormade 6'4"x14 Single Axle Utility, Retco 7x16 Tandem Utility, Gatormade 6'10"x16' Tandem Utility
+
+Use this guide to prioritize trailers that the dealer specifically recommends for each use case. Match by trailer name from the AVAILABLE INVENTORY below. If the customer's needs align with a category above, prefer those trailers. If a recommended trailer is not in the current inventory, pick the closest available alternative.
+
 AVAILABLE INVENTORY:
 ${inventoryList}
 
