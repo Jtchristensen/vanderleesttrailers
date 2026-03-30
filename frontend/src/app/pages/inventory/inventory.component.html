@@ -16,6 +16,27 @@
 <!-- Category Filter -->
 <section class="inv-filter section">
   <div class="container">
+    <div class="inv-filter__bar">
+      <div class="inv-filter__search">
+        <svg class="inv-filter__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          class="inv-filter__input"
+          placeholder="Search trailers by name or brand..."
+          [value]="searchQuery"
+          (input)="onSearch($any($event.target).value)"
+        />
+        @if (searchQuery) {
+          <button class="inv-filter__clear" (click)="onSearch('')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        }
+      </div>
+    </div>
     <div class="inv-filter__tabs">
       <a routerLink="/inventory"
          class="inv-filter__tab"
@@ -33,8 +54,55 @@
   </div>
 </section>
 
+<!-- Search Results (no category selected) -->
+@if (!activeCategory && searchQuery) {
+  <section class="inv-category section section--dark">
+    <div class="container">
+      <div class="inv-category__header">
+        <h2>Search Results</h2>
+        <p>{{ filteredTrailers.length }} trailer{{ filteredTrailers.length !== 1 ? 's' : '' }} matching "{{ searchQuery }}"</p>
+      </div>
+      @if (filteredTrailers.length > 0) {
+        <div class="inv-grid__cards" style="margin-bottom: var(--space-2xl);">
+          @for (trailer of filteredTrailers; track trailer.slug) {
+            <a [routerLink]="'/trailer/' + trailer.slug" class="inv-card card">
+              <div class="inv-card__img">
+                @if (trailer.images?.length) {
+                  <img [src]="trailer.images[0]" [alt]="trailer.name" loading="lazy" />
+                } @else {
+                  <img src="/uploads/site/categories/steel-utility.jpeg" [alt]="trailer.name" loading="lazy" />
+                }
+                <div class="inv-card__overlay"></div>
+              </div>
+              <div class="inv-card__body">
+                <h3>{{ trailer.name }}</h3>
+                @if (trailer.price) {
+                  <p class="inv-card__price">${{ trailer.price }}</p>
+                }
+                @if (trailer.gvwr) {
+                  <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>
+                }
+                <span class="inv-card__link">
+                  View Details
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </span>
+              </div>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="inv-category__empty">
+          <p>No trailers found matching "{{ searchQuery }}". Try a different search or browse by category.</p>
+        </div>
+      }
+    </div>
+  </section>
+}
+
 <!-- Category Grid -->
-@if (!activeCategory) {
+@if (!activeCategory && !searchQuery) {
   <section class="inv-grid section section--dark">
     <div class="container">
       <div class="inv-grid__cards">
@@ -75,6 +143,10 @@
           <a href="https://vanderleesttrailers.com/inventory/" target="_blank" rel="noopener" class="inv-category__phone">current inventory</a>.
         </p>
       </div>
+
+      @if (searchQuery) {
+        <p class="inv-category__results">{{ filteredTrailers.length }} result{{ filteredTrailers.length !== 1 ? 's' : '' }} matching "{{ searchQuery }}"</p>
+      }
 
       <!-- Trailers in this category -->
       @if (filteredTrailers.length > 0) {

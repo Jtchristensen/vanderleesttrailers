@@ -16,6 +16,7 @@ export class InventoryComponent implements OnInit {
   images: any = {};
   activeCategory: string | null = null;
   activeCategoryData: any = null;
+  searchQuery = '';
   loaded = false;
 
   constructor(private route: ActivatedRoute, private contentService: ContentService) {}
@@ -32,22 +33,40 @@ export class InventoryComponent implements OnInit {
 
     this.route.paramMap.subscribe(params => {
       this.activeCategory = params.get('category');
-      if (this.activeCategory) {
-        this.activeCategoryData = this.categories.find((c: any) => c.slug === this.activeCategory) || null;
-        this.filteredTrailers = this.trailers
-          .filter((t: any) => t.category === this.activeCategory)
-          .sort((a: any, b: any) => {
-            const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
-            const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
-            if (aOrder !== bOrder) return aOrder - bOrder;
-            return (a.name || '').localeCompare(b.name || '');
-          });
-      } else {
-        this.activeCategoryData = null;
-        this.filteredTrailers = [];
-      }
+      this.activeCategoryData = this.activeCategory
+        ? this.categories.find((c: any) => c.slug === this.activeCategory) || null
+        : null;
+      this.applyFilters();
     });
 
     this.loaded = true;
+  }
+
+  onSearch(query: string) {
+    this.searchQuery = query;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let result = this.trailers;
+
+    if (this.activeCategory) {
+      result = result.filter((t: any) => t.category === this.activeCategory);
+    }
+
+    if (this.searchQuery) {
+      const q = this.searchQuery.toLowerCase();
+      result = result.filter((t: any) =>
+        (t.name || '').toLowerCase().includes(q) ||
+        (t.brand || '').toLowerCase().includes(q)
+      );
+    }
+
+    this.filteredTrailers = result.sort((a: any, b: any) => {
+      const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return (a.name || '').localeCompare(b.name || '');
+    });
   }
 }

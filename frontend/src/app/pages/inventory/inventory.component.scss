@@ -3,6 +3,67 @@
   background: var(--color-bg-elevated);
   border-bottom: 1px solid var(--color-border);
 
+  &__bar {
+    margin-bottom: var(--space-md);
+  }
+
+  &__search {
+    position: relative;
+    max-width: 480px;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-lg);
+    padding-left: calc(var(--space-md) + 18px + var(--space-sm));
+    padding-right: calc(var(--space-md) + 16px + var(--space-sm));
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-text);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color var(--duration-fast);
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:focus {
+      border-color: var(--color-accent);
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    right: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: var(--space-xs);
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    transition: color var(--duration-fast);
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+
   &__tabs {
     display: flex;
     flex-wrap: wrap;
@@ -151,6 +212,24 @@
       height: 100%;
       object-fit: cover;
     }
+  }
+
+  &__results {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+  }
+
+  &__empty {
+    padding: var(--space-2xl);
+    text-align: center;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-2xl);
+
+    p { font-size: 0.95rem; }
   }
 
   &__cta {
