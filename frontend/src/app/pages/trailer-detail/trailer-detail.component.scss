@@ -36,6 +36,12 @@
 
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
+    // Prevent grid items from overflowing when content has long words
+    > * {
+      min-width: 0;
     }
   }
 
@@ -43,6 +49,11 @@
   &__gallery {
     position: sticky;
     top: calc(var(--header-height) + var(--space-lg));
+
+    @media (max-width: 900px) {
+      position: static;
+      top: auto;
+    }
   }
 
   &__main-image {
@@ -57,6 +68,11 @@
       max-height: 500px;
       object-fit: contain;
       background: var(--color-bg-card);
+      display: block;
+
+      @media (max-width: 900px) {
+        max-height: 60vw;
+      }
     }
   }
 
@@ -264,6 +280,9 @@
     p {
       font-size: 0.9rem;
       line-height: 1.7;
+      white-space: pre-line;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
     }
   }
 }
