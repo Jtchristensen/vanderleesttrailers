@@ -49,3 +49,4 @@ coverage/
 # Misc
 *.tgz
 *.zip
+.superpowers/
