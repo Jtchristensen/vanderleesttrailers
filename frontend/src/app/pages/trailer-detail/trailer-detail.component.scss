@@ -28,6 +28,12 @@
 }
 
 .detail {
+  // Breadcrumb above already provides visual separation; drop the section
+  // top padding on mobile so the hero image isn't pushed way down the page.
+  @media (max-width: 900px) {
+    &.section { padding-top: var(--space-lg); }
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
