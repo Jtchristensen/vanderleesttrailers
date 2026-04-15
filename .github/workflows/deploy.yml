@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-1
 
