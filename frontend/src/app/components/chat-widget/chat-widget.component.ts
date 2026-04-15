@@ -44,7 +44,7 @@ export class ChatWidgetComponent {
     if (this.chat.messages().length === 0) {
       this.chat.appendMessage({
         role: 'assistant',
-        content: "Hey there! I'm AI Matt. I can help you find a trailer, check what's in stock, or answer questions about financing. What can I help with?",
+        content: "Hey there! I'm AI Trailer Man. I can help you find a trailer, check what's in stock, or answer questions about financing. What can I help with?",
       });
     }
   }
