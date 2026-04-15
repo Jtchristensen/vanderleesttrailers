@@ -54,6 +54,14 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
+    const leadsTable = new dynamodb.Table(this, "LeadsTable", {
+      tableName: "VanderLeestLeads",
+      partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     // ============================================================
     // COGNITO
     // ============================================================
@@ -154,6 +162,30 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       })
     );
 
+    // Chat Lambda (Bedrock + tool use)
+    const chatLambda = new lambda.Function(this, "ChatApi", {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, "../lambda/chat")
+      ),
+      environment: {
+        TABLE_NAME:  contentTable.tableName,
+        LEADS_TABLE: leadsTable.tableName,
+        MODEL_ID:    "amazon.nova-micro-v1:0",
+      },
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 512,
+    });
+    contentTable.grantReadData(chatLambda);
+    leadsTable.grantWriteData(chatLambda);
+    chatLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["bedrock:InvokeModel"],
+        resources: ["arn:aws:bedrock:*::foundation-model/amazon.nova-micro-v1:0"],
+      })
+    );
+
     // ============================================================
     // API GATEWAY
     // ============================================================
@@ -179,6 +211,10 @@ export class VanderLeestTrailersStack extends cdk.Stack {
         throttlingBurstLimit: 100,
         methodOptions: {
           "/api/recommend/POST": {
+            throttlingRateLimit: 5,
+            throttlingBurstLimit: 10,
+          },
+          "/api/chat/POST": {
             throttlingRateLimit: 5,
             throttlingBurstLimit: 10,
           },
@@ -217,6 +253,11 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     const recommendIntegration = new apigateway.LambdaIntegration(recommendLambda);
     const recommendResource = apiResource.addResource("recommend");
     recommendResource.addMethod("POST", recommendIntegration);
+
+    // Chat route (public)
+    const chatIntegration = new apigateway.LambdaIntegration(chatLambda);
+    const chatResource = apiResource.addResource("chat");
+    chatResource.addMethod("POST", chatIntegration);
 
     // Admin routes (Cognito-protected)
     const adminResource = apiResource.addResource("admin");

@@ -1,0 +1,46 @@
+@if (visible()) {
+  @if (!isOpen()) {
+    <div class="bubble-wrap">
+      <div class="bubble-pill" (click)="openPanel()">Talk to AI Matt</div>
+      <div class="bubble-avatar" (click)="openPanel()" aria-label="Open chat"></div>
+    </div>
+  } @else {
+    <div class="panel">
+      <div class="p-header">
+        <div class="p-avatar"></div>
+        <div class="p-title">
+          <div class="p-name">AI Matt</div>
+          <div class="p-status">Online · typically replies instantly</div>
+        </div>
+        <button class="p-close" (click)="closePanel()" aria-label="Close chat">&times;</button>
+      </div>
+
+      <div class="p-messages" #messagesRef>
+        @for (m of messages(); track $index) {
+          <div class="msg" [class.msg-bot]="m.role==='assistant'" [class.msg-user]="m.role==='user'">{{ m.content }}</div>
+        }
+        @if (messages().length === 1) {
+          <div class="starters">
+            @for (s of starters; track s) {
+              <button class="chip" (click)="useStarter(s)">{{ s }}</button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="p-input">
+        <input
+          [value]="draft()"
+          (input)="draft.set($any($event.target).value)"
+          (keydown.enter)="send()"
+          placeholder="Type a message…"
+          [disabled]="sending()"
+        />
+        <button (click)="send()" [disabled]="sending() || !draft().trim()">
+          {{ sending() ? '…' : 'Send' }}
+        </button>
+      </div>
+      <div class="disclaimer">AI responses may be inaccurate · not for final quotes</div>
+    </div>
+  }
+}
