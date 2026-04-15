@@ -4,15 +4,15 @@ export const TOOL_SPECS = [
   {
     toolSpec: {
       name: 'searchTrailers',
-      description: 'Search the VanderLeest live inventory. Filter by optional category slug, brand, maxPrice, or free-text query over name and description. Returns up to 10 matching trailers.',
+      description: 'Search the VanderLeest live inventory. Returns up to 10 matching trailers plus a total count. OMIT any filter you do not need — do NOT send placeholder values like 0, ".", or empty strings.',
       inputSchema: {
         json: {
           type: 'object',
           properties: {
-            category: { type: 'string', description: 'Category slug, e.g. "dump-trailers"' },
-            brand:    { type: 'string', description: 'Brand name, e.g. "Maxx-D"' },
-            maxPrice: { type: 'number', description: 'Max price in USD' },
-            query:    { type: 'string', description: 'Free-text search over name and description' },
+            category: { type: 'string', description: 'Optional. Category slug, e.g. "dump-trailers", "utility-trailers". Omit if no preference.' },
+            brand:    { type: 'string', description: 'Optional. Brand name, e.g. "Maxx-D", "Retco". Omit if no preference.' },
+            maxPrice: { type: 'number', description: 'Optional. Max price in USD (positive number). Omit if no budget limit.' },
+            query:    { type: 'string', description: 'Optional. Free-text search over name and description. Omit for unfiltered listing.' },
           },
         },
       },
@@ -21,12 +21,16 @@ export const TOOL_SPECS = [
   {
     toolSpec: {
       name: 'getSiteContent',
-      description: 'Fetch a section of static site content. Allowed types: SITE_INFO, SERVICES, FINANCING, CONTACT, FAQ, BRANDS, CATEGORIES.',
+      description: 'Fetch a section of static site content. Use the right type for the question:\n- SITE_INFO: business hours, address, phone number, social links (USE THIS for "what are your hours", "where are you located", "phone number")\n- SERVICES: list of services offered (welding, painting, custom work)\n- FINANCING: financing partners and credit requirements\n- FAQ: frequently asked questions and answers\n- BRANDS: list of trailer brands carried\n- CATEGORIES: list of trailer categories\n- CONTACT: contact form labels only — do NOT use this for hours/address (use SITE_INFO instead)',
       inputSchema: {
         json: {
           type: 'object',
           properties: {
-            type: { type: 'string', description: 'Content type key' },
+            type: {
+              type: 'string',
+              enum: ['SITE_INFO', 'SERVICES', 'FINANCING', 'CONTACT', 'FAQ', 'BRANDS', 'CATEGORIES'],
+              description: 'Content type key',
+            },
           },
           required: ['type'],
         },
@@ -68,6 +72,14 @@ function slim(trailer) {
   };
 }
 
+function cleanFilter(s) {
+  // Strings shorter than 2 chars (after trim) are sentinel/placeholder values
+  // the model occasionally sends — treat them as "no filter".
+  if (typeof s !== 'string') return '';
+  const trimmed = s.trim();
+  return trimmed.length >= 2 ? trimmed.toLowerCase() : '';
+}
+
 async function searchTrailers(input, ctx) {
   const { category, brand, maxPrice, query } = input || {};
   const result = await ctx.ddb.send(new QueryCommand({
@@ -77,14 +89,16 @@ async function searchTrailers(input, ctx) {
   }));
   const all = (result.Items || []).map(i => i.data || i);
 
-  const cat = category?.toLowerCase();
-  const br  = brand?.toLowerCase();
-  const q   = query?.toLowerCase();
+  const cat = cleanFilter(category);
+  const br  = cleanFilter(brand);
+  const q   = cleanFilter(query);
+  // 0 / negative values mean "no budget" (the model sometimes sends 0 when it means "no filter").
+  const useMaxPrice = typeof maxPrice === 'number' && maxPrice > 0;
 
   const filtered = all.filter(t => {
     if (cat && (t.category || '').toLowerCase() !== cat) return false;
     if (br  && (t.brand || '').toLowerCase() !== br) return false;
-    if (typeof maxPrice === 'number' && Number(t.price) > maxPrice) return false;
+    if (useMaxPrice && Number(t.price) > maxPrice) return false;
     if (q) {
       const hay = `${t.name || ''} ${t.description || ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -111,7 +125,11 @@ async function getSiteContent(input, ctx) {
     TableName: ctx.contentTable,
     Key: { pk: input.type, sk: '_' },
   }));
-  return res.Item?.data ?? {};
+  const data = res.Item?.data ?? {};
+  // Bedrock Converse requires toolResult.content[].json to be a JSON object,
+  // not an array. Some content types (BRANDS, CATEGORIES, FAQ, REVIEWS) are
+  // arrays at the top level — wrap them so the call doesn't crash.
+  return Array.isArray(data) ? { items: data } : data;
 }
 
 function randomId() {
