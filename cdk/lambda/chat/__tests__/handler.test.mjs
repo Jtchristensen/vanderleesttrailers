@@ -62,6 +62,33 @@ describe('handler — request validation', () => {
   });
 });
 
+describe('handler — strips <thinking> tags', () => {
+  it('removes chain-of-thought blocks from the visible reply', async () => {
+    __setDdbClient({ send: async () => ({ Items: [] }) });
+    __setBedrockClient({
+      send: async () => ({
+        stopReason: 'end_turn',
+        output: {
+          message: {
+            role: 'assistant',
+            content: [{ text: '<thinking>The user is asking about hours.</thinking>\nWe are open Monday-Friday 8-5.' }],
+          },
+        },
+      }),
+    });
+    const res = await handler({
+      httpMethod: 'POST',
+      body: JSON.stringify({
+        sessionId: 'abc',
+        messages: [{ role: 'user', content: 'when are you open?' }],
+      }),
+    });
+    const reply = JSON.parse(res.body).reply;
+    assert.ok(!reply.includes('<thinking>'), `reply leaked thinking tag: ${reply}`);
+    assert.ok(reply.includes('Monday-Friday'));
+  });
+});
+
 describe('handler — happy path with mocked Bedrock', () => {
   beforeEach(() => {
     __setDdbClient({ send: async () => ({ Items: [] }) });
