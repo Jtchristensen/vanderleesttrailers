@@ -34,11 +34,11 @@ describe('ChatWidgetComponent — closed bubble', () => {
 
   afterEach(() => localStorage.removeItem('vl_chat_v1'));
 
-  it('renders the closed bubble with label "Talk to AI Matt"', () => {
+  it('renders the closed bubble with label "Talk to AI Trailer Man"', () => {
     fixture.detectChanges();
     const el: HTMLElement = fixture.nativeElement;
     const pill = el.querySelector('.bubble-pill');
-    expect(pill?.textContent).toContain('Talk to AI Matt');
+    expect(pill?.textContent).toContain('Talk to AI Trailer Man');
   });
 
   it('hides on /admin routes', async () => {

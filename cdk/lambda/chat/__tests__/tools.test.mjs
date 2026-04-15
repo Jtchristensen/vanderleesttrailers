@@ -125,6 +125,46 @@ describe('getSiteContent', () => {
     const res = await runTool({ name: 'getSiteContent', toolUseId: 'g4', input: { type: 'FAQ' } }, ctx);
     assert.deepEqual(res, {});
   });
+
+  it('wraps array-shaped data (e.g. BRANDS) in { items: [...] } so Bedrock accepts it', async () => {
+    const brands = [{ name: 'Black Rhino' }, { name: 'Maxx-D' }];
+    const ctx = ctxWithItem({ pk: 'BRANDS', sk: '_', data: brands });
+    const res = await runTool({ name: 'getSiteContent', toolUseId: 'g5', input: { type: 'BRANDS' } }, ctx);
+    assert.deepEqual(res, { items: brands });
+  });
+});
+
+describe('searchTrailers — input sanitization', () => {
+  const sample = [
+    { pk: 'TRAILER', sk: 'a', data: { slug: 'a', name: 'Maxx-D Dump', category: 'dump-trailers', brand: 'Maxx-D', price: 8000, description: 'dump' } },
+    { pk: 'TRAILER', sk: 'b', data: { slug: 'b', name: 'Retco Utility', category: 'utility-trailers', brand: 'Retco', price: 3000, description: 'utility' } },
+  ];
+  function ctx() {
+    return { contentTable: 'fake', ddb: { send: async () => ({ Items: sample }) } };
+  }
+
+  it('treats maxPrice <= 0 as "no filter"', async () => {
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 's1', input: { maxPrice: 0 } }, ctx());
+    assert.equal(res.count, 2);
+  });
+
+  it('treats single-character category as "no filter"', async () => {
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 's2', input: { category: '.' } }, ctx());
+    assert.equal(res.count, 2);
+  });
+
+  it('treats single-character brand as "no filter"', async () => {
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 's3', input: { brand: '.' } }, ctx());
+    assert.equal(res.count, 2);
+  });
+
+  it('ignores all four placeholder-style fields together', async () => {
+    const res = await runTool(
+      { name: 'searchTrailers', toolUseId: 's4', input: { category: '.', brand: '.', maxPrice: 0, query: '' } },
+      ctx(),
+    );
+    assert.equal(res.count, 2);
+  });
 });
 
 describe('submitLead', () => {

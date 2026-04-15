@@ -162,7 +162,9 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       })
     );
 
-    // Chat Lambda (Bedrock + tool use)
+    // Chat Lambda (Bedrock + tool use). Uses Claude Haiku 4.5 via the US
+    // cross-region inference profile — much smarter at tool selection than
+    // Nova Micro for ~10× the per-token cost (still pennies at this volume).
     const chatLambda = new lambda.Function(this, "ChatApi", {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: "index.handler",
@@ -172,7 +174,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       environment: {
         TABLE_NAME:  contentTable.tableName,
         LEADS_TABLE: leadsTable.tableName,
-        MODEL_ID:    "amazon.nova-micro-v1:0",
+        MODEL_ID:    "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       },
       timeout: cdk.Duration.seconds(30),
       memorySize: 512,
@@ -182,7 +184,12 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     chatLambda.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["bedrock:InvokeModel"],
-        resources: ["arn:aws:bedrock:*::foundation-model/amazon.nova-micro-v1:0"],
+        // Cross-region inference profile requires permission on BOTH the
+        // profile resource and every foundation model it can route to.
+        resources: [
+          "arn:aws:bedrock:*:*:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0",
+          "arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0",
+        ],
       })
     );
 
