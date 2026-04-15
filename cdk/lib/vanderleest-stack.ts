@@ -171,6 +171,19 @@ export class VanderLeestTrailersStack extends cdk.Stack {
           "X-Api-Key",
         ],
       },
+      // Cap bad actors. Stage-wide floor applies to every method; the
+      // recommend route calls Bedrock (expensive per request) so it gets a
+      // tighter override. Generous for real users, miserable for a bot.
+      deployOptions: {
+        throttlingRateLimit: 50,
+        throttlingBurstLimit: 100,
+        methodOptions: {
+          "/api/recommend/POST": {
+            throttlingRateLimit: 5,
+            throttlingBurstLimit: 10,
+          },
+        },
+      },
     });
 
     // Cognito authorizer for admin routes
@@ -248,6 +261,32 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     });
     imagesBucket.grantRead(imagesOAI);
 
+    // Short-TTL cache for public GET content so a bot looping on the same
+    // endpoint only hits origin once per minute per edge. Cuts Lambda
+    // invocations and DynamoDB reads under a spray attack.
+    const apiContentCachePolicy = new cloudfront.CachePolicy(
+      this,
+      "ApiContentCachePolicy",
+      {
+        defaultTtl: cdk.Duration.seconds(60),
+        minTtl: cdk.Duration.seconds(0),
+        maxTtl: cdk.Duration.seconds(300),
+        cookieBehavior: cloudfront.CacheCookieBehavior.none(),
+        headerBehavior: cloudfront.CacheHeaderBehavior.none(),
+        queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
+        enableAcceptEncodingGzip: true,
+        enableAcceptEncodingBrotli: true,
+      }
+    );
+
+    const apiOrigin = new origins.RestApiOrigin(api);
+    const cachedApiBehavior: cloudfront.BehaviorOptions = {
+      origin: apiOrigin,
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      cachePolicy: apiContentCachePolicy,
+    };
+
     const distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {
         origin: new origins.S3Origin(websiteBucket, {
@@ -257,8 +296,12 @@ export class VanderLeestTrailersStack extends cdk.Stack {
           cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
       additionalBehaviors: {
+        // Cacheable GET endpoints — content and trailer listings.
+        "/api/content/*": cachedApiBehavior,
+        "/api/trailers*": cachedApiBehavior,
+        // Catch-all for /api/recommend (POST) and /api/admin/* — no cache.
         "/api/*": {
-          origin: new origins.RestApiOrigin(api),
+          origin: apiOrigin,
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
