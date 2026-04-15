@@ -54,6 +54,14 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
+    const leadsTable = new dynamodb.Table(this, "LeadsTable", {
+      tableName: "VanderLeestLeads",
+      partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     // ============================================================
     // COGNITO
     // ============================================================
