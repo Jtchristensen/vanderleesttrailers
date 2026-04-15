@@ -36,6 +36,14 @@ jobs:
         working-directory: frontend
         run: npx ng test --watch=false --browsers=ChromeHeadlessCI
 
+      - name: Install CDK dependencies for Lambda tests
+        working-directory: cdk
+        run: npm install
+
+      - name: Run Lambda unit tests
+        working-directory: cdk
+        run: node --test lambda/chat/__tests__/*.test.mjs
+
   build:
     runs-on: ubuntu-latest
     needs: test
