@@ -21,6 +21,25 @@ describe('truncateHistory', () => {
   });
 });
 
+describe('truncateHistory — leading assistant stripping', () => {
+  it('drops leading assistant messages so the conversation starts with user', () => {
+    const out = truncateHistory([
+      { role: 'assistant', content: 'greeting' },
+      { role: 'user', content: 'hi' },
+      { role: 'assistant', content: 'hello' },
+    ]);
+    assert.equal(out.length, 2);
+    assert.equal(out[0].role, 'user');
+  });
+
+  it('returns an empty array when there is no user message', () => {
+    const out = truncateHistory([
+      { role: 'assistant', content: 'only greeting' },
+    ]);
+    assert.deepEqual(out, []);
+  });
+});
+
 describe('handler — request validation', () => {
   it('handles OPTIONS preflight with 200', async () => {
     const res = await handler(apiEvent({}, 'OPTIONS'));

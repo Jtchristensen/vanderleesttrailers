@@ -66,16 +66,37 @@ describe('ChatService', () => {
     expect(s.messages()[0].content).toBe('earlier');
   });
 
-  it('trims history to the last 20 turns when sending', () => {
+  it('trims history to the last 20 turns when sending (stripping any leading assistant turn)', () => {
     const many: ChatMessage[] = Array.from({ length: 25 }, (_, i) => ({
       role: i % 2 ? 'assistant' : 'user',
       content: String(i),
     }));
     many.forEach(m => service.appendMessage(m));
     const forSend = service.messagesForSend();
-    expect(forSend.length).toBe(20);
-    expect(forSend[0].content).toBe('5');
-    expect(forSend[19].content).toBe('24');
+    // slice(-20) starts at index 5 (assistant); stripping leaves 19 starting at index 6 (user).
+    expect(forSend.length).toBe(19);
+    expect(forSend[0].role).toBe('user');
+    expect(forSend[0].content).toBe('6');
+    expect(forSend[18].content).toBe('24');
+  });
+
+  it('strips any leading assistant greeting from messagesForSend', () => {
+    service.appendMessage({ role: 'assistant', content: 'Hey there!' });
+    service.appendMessage({ role: 'user', content: 'hi' });
+    service.appendMessage({ role: 'assistant', content: 'what can I do?' });
+    const forSend = service.messagesForSend();
+    expect(forSend[0].role).toBe('user');
+    expect(forSend[0].content).toBe('hi');
+    expect(forSend.length).toBe(2);
+  });
+
+  it('strips multiple leading assistant messages', () => {
+    service.appendMessage({ role: 'assistant', content: 'greeting 1' });
+    service.appendMessage({ role: 'assistant', content: 'greeting 2' });
+    service.appendMessage({ role: 'user', content: 'hi' });
+    const forSend = service.messagesForSend();
+    expect(forSend.length).toBe(1);
+    expect(forSend[0].role).toBe('user');
   });
 
   it('resets state and clears localStorage', () => {
