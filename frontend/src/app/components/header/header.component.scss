@@ -169,8 +169,12 @@
   &__burger {
     display: none;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 5px;
-    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
     z-index: 1001;
 
     @media (max-width: 1100px) {

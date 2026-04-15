@@ -58,6 +58,10 @@
   --duration-slow: 700ms;
 }
 
+@media (max-width: 640px) {
+  :root { --header-height: 60px; }
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;

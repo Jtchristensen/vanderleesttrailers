@@ -65,44 +65,45 @@
       <span></span>
     </button>
   </div>
-
-  <!-- Mobile Menu -->
-  <div class="header__mobile" [class.is-open]="isMobileMenuOpen">
-    <nav class="header__mobile-nav">
-      @for (link of navLinks; track link.label) {
-        @if (link.children) {
-          <div class="header__mobile-group">
-            <button class="header__mobile-link header__mobile-link--parent"
-                    (click)="toggleDropdown(link.label)">
-              {{ link.label }}
-              <svg width="10" height="6" viewBox="0 0 10 6" fill="none"
-                   [style.transform]="activeDropdown === link.label ? 'rotate(180deg)' : ''">
-                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </button>
-            @if (activeDropdown === link.label) {
-              <div class="header__mobile-sub">
-                @for (child of link.children; track child.label) {
-                  <a [routerLink]="child.route"
-                     class="header__mobile-link header__mobile-link--child"
-                     (click)="closeMobileMenu()">
-                    {{ child.label }}
-                  </a>
-                }
-              </div>
-            }
-          </div>
-        } @else {
-          <a [routerLink]="link.route"
-             class="header__mobile-link"
-             (click)="closeMobileMenu()">
-            {{ link.label }}
-          </a>
-        }
-      }
-    </nav>
-    <a [href]="'tel:' + site.phone" class="btn btn--primary header__mobile-cta">
-      Call {{ site.phoneFormatted }}
-    </a>
-  </div>
 </header>
+
+<!-- Mobile Menu (sibling of <header> so header's backdrop-filter doesn't
+     create a containing block that traps this fixed element) -->
+<div class="header__mobile" [class.is-open]="isMobileMenuOpen">
+  <nav class="header__mobile-nav">
+    @for (link of navLinks; track link.label) {
+      @if (link.children) {
+        <div class="header__mobile-group">
+          <button class="header__mobile-link header__mobile-link--parent"
+                  (click)="toggleDropdown(link.label)">
+            {{ link.label }}
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none"
+                 [style.transform]="activeDropdown === link.label ? 'rotate(180deg)' : ''">
+              <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          @if (activeDropdown === link.label) {
+            <div class="header__mobile-sub">
+              @for (child of link.children; track child.label) {
+                <a [routerLink]="child.route"
+                   class="header__mobile-link header__mobile-link--child"
+                   (click)="closeMobileMenu()">
+                  {{ child.label }}
+                </a>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <a [routerLink]="link.route"
+           class="header__mobile-link"
+           (click)="closeMobileMenu()">
+          {{ link.label }}
+        </a>
+      }
+    }
+  </nav>
+  <a [href]="'tel:' + site.phone" class="btn btn--primary header__mobile-cta">
+    Call {{ site.phoneFormatted }}
+  </a>
+</div>

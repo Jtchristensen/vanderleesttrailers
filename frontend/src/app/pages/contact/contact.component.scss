@@ -113,6 +113,10 @@
     border-radius: var(--radius-lg);
     padding: var(--space-2xl);
 
+    @media (max-width: 640px) {
+      padding: var(--space-lg);
+    }
+
     h3 {
       color: var(--color-text);
       margin-bottom: var(--space-xl);

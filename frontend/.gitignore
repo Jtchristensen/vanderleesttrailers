@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment config (generated at build time from secrets — see .github/workflows/deploy.yml)
+/src/environments/
