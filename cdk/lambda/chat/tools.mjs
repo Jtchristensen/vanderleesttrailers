@@ -1,4 +1,4 @@
-import { QueryCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
 export const TOOL_SPECS = [
   {
@@ -98,10 +98,28 @@ async function searchTrailers(input, ctx) {
   };
 }
 
+const ALLOWED_CONTENT_TYPES = new Set([
+  'SITE_INFO', 'SERVICES', 'FINANCING', 'CONTACT', 'FAQ', 'BRANDS', 'CATEGORIES',
+]);
+
+async function getSiteContent(input, ctx) {
+  if (!input?.type) throw new Error('getSiteContent: type is required');
+  if (!ALLOWED_CONTENT_TYPES.has(input.type)) {
+    throw new Error(`getSiteContent: type "${input.type}" is not allowed`);
+  }
+  const res = await ctx.ddb.send(new GetCommand({
+    TableName: ctx.contentTable,
+    Key: { pk: input.type, sk: '_' },
+  }));
+  return res.Item?.data ?? {};
+}
+
 export async function runTool(toolUse, ctx) {
   switch (toolUse.name) {
     case 'searchTrailers':
       return searchTrailers(toolUse.input, ctx);
+    case 'getSiteContent':
+      return getSiteContent(toolUse.input, ctx);
     default:
       throw new Error(`Unknown tool: ${toolUse.name}`);
   }

@@ -89,3 +89,40 @@ describe('searchTrailers', () => {
     assert.ok(!('description' in t), 'description should be stripped');
   });
 });
+
+describe('getSiteContent', () => {
+  function ctxWithItem(item) {
+    return {
+      contentTable: 'fake',
+      ddb: {
+        send: async () => ({ Item: item }),
+      },
+    };
+  }
+
+  it('returns the stored data for an allowed type', async () => {
+    const ctx = ctxWithItem({ pk: 'SITE_INFO', sk: '_', data: { phone: '920-555-0100' } });
+    const res = await runTool({ name: 'getSiteContent', toolUseId: 'g1', input: { type: 'SITE_INFO' } }, ctx);
+    assert.deepEqual(res, { phone: '920-555-0100' });
+  });
+
+  it('rejects a type not on the whitelist', async () => {
+    await assert.rejects(
+      () => runTool({ name: 'getSiteContent', toolUseId: 'g2', input: { type: 'TRAILER' } }, ctxWithItem(null)),
+      /not allowed/
+    );
+  });
+
+  it('rejects a missing type', async () => {
+    await assert.rejects(
+      () => runTool({ name: 'getSiteContent', toolUseId: 'g3', input: {} }, ctxWithItem(null)),
+      /type is required/
+    );
+  });
+
+  it('returns empty object when item is absent in DynamoDB', async () => {
+    const ctx = ctxWithItem(undefined);
+    const res = await runTool({ name: 'getSiteContent', toolUseId: 'g4', input: { type: 'FAQ' } }, ctx);
+    assert.deepEqual(res, {});
+  });
+});
