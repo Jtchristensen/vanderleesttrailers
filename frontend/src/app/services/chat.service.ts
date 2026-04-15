@@ -47,7 +47,13 @@ export class ChatService {
 
   messagesForSend(): ChatMessage[] {
     const all = this._messages();
-    return all.length <= MAX_SEND ? all : all.slice(-MAX_SEND);
+    const trimmed = all.length <= MAX_SEND ? all : all.slice(-MAX_SEND);
+    // Bedrock Converse requires the first message to be a user turn.
+    // Our local greeting is assistant-role for UX only — strip any leading
+    // assistant messages so the model sees a valid conversation.
+    let start = 0;
+    while (start < trimmed.length && trimmed[start].role !== 'user') start++;
+    return trimmed.slice(start);
   }
 
   reset() {

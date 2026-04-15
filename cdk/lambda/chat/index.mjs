@@ -25,7 +25,11 @@ const headers = {
 };
 
 export function truncateHistory(messages) {
-  return messages.length <= MAX_HISTORY ? messages : messages.slice(-MAX_HISTORY);
+  const trimmed = messages.length <= MAX_HISTORY ? messages : messages.slice(-MAX_HISTORY);
+  // Bedrock Converse requires the first message to be a user turn.
+  let start = 0;
+  while (start < trimmed.length && trimmed[start].role !== 'user') start++;
+  return trimmed.slice(start);
 }
 
 function toBedrockMessages(messages) {
