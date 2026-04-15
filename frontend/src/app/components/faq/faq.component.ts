@@ -9,7 +9,7 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./faq.component.scss']
 })
 export class FaqComponent implements OnInit {
-  faqs: any[] = [];
+  faqs: any[] = ContentService.getContentSync<any[]>('FAQ') ?? [];
   openIndex: number | null = null;
 
   constructor(private contentService: ContentService) {}

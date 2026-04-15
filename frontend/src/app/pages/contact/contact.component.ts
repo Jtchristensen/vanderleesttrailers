@@ -10,8 +10,8 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./contact.component.scss']
 })
 export class ContactComponent implements OnInit {
-  content: any = {};
-  site: any = {};
+  content: any = ContentService.getContentSync('CONTACT');
+  site: any = ContentService.getContentSync('SITE_INFO');
   loaded = false;
 
   formData = {

@@ -10,8 +10,8 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./custom-trailers.component.scss']
 })
 export class CustomTrailersComponent implements OnInit {
-  content: any = {};
-  site: any = {};
+  content: any = ContentService.getContentSync('CUSTOM_TRAILERS');
+  site: any = ContentService.getContentSync('SITE_INFO');
   loaded = false;
 
   constructor(private contentService: ContentService) {}

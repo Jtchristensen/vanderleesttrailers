@@ -10,10 +10,10 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent implements OnInit {
-  categories: any[] = [];
+  categories: any[] = ContentService.getContentSync<any[]>('CATEGORIES') ?? [];
   trailers: any[] = [];
   filteredTrailers: any[] = [];
-  images: any = {};
+  images: any = ContentService.getContentSync('IMAGES');
   activeCategory: string | null = null;
   activeCategoryData: any = null;
   searchQuery = '';

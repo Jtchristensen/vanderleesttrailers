@@ -9,9 +9,9 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./reviews.component.scss']
 })
 export class ReviewsComponent implements OnInit {
-  reviews: any[] = [];
-  images: any = {};
-  site: any = {};
+  reviews: any[] = ContentService.getContentSync<any[]>('REVIEWS') ?? [];
+  images: any = ContentService.getContentSync('IMAGES');
+  site: any = ContentService.getContentSync('SITE_INFO');
   loaded = false;
 
   constructor(private contentService: ContentService) {}

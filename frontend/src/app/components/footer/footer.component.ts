@@ -10,8 +10,8 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent implements OnInit {
-  site: any = {};
-  categories: any[] = [];
+  site: any = ContentService.getContentSync('SITE_INFO');
+  categories: any[] = ContentService.getContentSync<any[]>('CATEGORIES') ?? [];
   currentYear = new Date().getFullYear();
 
   constructor(private contentService: ContentService) {}

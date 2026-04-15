@@ -11,8 +11,8 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./services.component.scss']
 })
 export class ServicesComponent implements OnInit {
-  content: any = {};
-  site: any = {};
+  content: any = ContentService.getContentSync('SERVICES');
+  site: any = ContentService.getContentSync('SITE_INFO');
   loaded = false;
 
   constructor(private contentService: ContentService) {}

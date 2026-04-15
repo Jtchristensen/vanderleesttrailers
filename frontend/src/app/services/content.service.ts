@@ -8,6 +8,13 @@ export class ContentService {
   private cache = new Map<string, { data: any; timestamp: number }>();
   private cacheTTL = 5 * 60 * 1000; // 5 minutes
 
+  /** Synchronous accessor for the static fallback — use this to initialize
+   * component fields so templates never render against {} before the async
+   * getContent() resolves. Returns {} for unknown types. */
+  static getContentSync<T = any>(type: string): T {
+    return (ContentService.fallbackMap[type] ?? {}) as T;
+  }
+
   /** Static fallback map — used when API is unreachable (local dev) */
   private static fallbackMap: Record<string, any> = {
     SITE_INFO: staticContent.SITE_INFO,

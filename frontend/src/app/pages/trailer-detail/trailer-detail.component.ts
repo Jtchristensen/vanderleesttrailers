@@ -11,7 +11,7 @@ import { ContentService } from '../../services/content.service';
 })
 export class TrailerDetailComponent implements OnInit {
   trailer: any = null;
-  site: any = {};
+  site: any = ContentService.getContentSync('SITE_INFO');
   loaded = false;
   notFound = false;
   activeImage = 0;

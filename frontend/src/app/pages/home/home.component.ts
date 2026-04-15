@@ -13,13 +13,13 @@ import { ContentService } from '../../services/content.service';
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
 
-  content: any = {};
-  categories: any[] = [];
-  brands: any[] = [];
-  services: any[] = [];
-  reviews: any[] = [];
-  site: any = {};
-  images: any = {};
+  content: any = ContentService.getContentSync('PAGE_HOME');
+  categories: any[] = ContentService.getContentSync<any[]>('CATEGORIES') ?? [];
+  brands: any[] = ContentService.getContentSync<any[]>('BRANDS') ?? [];
+  services: any[] = ContentService.getContentSync<any>('SERVICES')?.services ?? [];
+  reviews: any[] = ContentService.getContentSync<any[]>('REVIEWS') ?? [];
+  site: any = ContentService.getContentSync('SITE_INFO');
+  images: any = ContentService.getContentSync('IMAGES');
   loaded = false;
 
   constructor(private contentService: ContentService) {}

@@ -11,7 +11,7 @@ import { NAV_LINKS } from '../../data/site-content';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  site: any = {};
+  site: any = ContentService.getContentSync('SITE_INFO');
   navLinks = NAV_LINKS;
   isScrolled = false;
   isMobileMenuOpen = false;

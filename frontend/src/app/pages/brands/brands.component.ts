@@ -8,7 +8,7 @@ import { ContentService } from '../../services/content.service';
     styleUrls: ['./brands.component.scss']
 })
 export class BrandsComponent implements OnInit {
-  brands: any[] = [];
+  brands: any[] = ContentService.getContentSync<any[]>('BRANDS') ?? [];
   loaded = false;
 
   constructor(private contentService: ContentService) {}
