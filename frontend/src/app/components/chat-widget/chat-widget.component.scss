@@ -32,7 +32,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--chat-accent) url('/assets/matcartoon.png') center top / cover;
+  background: var(--chat-accent) url('/assets/matcartoon.png') center 35% / cover;
   border: 2px solid var(--chat-accent-dim);
   box-shadow: 0 6px 20px rgba(15,138,60,0.35);
   cursor: pointer;
@@ -64,7 +64,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--chat-accent) url('/assets/matcartoon.png') center top / cover;
+  background: var(--chat-accent) url('/assets/matcartoon.png') center 35% / cover;
   border: 2px solid var(--chat-accent-dim);
 }
 
