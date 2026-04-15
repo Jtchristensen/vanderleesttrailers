@@ -64,3 +64,84 @@ describe('handler — happy path with mocked Bedrock', () => {
     assert.equal(body.reply, 'Hello there!');
   });
 });
+
+describe('handler — tool-use loop', () => {
+  it('invokes a tool, feeds the result back, and returns final text', async () => {
+    __setDdbClient({ send: async () => ({ Items: [] }) });
+
+    const bedrockCalls = [];
+    let call = 0;
+    __setBedrockClient({
+      send: async (cmd) => {
+        bedrockCalls.push(cmd);
+        call += 1;
+        if (call === 1) {
+          return {
+            stopReason: 'tool_use',
+            output: {
+              message: {
+                role: 'assistant',
+                content: [{ toolUse: { toolUseId: 'u1', name: 'searchTrailers', input: {} } }],
+              },
+            },
+          };
+        }
+        return {
+          stopReason: 'end_turn',
+          output: { message: { role: 'assistant', content: [{ text: 'Nothing in stock.' }] } },
+        };
+      },
+    });
+
+    const res = await handler({
+      httpMethod: 'POST',
+      body: JSON.stringify({
+        sessionId: 'abc',
+        messages: [{ role: 'user', content: 'any dump trailers?' }],
+      }),
+    });
+
+    assert.equal(res.statusCode, 200);
+    assert.equal(JSON.parse(res.body).reply, 'Nothing in stock.');
+    assert.equal(bedrockCalls.length, 2);
+
+    const secondMessages = bedrockCalls[1].input.messages;
+    const lastMsg = secondMessages[secondMessages.length - 1];
+    assert.equal(lastMsg.role, 'user');
+    assert.ok(lastMsg.content[0].toolResult);
+    assert.equal(lastMsg.content[0].toolResult.toolUseId, 'u1');
+  });
+
+  it('stops at MAX_TOOL_HOPS to bound cost', async () => {
+    __setDdbClient({ send: async () => ({ Items: [] }) });
+    let call = 0;
+    __setBedrockClient({
+      send: async () => {
+        call += 1;
+        return {
+          stopReason: 'tool_use',
+          output: {
+            message: {
+              role: 'assistant',
+              content: [
+                { text: `thinking ${call}` },
+                { toolUse: { toolUseId: `u${call}`, name: 'searchTrailers', input: {} } },
+              ],
+            },
+          },
+        };
+      },
+    });
+
+    const res = await handler({
+      httpMethod: 'POST',
+      body: JSON.stringify({
+        sessionId: 'abc',
+        messages: [{ role: 'user', content: 'loop forever' }],
+      }),
+    });
+
+    assert.equal(res.statusCode, 200);
+    assert.ok(call <= 4, `expected <=4 Bedrock calls, got ${call}`);
+  });
+});
