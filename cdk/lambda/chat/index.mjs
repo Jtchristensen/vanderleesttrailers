@@ -41,7 +41,10 @@ function toBedrockMessages(messages) {
 
 function extractText(res) {
   const parts = res.output?.message?.content || [];
-  return parts.map(p => p.text).filter(Boolean).join('\n').trim();
+  const raw = parts.map(p => p.text).filter(Boolean).join('\n');
+  // Nova sometimes emits chain-of-thought wrapped in <thinking>...</thinking>.
+  // Strip these so the user only sees the final answer.
+  return raw.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
 }
 
 function findToolUse(message) {
@@ -74,8 +77,15 @@ export const handler = async (event) => {
 
   let convo = toBedrockMessages(truncateHistory(messages));
 
+  const lastUserText = (() => {
+    const last = [...convo].reverse().find(m => m.role === 'user');
+    return last?.content?.[0]?.text?.slice(0, 500) || '';
+  })();
+  console.log(`[CHAT] sessionId=${sessionId} turn=${convo.length} userMsg="${lastUserText}"`);
+
   try {
     for (let hop = 0; hop <= MAX_TOOL_HOPS; hop++) {
+      const start = Date.now();
       const res = await bedrock.send(new ConverseCommand({
         modelId: MODEL_ID,
         system: [{ text: SYSTEM_PROMPT }],
@@ -83,21 +93,30 @@ export const handler = async (event) => {
         toolConfig: { tools: TOOL_SPECS },
         inferenceConfig: { maxTokens: MAX_TOKENS, temperature: 0.4 },
       }));
+      const dur = Date.now() - start;
+      const inTok = res.usage?.inputTokens || 0;
+      const outTok = res.usage?.outputTokens || 0;
+      console.log(`[CHAT] hop=${hop} stop=${res.stopReason} dur=${dur}ms in=${inTok} out=${outTok}`);
 
       if (res.stopReason !== 'tool_use') {
         const reply = extractText(res) || "Sorry — I didn't catch that. Could you try again?";
+        console.log(`[CHAT] reply (first 400 chars): ${reply.slice(0, 400)}`);
         return { statusCode: 200, headers, body: JSON.stringify({ reply }) };
       }
 
       if (hop === MAX_TOOL_HOPS) {
         const reply = extractText(res) || "I'm having trouble digging that up right now — give me another try?";
+        console.log(`[CHAT] hop ceiling — reply (first 400 chars): ${reply.slice(0, 400)}`);
         return { statusCode: 200, headers, body: JSON.stringify({ reply }) };
       }
 
       const toolUse = findToolUse(res.output?.message);
+      console.log(`[CHAT] tool=${toolUse?.name} input=${JSON.stringify(toolUse?.input)}`);
       let toolResult;
       try {
         toolResult = await runTool(toolUse, ctx);
+        const summary = JSON.stringify(toolResult).slice(0, 300);
+        console.log(`[CHAT] tool=${toolUse?.name} result (first 300 chars): ${summary}`);
       } catch (err) {
         console.error(`[CHAT] Tool "${toolUse?.name}" failed:`, err.message);
         toolResult = { error: err.message };
