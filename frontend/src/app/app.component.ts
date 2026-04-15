@@ -3,17 +3,19 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { ChatWidgetComponent } from './components/chat-widget/chat-widget.component';
 import { ContentService } from './services/content.service';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, HeaderComponent, FooterComponent],
+    imports: [RouterOutlet, HeaderComponent, FooterComponent, ChatWidgetComponent],
     template: `
     <app-header />
     <main>
       <router-outlet />
     </main>
     <app-footer />
+    <app-chat-widget />
   `,
     styles: [`
     main {
