@@ -126,3 +126,66 @@ describe('getSiteContent', () => {
     assert.deepEqual(res, {});
   });
 });
+
+describe('submitLead', () => {
+  function captureCtx() {
+    const writes = [];
+    return {
+      writes,
+      ctx: {
+        leadsTable: 'VanderLeestLeads',
+        sessionId: 'session-abc',
+        ddb: {
+          send: async (cmd) => {
+            writes.push(cmd);
+            return {};
+          },
+        },
+      },
+    };
+  }
+
+  it('rejects when name is missing', async () => {
+    const { ctx } = captureCtx();
+    await assert.rejects(
+      () => runTool({ name: 'submitLead', toolUseId: 'l1', input: { phone: '555' } }, ctx),
+      /name and phone are required/
+    );
+  });
+
+  it('rejects when phone is missing', async () => {
+    const { ctx } = captureCtx();
+    await assert.rejects(
+      () => runTool({ name: 'submitLead', toolUseId: 'l2', input: { name: 'John' } }, ctx),
+      /name and phone are required/
+    );
+  });
+
+  it('writes a lead record with required fields and returns ok + leadId', async () => {
+    const { writes, ctx } = captureCtx();
+    const res = await runTool(
+      { name: 'submitLead', toolUseId: 'l3', input: { name: 'John Doe', phone: '920-555-0134' } },
+      ctx,
+    );
+    assert.equal(res.ok, true);
+    assert.ok(res.leadId);
+    assert.equal(writes.length, 1);
+    const item = writes[0].input.Item;
+    assert.equal(item.pk, 'LEAD');
+    assert.match(item.sk, /^\d{4}-\d{2}-\d{2}T.+#session-abc$/);
+    assert.equal(item.name, 'John Doe');
+    assert.equal(item.phone, '920-555-0134');
+    assert.equal(item.sessionId, 'session-abc');
+  });
+
+  it('includes optional email and message when provided', async () => {
+    const { writes, ctx } = captureCtx();
+    await runTool(
+      { name: 'submitLead', toolUseId: 'l4', input: { name: 'A', phone: '1', email: 'a@b.co', message: 'hi' } },
+      ctx,
+    );
+    const item = writes[0].input.Item;
+    assert.equal(item.email, 'a@b.co');
+    assert.equal(item.message, 'hi');
+  });
+});

@@ -114,12 +114,44 @@ async function getSiteContent(input, ctx) {
   return res.Item?.data ?? {};
 }
 
+function randomId() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+async function submitLead(input, ctx) {
+  const { name, phone, email, message } = input || {};
+  if (!name || !phone) {
+    throw new Error('submitLead: name and phone are required');
+  }
+  const now = new Date().toISOString();
+  const leadId = randomId();
+  const item = {
+    pk: 'LEAD',
+    sk: `${now}#${ctx.sessionId}`,
+    leadId,
+    name,
+    phone,
+    sessionId: ctx.sessionId,
+    createdAt: now,
+  };
+  if (email)   item.email = email;
+  if (message) item.message = message;
+
+  await ctx.ddb.send(new PutCommand({
+    TableName: ctx.leadsTable,
+    Item: item,
+  }));
+  return { ok: true, leadId };
+}
+
 export async function runTool(toolUse, ctx) {
   switch (toolUse.name) {
     case 'searchTrailers':
       return searchTrailers(toolUse.input, ctx);
     case 'getSiteContent':
       return getSiteContent(toolUse.input, ctx);
+    case 'submitLead':
+      return submitLead(toolUse.input, ctx);
     default:
       throw new Error(`Unknown tool: ${toolUse.name}`);
   }
