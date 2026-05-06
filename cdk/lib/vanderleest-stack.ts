@@ -97,7 +97,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
 
     // Public content API
     const contentApiLambda = new lambda.Function(this, "ContentApi", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: lambda.Code.fromAsset(
         path.join(__dirname, "../lambda/content-api")
@@ -112,7 +112,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
 
     // Admin API
     const adminApiLambda = new lambda.Function(this, "AdminApi", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: lambda.Code.fromAsset(
         path.join(__dirname, "../lambda/admin-api")
@@ -130,7 +130,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
 
     // Seed Lambda
     const seedLambda = new lambda.Function(this, "SeedFunction", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/seed")),
       environment: {
@@ -143,7 +143,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
 
     // Recommend Lambda (Bedrock)
     const recommendLambda = new lambda.Function(this, "RecommendApi", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: lambda.Code.fromAsset(
         path.join(__dirname, "../lambda/recommend")
@@ -166,7 +166,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     // cross-region inference profile — much smarter at tool selection than
     // Nova Micro for ~10× the per-token cost (still pennies at this volume).
     const chatLambda = new lambda.Function(this, "ChatApi", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: lambda.Code.fromAsset(
         path.join(__dirname, "../lambda/chat")
