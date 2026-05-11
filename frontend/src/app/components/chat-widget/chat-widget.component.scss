@@ -1,6 +1,9 @@
 :host {
   --chat-accent: #0f8a3c;
   --chat-accent-dim: #2a8f4f;
+  --avatar-bg: #1e6fd9;
+  --avatar-border: #2a86f0;
+  --avatar-glow: rgba(30, 111, 217, 0.35);
   position: fixed;
   right: 16px;
   bottom: 16px;
@@ -32,9 +35,9 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--chat-accent) url('/assets/matcartoon.png') center 35% / cover;
-  border: 2px solid var(--chat-accent-dim);
-  box-shadow: 0 6px 20px rgba(15,138,60,0.35);
+  background: var(--avatar-bg) url('/assets/matcartoon.png') center 35% / cover;
+  border: 2px solid var(--avatar-border);
+  box-shadow: 0 6px 20px var(--avatar-glow);
   cursor: pointer;
 }
 
@@ -64,8 +67,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--chat-accent) url('/assets/matcartoon.png') center 35% / cover;
-  border: 2px solid var(--chat-accent-dim);
+  background: var(--avatar-bg) url('/assets/matcartoon.png') center 35% / cover;
+  border: 2px solid var(--avatar-border);
 }
 
 .p-title { flex: 1; }
