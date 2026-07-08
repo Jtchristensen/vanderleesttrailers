@@ -51,6 +51,33 @@ export class ContentService {
     }
   }
 
+  /** Live Google reviews via the server-side proxy. Returns overall rating,
+   * count, a Google Maps link, and up to 5 reviews. Falls back to the static
+   * hand-written reviews whenever the endpoint is unreachable or unconfigured. */
+  async getGoogleReviews(): Promise<{
+    rating: number | null;
+    userRatingCount: number | null;
+    googleMapsUri: string;
+    reviews: any[];
+  }> {
+    const fallback = {
+      rating: 5,
+      userRatingCount: null,
+      googleMapsUri: '',
+      reviews: ContentService.fallbackMap['REVIEWS'] ?? [],
+    };
+    try {
+      const res = await fetch(`${this.apiUrl}/reviews`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      // Guard against an empty/misconfigured upstream response.
+      if (!data?.reviews?.length) return fallback;
+      return data;
+    } catch {
+      return fallback;
+    }
+  }
+
   async getTrailers(): Promise<any[]> {
     try {
       const res = await fetch(`${this.apiUrl}/trailers`);
