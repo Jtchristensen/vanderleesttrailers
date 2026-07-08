@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
+import { CompareService } from '../../services/compare.service';
 import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
@@ -23,8 +24,21 @@ export class InventoryComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private contentService: ContentService,
+    public compare: CompareService,
     public favorites: FavoritesService,
   ) {}
+
+  toggleCompare(event: Event, trailer: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.compare.toggle(trailer.slug);
+  }
+
+  /** Selected trailers resolved to full objects for the floating tray. */
+  compareItems(): any[] {
+    const bySlug = new Map(this.trailers.map((t: any) => [t.slug, t]));
+    return this.compare.slugs().map(slug => bySlug.get(slug)).filter(Boolean);
+  }
 
   toggleFavorite(event: Event, trailer: any) {
     event.preventDefault();
