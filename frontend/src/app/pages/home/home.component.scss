@@ -607,6 +607,33 @@
     h2 { color: var(--color-text); }
   }
 
+  &__rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+
+  &__score {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  &__rating-stars {
+    display: inline-flex;
+    gap: 2px;
+  }
+
+  &__count {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

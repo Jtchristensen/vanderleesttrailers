@@ -26,6 +26,25 @@
       } @else {
         <p>Based on customer reviews</p>
       }
+
+      @if (openNow !== null) {
+        <span
+          class="reviews-rating__status"
+          [class.reviews-rating__status--open]="openNow"
+          [class.reviews-rating__status--closed]="!openNow"
+        >
+          <span class="reviews-rating__dot"></span>
+          {{ openNow ? 'Open now' : 'Closed now' }}
+        </span>
+      }
+
+      @if (hours.length) {
+        <ul class="reviews-rating__hours">
+          @for (line of hours; track line) {
+            <li>{{ line }}</li>
+          }
+        </ul>
+      }
     </div>
   </div>
 </section>
@@ -45,15 +64,31 @@
           </div>
           <p class="review-card__text">"{{ review.text }}"</p>
           <div class="review-card__author">
-            <div class="review-card__avatar">
-              {{ review.name.charAt(0) }}
-            </div>
-            <span>
-              {{ review.name }}
-              @if (review.relativeTime) {
-                <span class="review-card__time"> · {{ review.relativeTime }}</span>
+            @if (review.authorPhoto) {
+              <img
+                class="review-card__avatar review-card__avatar--photo"
+                [src]="review.authorPhoto"
+                [alt]="review.name"
+                referrerpolicy="no-referrer"
+                loading="lazy"
+                width="36"
+                height="36"
+              />
+            } @else {
+              <div class="review-card__avatar">{{ review.name.charAt(0) }}</div>
+            }
+            <div class="review-card__meta">
+              @if (review.reviewUrl) {
+                <a class="review-card__name" [href]="review.reviewUrl" target="_blank" rel="noopener">{{ review.name }}</a>
+              } @else {
+                <span class="review-card__name">{{ review.name }}</span>
               }
-            </span>
+              @if (review.publishTime) {
+                <span class="review-card__time">{{ review.publishTime | date:'MMMM y' }}</span>
+              } @else if (review.relativeTime) {
+                <span class="review-card__time">{{ review.relativeTime }}</span>
+              }
+            </div>
           </div>
         </div>
       }
@@ -71,7 +106,12 @@
         <a [href]="'tel:' + site.phone" class="btn btn--primary">
           Call {{ site.phoneFormatted }}
         </a>
-        <a [href]="googleMapsUri || site.social?.facebook" target="_blank" rel="noopener" class="btn btn--outline">
+        @if (links.directions) {
+          <a [href]="links.directions" target="_blank" rel="noopener" class="btn btn--outline">
+            Get Directions
+          </a>
+        }
+        <a [href]="links.writeReview || googleMapsUri || site.social?.facebook" target="_blank" rel="noopener" class="btn btn--outline">
           Leave a Review
         </a>
       </div>

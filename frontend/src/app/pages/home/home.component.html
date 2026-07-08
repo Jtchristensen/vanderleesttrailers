@@ -186,6 +186,21 @@
     <div class="home-reviews__header">
       <span class="intro__label">What Our Customers Say</span>
       <h2>Customer Reviews</h2>
+
+      <div class="home-reviews__rating">
+        <span class="home-reviews__score">{{ (rating ?? 5) | number:'1.1-1' }}</span>
+        <span class="home-reviews__rating-stars">
+          @for (filled of starsFor(rating ?? 5); track $index) {
+            <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="filled ? 'var(--color-accent)' : 'var(--color-border)'" stroke="none">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          }
+        </span>
+        @if (reviewCount) {
+          <span class="home-reviews__count">{{ reviewCount }} Google reviews</span>
+        }
+      </div>
+
       <div class="page-hero__accent-line" style="margin: var(--space-md) 0 0;"></div>
     </div>
 

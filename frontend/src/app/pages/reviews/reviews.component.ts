@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, DatePipe } from '@angular/common';
 
 import { ContentService } from '../../services/content.service';
 
 @Component({
     selector: 'app-reviews',
-    imports: [DecimalPipe],
+    imports: [DecimalPipe, DatePipe],
     templateUrl: './reviews.component.html',
     styleUrls: ['./reviews.component.scss']
 })
@@ -16,6 +16,9 @@ export class ReviewsComponent implements OnInit {
   rating: number | null = 5;
   reviewCount: number | null = null;
   googleMapsUri = '';
+  openNow: boolean | null = null;
+  hours: string[] = [];
+  links = { directions: '', writeReview: '', reviews: '', photos: '' };
   loaded = false;
 
   constructor(private contentService: ContentService) {}
@@ -30,6 +33,9 @@ export class ReviewsComponent implements OnInit {
     this.rating = google.rating;
     this.reviewCount = google.userRatingCount;
     this.googleMapsUri = google.googleMapsUri;
+    this.openNow = google.openNow;
+    this.hours = google.hours;
+    this.links = google.links;
     this.images = images;
     this.site = site;
     this.loaded = true;
