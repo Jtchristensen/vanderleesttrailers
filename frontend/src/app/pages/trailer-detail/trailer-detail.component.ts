@@ -1,11 +1,12 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 
+import { TowCheckComponent } from '../../components/tow-check/tow-check.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 
 @Component({
     selector: 'app-trailer-detail',
-    imports: [RouterLink],
+    imports: [RouterLink, TowCheckComponent],
     templateUrl: './trailer-detail.component.html',
     styleUrls: ['./trailer-detail.component.scss']
 })
