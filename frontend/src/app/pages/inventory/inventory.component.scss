@@ -335,6 +335,9 @@
     margin: 0 auto;
     padding: var(--space-md) var(--space-xl);
     padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+    // Reserve room on the right so the actions clear the fixed "Talk to AI
+    // Trailer Man" chat launcher pinned to the bottom-right corner.
+    padding-right: calc(var(--space-xl) + 310px);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -342,7 +345,9 @@
 
     @media (max-width: 640px) {
       padding: var(--space-sm) var(--space-lg);
-      padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+      // Stacked layout: reserve room below so the buttons clear the collapsed
+      // chat launcher, which sits at the bottom-right on top of the tray.
+      padding-bottom: calc(var(--space-sm) + 76px + env(safe-area-inset-bottom, 0px));
       flex-direction: column;
       align-items: stretch;
       gap: var(--space-sm);
