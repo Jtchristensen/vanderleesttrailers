@@ -110,6 +110,36 @@
 .inv-card {
   display: block;
 
+  &__fav {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(10, 13, 16, 0.75);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--color-border-hover);
+    color: var(--color-text);
+    transition: all var(--duration-fast);
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      transform: scale(1.08);
+    }
+
+    &.is-active {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      background: var(--color-accent-glow);
+    }
+  }
+
   &__img {
     position: relative;
     aspect-ratio: 16 / 10;

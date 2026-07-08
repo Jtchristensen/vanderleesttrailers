@@ -3,6 +3,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { TowCheckComponent } from '../../components/tow-check/tow-check.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
     selector: 'app-trailer-detail',
@@ -18,7 +19,11 @@ export class TrailerDetailComponent implements OnInit {
   activeImage = 0;
   lightboxOpen = false;
 
-  constructor(private route: ActivatedRoute, private contentService: ContentService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private contentService: ContentService,
+    public favorites: FavoritesService,
+  ) {}
 
   openLightbox() {
     if (!this.trailer?.images?.length) return;

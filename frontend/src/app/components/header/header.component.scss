@@ -126,6 +126,53 @@
     }
   }
 
+  &__saved {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--color-text-secondary);
+    transition: all var(--duration-fast);
+
+    &:hover {
+      color: var(--color-accent);
+      background: var(--color-accent-glow);
+    }
+  }
+
+  &__saved-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #0a0d10;
+    background: var(--color-accent);
+    border-radius: 100px;
+  }
+
+  &__mobile-saved#{&}__mobile-link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-sm);
+
+    .header__saved-badge {
+      position: static;
+    }
+  }
+
   &__review {
     display: flex;
     align-items: center;

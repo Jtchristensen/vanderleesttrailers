@@ -48,6 +48,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/reviews/reviews.component').then(m => m.ReviewsComponent),
   },
   {
+    path: 'favorites',
+    loadComponent: () => import('./pages/favorites/favorites.component').then(m => m.FavoritesComponent),
+  },
+  {
     path: 'contact',
     loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent),
   },

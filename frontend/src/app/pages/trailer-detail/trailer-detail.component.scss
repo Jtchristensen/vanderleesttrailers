@@ -392,3 +392,11 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ---- Save-to-favorites button ---- */
+.detail__save {
+  &.is-active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+}

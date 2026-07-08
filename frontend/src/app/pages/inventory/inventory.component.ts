@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
     selector: 'app-inventory',
@@ -19,7 +20,17 @@ export class InventoryComponent implements OnInit {
   searchQuery = '';
   loaded = false;
 
-  constructor(private route: ActivatedRoute, private contentService: ContentService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private contentService: ContentService,
+    public favorites: FavoritesService,
+  ) {}
+
+  toggleFavorite(event: Event, trailer: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.favorites.toggle(trailer.slug);
+  }
 
   async ngOnInit() {
     const [categories, images, trailers] = await Promise.all([
