@@ -73,6 +73,27 @@
                   <img src="/uploads/site/categories/steel-utility.jpeg" [alt]="trailer.name" loading="lazy" />
                 }
                 <div class="inv-card__overlay"></div>
+                <button
+                  type="button"
+                  class="inv-card__compare"
+                  [class.is-active]="compare.isSelected(trailer.slug)"
+                  [class.is-disabled]="compare.isFull() && !compare.isSelected(trailer.slug)"
+                  [attr.aria-pressed]="compare.isSelected(trailer.slug)"
+                  [title]="compare.isSelected(trailer.slug) ? 'Remove from comparison' : compare.isFull() ? 'Compare list is full' : 'Add to comparison'"
+                  (click)="toggleCompare($event, trailer)">
+                  @if (compare.isSelected(trailer.slug)) {
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Added
+                  } @else {
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="18" rx="1"/>
+                      <rect x="14" y="3" width="7" height="18" rx="1"/>
+                    </svg>
+                    Compare
+                  }
+                </button>
               </div>
               <div class="inv-card__body">
                 <h3>{{ trailer.name }}</h3>
@@ -160,6 +181,27 @@
                   <img [src]="activeCategoryData.image" [alt]="trailer.name" loading="lazy" />
                 }
                 <div class="inv-card__overlay"></div>
+                <button
+                  type="button"
+                  class="inv-card__compare"
+                  [class.is-active]="compare.isSelected(trailer.slug)"
+                  [class.is-disabled]="compare.isFull() && !compare.isSelected(trailer.slug)"
+                  [attr.aria-pressed]="compare.isSelected(trailer.slug)"
+                  [title]="compare.isSelected(trailer.slug) ? 'Remove from comparison' : compare.isFull() ? 'Compare list is full' : 'Add to comparison'"
+                  (click)="toggleCompare($event, trailer)">
+                  @if (compare.isSelected(trailer.slug)) {
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Added
+                  } @else {
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="18" rx="1"/>
+                      <rect x="14" y="3" width="7" height="18" rx="1"/>
+                    </svg>
+                    Compare
+                  }
+                </button>
               </div>
               <div class="inv-card__body">
                 <h3>{{ trailer.name }}</h3>
@@ -197,4 +239,37 @@
       </div>
     </div>
   </section>
+}
+
+<!-- Floating compare tray -->
+@if (compare.count() > 0) {
+  <div class="compare-tray">
+    <div class="compare-tray__inner">
+      <div class="compare-tray__items">
+        @for (t of compareItems(); track t.slug) {
+          <div class="compare-tray__item">
+            @if (t.images?.length) {
+              <img [src]="t.images[0]" [alt]="t.name" />
+            }
+            <span class="compare-tray__item-name">{{ t.name }}</span>
+            <button
+              type="button"
+              class="compare-tray__item-remove"
+              (click)="compare.remove(t.slug)"
+              [attr.aria-label]="'Remove ' + t.name + ' from comparison'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        }
+      </div>
+      <div class="compare-tray__actions">
+        <a routerLink="/compare" class="btn btn--primary compare-tray__go">
+          Compare ({{ compare.count() }})
+        </a>
+        <button type="button" class="compare-tray__clear" (click)="compare.clear()">Clear</button>
+      </div>
+    </div>
+  </div>
 }

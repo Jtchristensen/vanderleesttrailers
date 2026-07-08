@@ -1,0 +1,133 @@
+<!-- Compact hero -->
+<section class="compare-hero">
+  <div class="container">
+    <h1 class="animate-fade-up">Compare Trailers</h1>
+    <p class="animate-fade-up delay-1">Line up specs side by side and find the right trailer for the job.</p>
+    <div class="compare-hero__accent animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<section class="compare section">
+  <div class="container">
+    @if (loaded) {
+      @if (trailers.length === 0) {
+        <div class="compare__empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5">
+            <rect x="3" y="3" width="7" height="18" rx="1"/>
+            <rect x="14" y="3" width="7" height="18" rx="1"/>
+          </svg>
+          <h3>Nothing to compare yet</h3>
+          <p>Browse the inventory and tap "Compare" on up to {{ limit }} trailers to see them side by side.</p>
+          <a routerLink="/inventory" class="btn btn--primary">Browse Inventory</a>
+        </div>
+      } @else {
+        <div class="compare__toolbar">
+          <p class="compare__count">{{ trailers.length }} of {{ limit }} trailers selected</p>
+          <button type="button" class="compare__clear" (click)="clearAll()">Clear All</button>
+        </div>
+
+        <div class="compare__scroll">
+          <div class="compare__table" [style.--cols]="trailers.length + (trailers.length < limit ? 1 : 0)">
+
+            <!-- Header row: images + names -->
+            <div class="compare__row compare__row--head">
+              <div class="compare__label"></div>
+              @for (t of trailers; track t.slug) {
+                <div class="compare__cell compare__head-cell">
+                  <button type="button" class="compare__remove" (click)="remove(t.slug)" [attr.aria-label]="'Remove ' + t.name">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                  <a [routerLink]="'/trailer/' + t.slug" class="compare__img">
+                    @if (t.images?.length) {
+                      <img [src]="t.images[0]" [alt]="t.name" loading="lazy" />
+                    } @else {
+                      <img src="/uploads/site/categories/steel-utility.jpeg" [alt]="t.name" loading="lazy" />
+                    }
+                  </a>
+                  <a [routerLink]="'/trailer/' + t.slug" class="compare__name">{{ t.name }}</a>
+                </div>
+              }
+              @if (trailers.length < limit) {
+                <div class="compare__cell compare__add">
+                  <a routerLink="/inventory" class="compare__add-link">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    <span>Add a trailer</span>
+                  </a>
+                </div>
+              }
+            </div>
+
+            <!-- Spec rows -->
+            @for (row of specRows; track row.field) {
+              @if (anyHas(row.field)) {
+                <div class="compare__row">
+                  <div class="compare__label">{{ row.label }}</div>
+                  @for (t of trailers; track t.slug) {
+                    <div class="compare__cell" [class.is-best]="isBest(t, row)">
+                      @if (t[row.field]) {
+                        <span class="compare__value">{{ row.prefix || '' }}{{ t[row.field] }}@if (row.unit) {&nbsp;{{ row.unit }}}</span>
+                        @if (isBest(t, row)) {
+                          <span class="compare__best-badge">Best</span>
+                        }
+                      } @else {
+                        <span class="compare__na">—</span>
+                      }
+                    </div>
+                  }
+                  @if (trailers.length < limit) { <div class="compare__cell compare__cell--ghost"></div> }
+                </div>
+              }
+            }
+
+            <!-- Feature matrix -->
+            @if (allFeatures.length) {
+              <div class="compare__row compare__row--section">
+                <div class="compare__label compare__label--section">Features</div>
+                @for (t of trailers; track t.slug) { <div class="compare__cell compare__cell--ghost"></div> }
+                @if (trailers.length < limit) { <div class="compare__cell compare__cell--ghost"></div> }
+              </div>
+              @for (feature of allFeatures; track feature) {
+                <div class="compare__row">
+                  <div class="compare__label compare__label--feature">{{ feature }}</div>
+                  @for (t of trailers; track t.slug) {
+                    <div class="compare__cell">
+                      @if (hasFeature(t, feature)) {
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      } @else {
+                        <span class="compare__na">—</span>
+                      }
+                    </div>
+                  }
+                  @if (trailers.length < limit) { <div class="compare__cell compare__cell--ghost"></div> }
+                </div>
+              }
+            }
+
+            <!-- CTA row -->
+            <div class="compare__row compare__row--cta">
+              <div class="compare__label"></div>
+              @for (t of trailers; track t.slug) {
+                <div class="compare__cell">
+                  <a [routerLink]="'/trailer/' + t.slug" class="btn btn--outline compare__cta-btn">View Details</a>
+                </div>
+              }
+              @if (trailers.length < limit) { <div class="compare__cell compare__cell--ghost"></div> }
+            </div>
+
+          </div>
+        </div>
+
+        <div class="compare__footer">
+          <p>Questions about any of these trailers?</p>
+          <a [href]="'tel:' + site.phone" class="btn btn--primary">Call {{ site.phoneFormatted }}</a>
+        </div>
+      }
+    }
+  </div>
+</section>

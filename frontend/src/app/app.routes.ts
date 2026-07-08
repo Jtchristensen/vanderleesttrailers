@@ -24,6 +24,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/trailer-detail/trailer-detail.component').then(m => m.TrailerDetailComponent),
   },
   {
+    path: 'compare',
+    loadComponent: () => import('./pages/compare/compare.component').then(m => m.CompareComponent),
+  },
+  {
     path: 'brands',
     loadComponent: () => import('./pages/brands/brands.component').then(m => m.BrandsComponent),
   },
