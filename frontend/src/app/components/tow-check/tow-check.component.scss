@@ -1,0 +1,209 @@
+.tow-check {
+  margin-top: var(--space-xl);
+  padding: var(--space-lg);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--color-text);
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  &__label {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  &__select,
+  &__input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.9rem;
+    color: var(--color-text);
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color var(--duration-fast);
+
+    &:focus {
+      border-color: var(--color-accent);
+    }
+  }
+
+  &__select option {
+    background: var(--color-bg-elevated);
+  }
+
+  &__custom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__form-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-xs);
+  }
+
+  &__apply {
+    padding: 0.55rem 1.4rem;
+    font-size: 0.85rem;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  &__cancel {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    transition: color var(--duration-fast);
+
+    &:hover { color: var(--color-text); }
+  }
+
+  &__result {
+    --verdict-color: var(--color-success);
+
+    &--caution { --verdict-color: #e5a53d; }
+    &--over { --verdict-color: var(--color-error); }
+  }
+
+  &__verdict {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--verdict-color);
+    margin-bottom: var(--space-md);
+  }
+
+  &__headline {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  &__gauge {
+    margin-bottom: var(--space-md);
+  }
+
+  &__gauge-track {
+    position: relative;
+    height: 10px;
+    background: var(--color-bg-subtle);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  /* 0–100% of capacity occupies 2/3 of the track (ratio display is capped at 1.5) */
+  &__gauge-safe-zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 66.67%;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &__gauge-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: var(--verdict-color);
+    border-radius: 100px;
+    transition: width 0.7s var(--ease-out);
+  }
+
+  &__gauge-limit {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    left: 66.67%;
+    width: 2px;
+    background: var(--color-text-secondary);
+  }
+
+  &__gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-xs);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  &__gauge-cap {
+    /* sits under the limit marker at 2/3 of the track */
+    margin-right: calc(33.33% - 3em);
+  }
+
+  &__detail {
+    font-size: 0.9rem;
+    margin-bottom: var(--space-md);
+  }
+
+  &__vehicle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+  }
+
+  &__change {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    transition: color var(--duration-fast);
+
+    &:hover { color: var(--color-accent-light); }
+  }
+
+  &__disclaimer {
+    margin-top: var(--space-md);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+}
