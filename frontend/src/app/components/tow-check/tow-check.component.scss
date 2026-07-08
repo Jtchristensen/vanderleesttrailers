@@ -39,6 +39,11 @@
     padding: var(--space-sm) var(--space-md);
     font-size: 0.9rem;
     color: var(--color-text);
+
+    /* 16px minimum prevents iOS Safari's zoom-on-focus */
+    @media (max-width: 640px) {
+      font-size: 1rem;
+    }
     background: var(--color-bg-subtle);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
