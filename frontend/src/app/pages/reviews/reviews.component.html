@@ -13,15 +13,19 @@
 <section class="reviews-rating section">
   <div class="container">
     <div class="reviews-rating__content">
-      <div class="reviews-rating__score">5.0</div>
+      <div class="reviews-rating__score">{{ (rating ?? 5) | number:'1.1-1' }}</div>
       <div class="reviews-rating__stars">
-        @for (star of [1,2,3,4,5]; track star) {
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none">
+        @for (filled of starsFor(rating ?? 5); track $index) {
+          <svg width="24" height="24" viewBox="0 0 24 24" [attr.fill]="filled ? 'var(--color-accent)' : 'var(--color-border)'" stroke="none">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
         }
       </div>
-      <p>Based on customer reviews</p>
+      @if (reviewCount) {
+        <p>Based on {{ reviewCount }} Google reviews</p>
+      } @else {
+        <p>Based on customer reviews</p>
+      }
     </div>
   </div>
 </section>
@@ -30,11 +34,11 @@
 <section class="reviews-grid section section--dark">
   <div class="container">
     <div class="reviews-grid__cards">
-      @for (review of reviews; track review.text; let i = $index) {
+      @for (review of reviews; track $index) {
         <div class="review-card">
           <div class="review-card__stars">
-            @for (star of [1,2,3,4,5]; track star) {
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="none">
+            @for (filled of starsFor(review.rating ?? 5); track $index) {
+              <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="filled ? 'var(--color-accent)' : 'var(--color-border)'" stroke="none">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
               </svg>
             }
@@ -44,7 +48,12 @@
             <div class="review-card__avatar">
               {{ review.name.charAt(0) }}
             </div>
-            <span>Verified Customer</span>
+            <span>
+              {{ review.name }}
+              @if (review.relativeTime) {
+                <span class="review-card__time"> · {{ review.relativeTime }}</span>
+              }
+            </span>
           </div>
         </div>
       }
@@ -62,7 +71,7 @@
         <a [href]="'tel:' + site.phone" class="btn btn--primary">
           Call {{ site.phoneFormatted }}
         </a>
-        <a [href]="site.social?.facebook" target="_blank" rel="noopener" class="btn btn--outline">
+        <a [href]="googleMapsUri || site.social?.facebook" target="_blank" rel="noopener" class="btn btn--outline">
           Leave a Review
         </a>
       </div>

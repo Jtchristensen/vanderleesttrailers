@@ -7,6 +7,7 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as cr from "aws-cdk-lib/custom-resources";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
@@ -162,6 +163,31 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       })
     );
 
+    // Reviews Lambda — proxies live Google reviews so the API key stays
+    // server-side. The Google API key + place id live in a Secrets Manager
+    // secret (JSON: GOOGLE_MAPS_API_KEY, GOOGLE_PLACE_ID); nothing sensitive
+    // is committed here or baked into the Lambda env. CDK creates the secret
+    // empty; populate it once after the first deploy (see README/aws CLI).
+    const reviewsSecret = new secretsmanager.Secret(this, "GoogleReviewsSecret", {
+      secretName: "vanderleest/google-reviews",
+      description:
+        "Google Places API key + Place ID for the live reviews widget",
+    });
+
+    const reviewsApiLambda = new lambda.Function(this, "ReviewsApi", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, "../lambda/reviews-api")
+      ),
+      environment: {
+        REVIEWS_SECRET_ARN: reviewsSecret.secretArn,
+      },
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 256,
+    });
+    reviewsSecret.grantRead(reviewsApiLambda);
+
     // Chat Lambda (Bedrock + tool use). Uses Claude Haiku 4.5 via the US
     // cross-region inference profile — much smarter at tool selection than
     // Nova Micro for ~10× the per-token cost (still pennies at this volume).
@@ -266,6 +292,13 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     const chatResource = apiResource.addResource("chat");
     chatResource.addMethod("POST", chatIntegration);
 
+    // Reviews route (public) — live Google reviews
+    const reviewsIntegration = new apigateway.LambdaIntegration(
+      reviewsApiLambda
+    );
+    const reviewsResource = apiResource.addResource("reviews");
+    reviewsResource.addMethod("GET", reviewsIntegration);
+
     // Admin routes (Cognito-protected)
     const adminResource = apiResource.addResource("admin");
     const adminAuth = {
@@ -347,6 +380,7 @@ export class VanderLeestTrailersStack extends cdk.Stack {
         // Cacheable GET endpoints — content and trailer listings.
         "/api/content/*": cachedApiBehavior,
         "/api/trailers*": cachedApiBehavior,
+        "/api/reviews": cachedApiBehavior,
         // Catch-all for /api/recommend (POST) and /api/admin/* — no cache.
         "/api/*": {
           origin: apiOrigin,
