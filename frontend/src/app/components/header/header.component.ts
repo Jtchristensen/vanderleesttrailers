@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ContentService } from '../../services/content.service';
+import { FavoritesService } from '../../services/favorites.service';
 import { NAV_LINKS } from '../../data/site-content';
 
 @Component({
@@ -17,7 +18,7 @@ export class HeaderComponent implements OnInit {
   isMobileMenuOpen = false;
   activeDropdown: string | null = null;
 
-  constructor(private contentService: ContentService) {}
+  constructor(private contentService: ContentService, public favorites: FavoritesService) {}
 
   async ngOnInit() {
     this.site = await this.contentService.getContent('SITE_INFO');

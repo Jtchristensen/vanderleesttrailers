@@ -1,0 +1,83 @@
+<!-- Compact hero -->
+<section class="fav-hero">
+  <div class="container">
+    <h1 class="animate-fade-up">Saved Trailers</h1>
+    <p class="animate-fade-up delay-1">Your shortlist, saved on this device — pick up right where you left off.</p>
+    <div class="fav-hero__accent animate-fade-up delay-2"></div>
+  </div>
+</section>
+
+<section class="fav section">
+  <div class="container">
+    @if (loaded) {
+      @if (trailers.length === 0) {
+        <div class="fav__empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
+          <h3>No saved trailers yet</h3>
+          <p>Tap the heart on any trailer to save it here for later.</p>
+          <a routerLink="/inventory" class="btn btn--primary">Browse Inventory</a>
+        </div>
+      } @else {
+        <div class="fav__toolbar">
+          <p class="fav__count">{{ trailers.length }} saved trailer{{ trailers.length !== 1 ? 's' : '' }}</p>
+          <button type="button" class="fav__clear" (click)="clearAll()">Clear All</button>
+        </div>
+
+        @if (missingCount > 0) {
+          <p class="fav__missing">
+            {{ missingCount }} saved trailer{{ missingCount !== 1 ? 's are' : ' is' }} no longer in our inventory.
+          </p>
+        }
+
+        <div class="fav__cards">
+          @for (trailer of trailers; track trailer.slug) {
+            <a [routerLink]="'/trailer/' + trailer.slug" class="fav-card card">
+              <div class="fav-card__img">
+                @if (trailer.images?.length) {
+                  <img [src]="trailer.images[0]" [alt]="trailer.name" loading="lazy" />
+                } @else {
+                  <img src="/uploads/site/categories/steel-utility.jpeg" [alt]="trailer.name" loading="lazy" />
+                }
+                <div class="fav-card__overlay"></div>
+                <button
+                  type="button"
+                  class="fav-card__remove"
+                  (click)="remove($event, trailer.slug)"
+                  [attr.aria-label]="'Remove ' + trailer.name + ' from saved trailers'">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="fav-card__body">
+                <h3>{{ trailer.name }}</h3>
+                @if (trailer.brand) {
+                  <p class="fav-card__brand">{{ trailer.brand }}</p>
+                }
+                @if (trailer.price) {
+                  <p class="fav-card__price">${{ trailer.price }}</p>
+                }
+                @if (trailer.gvwr) {
+                  <p class="fav-card__spec">GVWR: {{ trailer.gvwr }} lbs</p>
+                }
+                <span class="fav-card__link">
+                  View Details
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </span>
+              </div>
+            </a>
+          }
+        </div>
+
+        <div class="fav__footer">
+          <p>Ready to talk about one of these?</p>
+          <a [href]="'tel:' + site.phone" class="btn btn--primary">Call {{ site.phoneFormatted }}</a>
+        </div>
+      }
+    }
+  </div>
+</section>
