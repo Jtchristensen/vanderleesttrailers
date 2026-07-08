@@ -58,12 +58,18 @@ export class ContentService {
     rating: number | null;
     userRatingCount: number | null;
     googleMapsUri: string;
+    openNow: boolean | null;
+    hours: string[];
+    links: { directions: string; writeReview: string; reviews: string; photos: string };
     reviews: any[];
   }> {
     const fallback = {
       rating: 5,
       userRatingCount: null,
       googleMapsUri: '',
+      openNow: null,
+      hours: [],
+      links: { directions: '', writeReview: '', reviews: '', photos: '' },
       reviews: ContentService.fallbackMap['REVIEWS'] ?? [],
     };
     try {
@@ -72,7 +78,9 @@ export class ContentService {
       const data = await res.json();
       // Guard against an empty/misconfigured upstream response.
       if (!data?.reviews?.length) return fallback;
-      return data;
+      // Merge over defaults so older cached responses missing the newer
+      // fields (hours/links/openNow) still yield a well-formed object.
+      return { ...fallback, ...data, links: { ...fallback.links, ...data.links } };
     } catch {
       return fallback;
     }

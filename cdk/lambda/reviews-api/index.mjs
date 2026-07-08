@@ -65,14 +65,28 @@ function normalize(place) {
     rating: r.rating ?? 5,
     text: r.originalText?.text || r.text?.text || '',
     relativeTime: r.relativePublishTimeDescription || '',
+    publishTime: r.publishTime || '', // ISO date, formatted client-side
     authorPhoto: r.authorAttribution?.photoUri || '',
     authorUrl: r.authorAttribution?.uri || '',
+    reviewUrl: r.googleMapsUri || '',
   }));
+
+  const links = place.googleMapsLinks || {};
 
   return {
     rating: place.rating ?? null,
     userRatingCount: place.userRatingCount ?? null,
     googleMapsUri: place.googleMapsUri || '',
+    // Live open/closed + weekday hours ("Monday: 8:00 AM – 5:00 PM").
+    openNow: place.currentOpeningHours?.openNow ?? null,
+    hours: place.regularOpeningHours?.weekdayDescriptions || [],
+    // Dedicated Google deep-links (better than the generic Maps URL).
+    links: {
+      directions: links.directionsUri || '',
+      writeReview: links.writeAReviewUri || '',
+      reviews: links.reviewsUri || '',
+      photos: links.photosUri || '',
+    },
     reviews,
   };
 }
@@ -102,9 +116,23 @@ export const handler = async (event) => {
     const res = await fetch(url, {
       headers: {
         'X-Goog-Api-Key': apiKey,
-        // Only pull the fields we render — keeps us on the cheapest SKU.
-        'X-Goog-FieldMask':
-          'rating,userRatingCount,googleMapsUri,reviews.rating,reviews.text,reviews.originalText,reviews.relativePublishTimeDescription,reviews.authorAttribution',
+        // Only pull the fields we render. Reviews already put us on the top
+        // SKU, so the hours/links fields add no extra per-request cost.
+        'X-Goog-FieldMask': [
+          'rating',
+          'userRatingCount',
+          'googleMapsUri',
+          'googleMapsLinks',
+          'currentOpeningHours.openNow',
+          'regularOpeningHours.weekdayDescriptions',
+          'reviews.rating',
+          'reviews.text',
+          'reviews.originalText',
+          'reviews.relativePublishTimeDescription',
+          'reviews.publishTime',
+          'reviews.authorAttribution',
+          'reviews.googleMapsUri',
+        ].join(','),
       },
     });
 
