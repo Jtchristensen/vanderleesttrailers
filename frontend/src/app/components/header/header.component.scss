@@ -162,9 +162,10 @@
     border-radius: 100px;
   }
 
-  &__mobile-saved {
+  &__mobile-saved#{&}__mobile-link {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: var(--space-sm);
 
     .header__saved-badge {
