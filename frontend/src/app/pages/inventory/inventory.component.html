@@ -67,6 +67,17 @@
           @for (trailer of filteredTrailers; track trailer.slug) {
             <a [routerLink]="'/trailer/' + trailer.slug" class="inv-card card">
               <div class="inv-card__img">
+                <button
+                  type="button"
+                  class="inv-card__fav"
+                  [class.is-active]="favorites.isFavorite(trailer.slug)"
+                  [attr.aria-pressed]="favorites.isFavorite(trailer.slug)"
+                  [attr.aria-label]="favorites.isFavorite(trailer.slug) ? 'Remove from saved trailers' : 'Save trailer'"
+                  (click)="toggleFavorite($event, trailer)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="favorites.isFavorite(trailer.slug) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                  </svg>
+                </button>
                 @if (trailer.images?.length) {
                   <img [src]="trailer.images[0]" [alt]="trailer.name" loading="lazy" />
                 } @else {
@@ -154,6 +165,17 @@
           @for (trailer of filteredTrailers; track trailer.slug) {
             <a [routerLink]="'/trailer/' + trailer.slug" class="inv-card card">
               <div class="inv-card__img">
+                <button
+                  type="button"
+                  class="inv-card__fav"
+                  [class.is-active]="favorites.isFavorite(trailer.slug)"
+                  [attr.aria-pressed]="favorites.isFavorite(trailer.slug)"
+                  [attr.aria-label]="favorites.isFavorite(trailer.slug) ? 'Remove from saved trailers' : 'Save trailer'"
+                  (click)="toggleFavorite($event, trailer)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="favorites.isFavorite(trailer.slug) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                  </svg>
+                </button>
                 @if (trailer.images?.length) {
                   <img [src]="trailer.images[0]" [alt]="trailer.name" loading="lazy" />
                 } @else {
