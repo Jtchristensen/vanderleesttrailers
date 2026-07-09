@@ -1,0 +1,53 @@
+:host {
+  display: contents;
+}
+
+.tow-fit-badge {
+  --verdict-color: var(--color-success);
+  --verdict-bg: rgba(52, 199, 89, 0.14);
+  --verdict-border: rgba(52, 199, 89, 0.4);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 4px 10px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--verdict-color);
+  background: var(--verdict-bg);
+  border: 1px solid var(--verdict-border);
+  border-radius: 100px;
+  cursor: default;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--caution {
+    --verdict-color: #e5a53d;
+    --verdict-bg: rgba(229, 165, 61, 0.14);
+    --verdict-border: rgba(229, 165, 61, 0.4);
+  }
+
+  &--over {
+    --verdict-color: var(--color-error);
+    --verdict-bg: rgba(229, 77, 77, 0.14);
+    --verdict-border: rgba(229, 77, 77, 0.4);
+  }
+
+  &--unknown {
+    --verdict-color: var(--color-text-muted);
+    --verdict-bg: rgba(77, 87, 102, 0.14);
+    --verdict-border: rgba(77, 87, 102, 0.4);
+  }
+}

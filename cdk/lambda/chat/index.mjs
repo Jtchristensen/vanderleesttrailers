@@ -51,6 +51,21 @@ function findToolUse(message) {
   return message?.content?.find(p => p.toolUse)?.toolUse;
 }
 
+/** Builds an extra system block telling the model the shopper's saved tow
+ * vehicle, so it can factor towing fit into recommendations from
+ * searchTrailers results (which already include each trailer's gvwr) without
+ * a dedicated tool round-trip. Returns null when the vehicle is missing or
+ * malformed — never trust client-supplied shape blindly. */
+export function vehicleContextBlock(vehicle) {
+  if (!vehicle || typeof vehicle.name !== 'string' || !vehicle.name.trim()) return null;
+  const capacity = Number(vehicle.capacity);
+  if (!isFinite(capacity) || capacity <= 0) return null;
+  const name = vehicle.name.trim().slice(0, 80);
+  return {
+    text: `# Shopper's tow vehicle\nThis visitor has told us they drive a ${name} with a maximum tow rating of ${Math.round(capacity).toLocaleString()} lbs. When discussing or recommending trailers, compare each trailer's GVWR (from searchTrailers results) against this rating: at or under 80% is a comfortable match, 80-100% is towable but tight, and over 100% exceeds the rating. Proactively mention fit when relevant, but don't refuse to discuss heavier trailers if asked directly — just flag the concern and suggest lighter alternatives when it's an easy swap.`,
+  };
+}
+
 export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
@@ -63,7 +78,7 @@ export const handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'invalid_json' }) };
   }
 
-  const { sessionId, messages } = payload || {};
+  const { sessionId, messages, vehicle } = payload || {};
   if (!sessionId || !Array.isArray(messages) || messages.length === 0) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'invalid_request' }) };
   }
@@ -74,6 +89,10 @@ export const handler = async (event) => {
     leadsTable:   LEADS_TBL,
     ddb: ddbClient,
   };
+
+  const system = [{ text: SYSTEM_PROMPT }];
+  const vehicleBlock = vehicleContextBlock(vehicle);
+  if (vehicleBlock) system.push(vehicleBlock);
 
   let convo = toBedrockMessages(truncateHistory(messages));
 
@@ -88,7 +107,7 @@ export const handler = async (event) => {
       const start = Date.now();
       const res = await bedrock.send(new ConverseCommand({
         modelId: MODEL_ID,
-        system: [{ text: SYSTEM_PROMPT }],
+        system,
         messages: convo,
         toolConfig: { tools: TOOL_SPECS },
         inferenceConfig: { maxTokens: MAX_TOKENS, temperature: 0.4 },

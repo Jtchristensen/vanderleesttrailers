@@ -1,6 +1,6 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { handler, __setBedrockClient, __setDdbClient, truncateHistory } from '../index.mjs';
+import { handler, __setBedrockClient, __setDdbClient, truncateHistory, vehicleContextBlock } from '../index.mjs';
 
 function apiEvent(body, method = 'POST') {
   return { httpMethod: method, body: JSON.stringify(body) };
@@ -37,6 +37,24 @@ describe('truncateHistory — leading assistant stripping', () => {
       { role: 'assistant', content: 'only greeting' },
     ]);
     assert.deepEqual(out, []);
+  });
+});
+
+describe('vehicleContextBlock', () => {
+  it('returns null when vehicle is missing or malformed', () => {
+    assert.equal(vehicleContextBlock(undefined), null);
+    assert.equal(vehicleContextBlock(null), null);
+    assert.equal(vehicleContextBlock({}), null);
+    assert.equal(vehicleContextBlock({ name: '', capacity: 10000 }), null);
+    assert.equal(vehicleContextBlock({ name: 'Truck', capacity: 0 }), null);
+    assert.equal(vehicleContextBlock({ name: 'Truck', capacity: -5 }), null);
+    assert.equal(vehicleContextBlock({ name: 'Truck', capacity: 'nope' }), null);
+  });
+
+  it('builds a system block with the vehicle name and capacity', () => {
+    const block = vehicleContextBlock({ name: 'Ford F-150', capacity: 13500 });
+    assert.ok(block.text.includes('Ford F-150'));
+    assert.ok(block.text.includes('13,500'));
   });
 });
 
@@ -108,6 +126,54 @@ describe('handler — happy path with mocked Bedrock', () => {
     assert.equal(res.statusCode, 200);
     const body = JSON.parse(res.body);
     assert.equal(body.reply, 'Hello there!');
+  });
+});
+
+describe('handler — vehicle context', () => {
+  beforeEach(() => {
+    __setDdbClient({ send: async () => ({ Items: [] }) });
+  });
+
+  it('adds a vehicle system block when a valid vehicle is supplied', async () => {
+    let capturedSystem;
+    __setBedrockClient({
+      send: async (cmd) => {
+        capturedSystem = cmd.input.system;
+        return {
+          stopReason: 'end_turn',
+          output: { message: { role: 'assistant', content: [{ text: 'Sure!' }] } },
+        };
+      },
+    });
+
+    await handler(apiEvent({
+      sessionId: 'abc',
+      messages: [{ role: 'user', content: 'what fits my truck?' }],
+      vehicle: { name: 'Ford F-150', capacity: 13500 },
+    }));
+
+    assert.equal(capturedSystem.length, 2);
+    assert.ok(capturedSystem[1].text.includes('Ford F-150'));
+  });
+
+  it('omits the vehicle system block when no vehicle is supplied', async () => {
+    let capturedSystem;
+    __setBedrockClient({
+      send: async (cmd) => {
+        capturedSystem = cmd.input.system;
+        return {
+          stopReason: 'end_turn',
+          output: { message: { role: 'assistant', content: [{ text: 'Sure!' }] } },
+        };
+      },
+    });
+
+    await handler(apiEvent({
+      sessionId: 'abc',
+      messages: [{ role: 'user', content: 'hi' }],
+    }));
+
+    assert.equal(capturedSystem.length, 1);
   });
 });
 

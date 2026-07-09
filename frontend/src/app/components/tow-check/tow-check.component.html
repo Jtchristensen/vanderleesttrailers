@@ -12,44 +12,11 @@
     </div>
 
     @if (!towCheck.vehicle() || editing) {
-      <div class="tow-check__form">
-        <label class="tow-check__label" for="tow-vehicle">Your tow vehicle</label>
-        <select id="tow-vehicle" class="tow-check__select" [(ngModel)]="selectedPreset">
-          <option value="" disabled>Select your vehicle...</option>
-          @for (preset of presets; track preset.name) {
-            <option [value]="preset.name">{{ preset.name }} (up to {{ preset.capacity.toLocaleString() }} lbs)</option>
-          }
-          <option value="custom">Other — enter towing capacity</option>
-        </select>
-
-        @if (selectedPreset === 'custom') {
-          <div class="tow-check__custom">
-            <input
-              type="text"
-              class="tow-check__input"
-              placeholder="Vehicle name (optional)"
-              [(ngModel)]="customName" />
-            <input
-              type="number"
-              class="tow-check__input"
-              placeholder="Towing capacity (lbs)"
-              min="1"
-              [(ngModel)]="customCapacity" />
-          </div>
+      <div class="tow-check__form-actions">
+        <app-vehicle-picker (applied)="editing = false" />
+        @if (editing && towCheck.vehicle()) {
+          <button type="button" class="tow-check__cancel" (click)="editing = false">Cancel</button>
         }
-
-        <div class="tow-check__form-actions">
-          <button
-            type="button"
-            class="btn btn--primary tow-check__apply"
-            [disabled]="!selectedPreset || (selectedPreset === 'custom' && (!customCapacity || customCapacity <= 0))"
-            (click)="apply()">
-            Check Fit
-          </button>
-          @if (editing && towCheck.vehicle()) {
-            <button type="button" class="tow-check__cancel" (click)="editing = false">Cancel</button>
-          }
-        </div>
       </div>
     } @else {
       @if (result; as r) {
@@ -96,8 +63,9 @@
     }
 
     <p class="tow-check__disclaimer">
-      Estimate based on the trailer's GVWR and typical max ratings. Always verify your vehicle's
-      actual towing capacity in the owner's manual — it varies by engine, cab, and equipment.
+      Estimate based on the trailer's GVWR and typical max tow ratings. Actual capacity varies by
+      engine, cab, and equipment — verify in your owner's manual. Tow rating is only one limit;
+      also confirm your truck's payload covers this trailer's tongue weight plus cargo.
     </p>
   </div>
 }

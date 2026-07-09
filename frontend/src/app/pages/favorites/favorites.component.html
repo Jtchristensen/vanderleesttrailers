@@ -62,6 +62,11 @@
                 @if (trailer.gvwr) {
                   <p class="fav-card__spec">GVWR: {{ trailer.gvwr }} lbs</p>
                 }
+                @if (towCheck.vehicle()) {
+                  <div class="fav-card__fit">
+                    <app-tow-fit-badge [trailer]="trailer" />
+                  </div>
+                }
                 <span class="fav-card__link">
                   View Details
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

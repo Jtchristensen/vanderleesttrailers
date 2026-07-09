@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { CompareService, COMPARE_LIMIT } from '../../services/compare.service';
+import { TowCheckService } from '../../services/tow-check.service';
+import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
 
 interface SpecRow {
   label: string;
@@ -15,7 +17,7 @@ interface SpecRow {
 
 @Component({
     selector: 'app-compare',
-    imports: [RouterLink],
+    imports: [RouterLink, TowFitBadgeComponent],
     templateUrl: './compare.component.html',
     styleUrls: ['./compare.component.scss']
 })
@@ -38,7 +40,11 @@ export class CompareComponent implements OnInit {
 
   private allTrailers: any[] = [];
 
-  constructor(private contentService: ContentService, public compare: CompareService) {}
+  constructor(
+    private contentService: ContentService,
+    public compare: CompareService,
+    public towCheck: TowCheckService,
+  ) {}
 
   async ngOnInit() {
     const [trailers, site] = await Promise.all([

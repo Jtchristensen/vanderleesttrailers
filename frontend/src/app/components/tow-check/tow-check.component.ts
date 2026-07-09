@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 
-import { FormsModule } from '@angular/forms';
-import { TowCheckService, TowResult, VEHICLE_PRESETS } from '../../services/tow-check.service';
+import { VehiclePickerComponent } from '../vehicle-picker/vehicle-picker.component';
+import { TowCheckService, TowResult } from '../../services/tow-check.service';
 
 @Component({
     selector: 'app-tow-check',
-    imports: [FormsModule],
+    imports: [VehiclePickerComponent],
     templateUrl: './tow-check.component.html',
     styleUrls: ['./tow-check.component.scss']
 })
@@ -13,11 +13,7 @@ export class TowCheckComponent {
   /** The trailer whose GVWR is checked against the shopper's tow vehicle. */
   @Input() trailer: any;
 
-  presets = VEHICLE_PRESETS;
   editing = false;
-  selectedPreset = '';
-  customName = '';
-  customCapacity: number | null = null;
 
   constructor(public towCheck: TowCheckService) {}
 
@@ -30,24 +26,7 @@ export class TowCheckComponent {
   }
 
   startEditing() {
-    const vehicle = this.towCheck.vehicle();
-    const preset = vehicle && this.presets.find(p => p.name === vehicle.name && p.capacity === vehicle.capacity);
-    this.selectedPreset = preset ? preset.name : vehicle ? 'custom' : '';
-    this.customName = !preset && vehicle ? vehicle.name : '';
-    this.customCapacity = !preset && vehicle ? vehicle.capacity : null;
     this.editing = true;
-  }
-
-  apply() {
-    if (this.selectedPreset === 'custom') {
-      if (!this.customCapacity || this.customCapacity <= 0) return;
-      this.towCheck.setVehicle(this.customName.trim() || 'My vehicle', this.customCapacity);
-    } else {
-      const preset = this.presets.find(p => p.name === this.selectedPreset);
-      if (!preset) return;
-      this.towCheck.setVehicle(preset.name, preset.capacity);
-    }
-    this.editing = false;
   }
 
   percent(result: TowResult): number {

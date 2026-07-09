@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
 import { ChatService, ChatMessage } from '../../services/chat.service';
 import { ChatApiService } from '../../services/chat-api.service';
+import { TowCheckService } from '../../services/tow-check.service';
 
 const STARTERS = ['Browse inventory', 'Financing options', 'Hours & location'];
 
@@ -29,6 +30,7 @@ export class ChatWidgetComponent {
   constructor(
     public chat: ChatService,
     private api: ChatApiService,
+    private towCheck: TowCheckService,
     private router: Router,
   ) {
     this.visible.set(!router.url.startsWith('/admin'));
@@ -64,7 +66,7 @@ export class ChatWidgetComponent {
     this.chat.appendMessage({ role: 'user', content: text });
     this.sending.set(true);
     try {
-      const reply = await this.api.sendMessage(this.chat.sessionId, this.chat.messagesForSend());
+      const reply = await this.api.sendMessage(this.chat.sessionId, this.chat.messagesForSend(), this.towCheck.vehicle());
       this.chat.appendMessage({ role: 'assistant', content: reply });
     } catch (err: any) {
       const msg = err?.message === 'rate_limited'
