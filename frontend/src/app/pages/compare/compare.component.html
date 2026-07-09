@@ -92,6 +92,19 @@
               }
             }
 
+            <!-- Tow fit row -->
+            @if (towCheck.vehicle()) {
+              <div class="compare__row">
+                <div class="compare__label">Fits Your {{ towCheck.vehicle()!.name }}</div>
+                @for (t of trailers; track t.slug) {
+                  <div class="compare__cell">
+                    <app-tow-fit-badge [trailer]="t" [compact]="true" />
+                  </div>
+                }
+                @if (trailers.length < limit) { <div class="compare__cell compare__cell--ghost"></div> }
+              </div>
+            }
+
             <!-- Feature matrix -->
             @if (allFeatures.length) {
               <div class="compare__row compare__row--section">

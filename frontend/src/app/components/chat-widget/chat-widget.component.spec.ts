@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { ChatWidgetComponent } from './chat-widget.component';
 import { ChatService } from '../../services/chat.service';
 import { ChatApiService } from '../../services/chat-api.service';
+import { TowCheckService } from '../../services/tow-check.service';
 
 @Component({ standalone: true, template: '' })
 class DummyComponent {}
@@ -14,6 +15,7 @@ describe('ChatWidgetComponent — closed bubble', () => {
 
   beforeEach(async () => {
     localStorage.removeItem('vl_chat_v1');
+    localStorage.removeItem('vlt-tow-vehicle');
     await TestBed.configureTestingModule({
       imports: [ChatWidgetComponent],
       providers: [
@@ -32,7 +34,10 @@ describe('ChatWidgetComponent — closed bubble', () => {
     chat = TestBed.inject(ChatService);
   });
 
-  afterEach(() => localStorage.removeItem('vl_chat_v1'));
+  afterEach(() => {
+    localStorage.removeItem('vl_chat_v1');
+    localStorage.removeItem('vlt-tow-vehicle');
+  });
 
   it('renders the closed bubble with label "Talk to AI Trailer Man"', () => {
     fixture.detectChanges();
@@ -67,6 +72,7 @@ describe('ChatWidgetComponent — send flow', () => {
 
   beforeEach(async () => {
     localStorage.removeItem('vl_chat_v1');
+    localStorage.removeItem('vlt-tow-vehicle');
     apiSpy = jasmine.createSpyObj<ChatApiService>('ChatApiService', ['sendMessage']);
     await TestBed.configureTestingModule({
       imports: [ChatWidgetComponent],
@@ -80,7 +86,10 @@ describe('ChatWidgetComponent — send flow', () => {
     chat = TestBed.inject(ChatService);
   });
 
-  afterEach(() => localStorage.removeItem('vl_chat_v1'));
+  afterEach(() => {
+    localStorage.removeItem('vl_chat_v1');
+    localStorage.removeItem('vlt-tow-vehicle');
+  });
 
   it('sends the user message, appends the assistant reply', async () => {
     apiSpy.sendMessage.and.resolveTo('Sure — what kind?');
@@ -98,7 +107,24 @@ describe('ChatWidgetComponent — send flow', () => {
     expect(msgs.length).toBe(3);
     expect(msgs[1]).toEqual({ role: 'user', content: 'I need a dump trailer' });
     expect(msgs[2]).toEqual({ role: 'assistant', content: 'Sure — what kind?' });
-    expect(apiSpy.sendMessage).toHaveBeenCalledWith(chat.sessionId, jasmine.any(Array));
+    expect(apiSpy.sendMessage).toHaveBeenCalledWith(chat.sessionId, jasmine.any(Array), null);
+  });
+
+  it('passes the saved tow vehicle along with the message', async () => {
+    apiSpy.sendMessage.and.resolveTo('Sure thing');
+    TestBed.inject(TowCheckService).setVehicle('Ford F-150', 13500);
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    (el.querySelector('.bubble-pill') as HTMLElement).click();
+    fixture.detectChanges();
+
+    fixture.componentInstance.draft.set('what fits my truck?');
+    await fixture.componentInstance.send();
+
+    expect(apiSpy.sendMessage).toHaveBeenCalledWith(
+      chat.sessionId, jasmine.any(Array), { name: 'Ford F-150', capacity: 13500 },
+    );
   });
 
   it('renders an apology when the API throws', async () => {

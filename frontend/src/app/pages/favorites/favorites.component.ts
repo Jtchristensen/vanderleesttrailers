@@ -3,10 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { TowCheckService } from '../../services/tow-check.service';
+import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
 
 @Component({
     selector: 'app-favorites',
-    imports: [RouterLink],
+    imports: [RouterLink, TowFitBadgeComponent],
     templateUrl: './favorites.component.html',
     styleUrls: ['./favorites.component.scss']
 })
@@ -19,7 +21,11 @@ export class FavoritesComponent implements OnInit {
 
   private allTrailers: any[] = [];
 
-  constructor(private contentService: ContentService, public favorites: FavoritesService) {}
+  constructor(
+    private contentService: ContentService,
+    public favorites: FavoritesService,
+    public towCheck: TowCheckService,
+  ) {}
 
   async ngOnInit() {
     const [trailers, site] = await Promise.all([

@@ -226,6 +226,10 @@
     }
   }
 
+  &__fit {
+    margin-bottom: var(--space-md);
+  }
+
   &__link {
     display: inline-flex;
     align-items: center;

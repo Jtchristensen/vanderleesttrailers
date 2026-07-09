@@ -1,0 +1,60 @@
+<div class="tow-fit-bar">
+  @if (!towCheck.vehicle() || editing) {
+    <div class="tow-fit-bar__setup">
+      <svg class="tow-fit-bar__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2">
+        <path d="M14 16.94V12.5a1.5 1.5 0 00-1.5-1.5H3v6"/>
+        <path d="M3 11V6a1 1 0 011-1h6l4 4"/>
+        <circle cx="6.5" cy="17.5" r="1.8"/>
+        <circle cx="16.5" cy="17.5" r="1.8"/>
+        <path d="M18.3 17.5H21v-3l-2-4h-3"/>
+      </svg>
+      <div class="tow-fit-bar__setup-body">
+        <p class="tow-fit-bar__setup-text">Pick your tow vehicle once and we'll flag every trailer as safe, close, or over for you.</p>
+        <div class="tow-fit-bar__picker">
+          <app-vehicle-picker (applied)="editing = false" />
+          @if (editing && towCheck.vehicle()) {
+            <button type="button" class="tow-fit-bar__cancel" (click)="editing = false">Cancel</button>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="tow-fit-bar__ready">
+      <div class="tow-fit-bar__vehicle">
+        <svg class="tow-fit-bar__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2">
+          <path d="M14 16.94V12.5a1.5 1.5 0 00-1.5-1.5H3v6"/>
+          <path d="M3 11V6a1 1 0 011-1h6l4 4"/>
+          <circle cx="6.5" cy="17.5" r="1.8"/>
+          <circle cx="16.5" cy="17.5" r="1.8"/>
+          <path d="M18.3 17.5H21v-3l-2-4h-3"/>
+        </svg>
+        <span class="tow-fit-bar__vehicle-name">
+          {{ towCheck.vehicle()!.name }} <span class="tow-fit-bar__vehicle-cap">&middot; up to {{ towCheck.vehicle()!.capacity.toLocaleString() }} lbs</span>
+        </span>
+        <button type="button" class="tow-fit-bar__link" (click)="changeVehicle()">Change</button>
+        <button type="button" class="tow-fit-bar__link" (click)="clearVehicle()">Clear</button>
+      </div>
+
+      <button
+        type="button"
+        class="tow-fit-bar__toggle"
+        [class.is-active]="filterOnlyTowable"
+        [attr.aria-pressed]="filterOnlyTowable"
+        (click)="toggleFilter()">
+        @if (filterOnlyTowable) {
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        }
+        Only show trailers I can tow
+      </button>
+    </div>
+
+    @if (isFiltering) {
+      <p class="tow-fit-bar__count">
+        Showing {{ shownCount }} of {{ totalCount }} trailers your {{ towCheck.vehicle()!.name }} can tow &middot;
+        <button type="button" class="tow-fit-bar__link" (click)="showAll()">Show all</button>
+      </p>
+    }
+  }
+</div>

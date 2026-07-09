@@ -51,6 +51,12 @@
         </a>
       }
     </div>
+
+    <app-tow-fit-bar
+      [shownCount]="filteredTrailers.length"
+      [totalCount]="preTowFilterCount"
+      [filterOnlyTowable]="onlyTowable"
+      (filterOnlyTowableChange)="onTowFilterChange($event)" />
   </div>
 </section>
 
@@ -113,6 +119,11 @@
                 }
                 @if (trailer.gvwr) {
                   <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>
+                }
+                @if (towCheck.vehicle()) {
+                  <div class="inv-card__fit">
+                    <app-tow-fit-badge [trailer]="trailer" />
+                  </div>
                 }
                 <span class="inv-card__link">
                   View Details
@@ -232,6 +243,11 @@
                 }
                 @if (trailer.gvwr) {
                   <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>
+                }
+                @if (towCheck.vehicle()) {
+                  <div class="inv-card__fit">
+                    <app-tow-fit-badge [trailer]="trailer" />
+                  </div>
                 }
                 <span class="inv-card__link">
                   View Details

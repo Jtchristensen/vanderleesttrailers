@@ -35,6 +35,28 @@ describe('ChatApiService', () => {
     expect(body.messages).toEqual(msgs);
   });
 
+  it('includes the vehicle in the request body when provided', async () => {
+    const fetchSpy = jasmine.createSpy('fetch').and.resolveTo(
+      new Response(JSON.stringify({ reply: 'hi' }), { status: 200 }),
+    );
+    globalThis.fetch = fetchSpy;
+
+    await service.sendMessage('sess-1', [], { name: 'Ford F-150', capacity: 13500 });
+    const body = JSON.parse((fetchSpy.calls.mostRecent().args[1] as RequestInit).body as string);
+    expect(body.vehicle).toEqual({ name: 'Ford F-150', capacity: 13500 });
+  });
+
+  it('sends a null vehicle when none is provided', async () => {
+    const fetchSpy = jasmine.createSpy('fetch').and.resolveTo(
+      new Response(JSON.stringify({ reply: 'hi' }), { status: 200 }),
+    );
+    globalThis.fetch = fetchSpy;
+
+    await service.sendMessage('sess-1', []);
+    const body = JSON.parse((fetchSpy.calls.mostRecent().args[1] as RequestInit).body as string);
+    expect(body.vehicle).toBeNull();
+  });
+
   it('throws a "rate_limited" error on 429', async () => {
     globalThis.fetch = jasmine.createSpy('fetch').and.resolveTo(
       new Response('', { status: 429 }),

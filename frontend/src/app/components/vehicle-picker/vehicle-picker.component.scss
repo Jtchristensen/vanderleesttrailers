@@ -1,0 +1,63 @@
+.vehicle-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-start;
+
+  &__label {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  &__select,
+  &__input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.9rem;
+    color: var(--color-text);
+
+    /* 16px minimum prevents iOS Safari's zoom-on-focus */
+    @media (max-width: 640px) {
+      font-size: 1rem;
+    }
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color var(--duration-fast);
+
+    &:focus {
+      border-color: var(--color-accent);
+    }
+  }
+
+  &__select option {
+    background: var(--color-bg-elevated);
+  }
+
+  &__custom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    width: 100%;
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__apply {
+    padding: 0.55rem 1.4rem;
+    font-size: 0.85rem;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}

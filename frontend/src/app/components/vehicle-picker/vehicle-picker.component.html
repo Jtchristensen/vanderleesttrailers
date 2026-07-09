@@ -1,0 +1,35 @@
+<div class="vehicle-picker">
+  <label class="vehicle-picker__label" for="vehicle-picker-select">Your tow vehicle</label>
+  <select id="vehicle-picker-select" class="vehicle-picker__select" [(ngModel)]="selectedPreset">
+    <option value="" disabled>Select your vehicle...</option>
+    @for (preset of presets; track preset.name) {
+      <option [value]="preset.name">{{ preset.name }} (up to {{ preset.capacity.toLocaleString() }} lbs)</option>
+    }
+    <option value="custom">Other — enter towing capacity</option>
+  </select>
+
+  @if (selectedPreset === 'custom') {
+    <div class="vehicle-picker__custom">
+      <input
+        type="text"
+        class="vehicle-picker__input"
+        placeholder="Vehicle name (optional)"
+        maxlength="40"
+        [(ngModel)]="customName" />
+      <input
+        type="number"
+        class="vehicle-picker__input"
+        placeholder="Towing capacity (lbs)"
+        min="1"
+        [(ngModel)]="customCapacity" />
+    </div>
+  }
+
+  <button
+    type="button"
+    class="btn btn--primary vehicle-picker__apply"
+    [disabled]="!canApply"
+    (click)="apply()">
+    Check Fit
+  </button>
+</div>
