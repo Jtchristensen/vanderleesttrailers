@@ -1,3 +1,8 @@
+@keyframes barPanelIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .tow-fit-bar {
   padding: var(--space-lg);
   margin-bottom: var(--space-xl);
@@ -5,6 +10,13 @@
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-accent);
   border-radius: var(--radius-md);
+
+  &__setup,
+  &__ready {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: barPanelIn var(--duration-normal) var(--ease-out) both;
+    }
+  }
 
   &__setup {
     display: flex;
