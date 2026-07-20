@@ -257,3 +257,94 @@ describe('handler — tool-use loop', () => {
     assert.ok(call <= 4, `expected <=4 Bedrock calls, got ${call}`);
   });
 });
+
+describe('handler — parallel tool use (Claude Haiku)', () => {
+  it('answers every toolUse id when the assistant requests multiple tools at once', async () => {
+    // Reads (searchTrailers) and the getSiteContent lookup both hit DDB.
+    __setDdbClient({ send: async () => ({ Items: [] }) });
+
+    const bedrockCalls = [];
+    let call = 0;
+    __setBedrockClient({
+      send: async (cmd) => {
+        bedrockCalls.push(cmd);
+        call += 1;
+        if (call === 1) {
+          // Claude Haiku routinely emits multiple tool calls in one turn.
+          return {
+            stopReason: 'tool_use',
+            output: {
+              message: {
+                role: 'assistant',
+                content: [
+                  { toolUse: { toolUseId: 'u1', name: 'searchTrailers', input: { query: 'skidsteer' } } },
+                  { toolUse: { toolUseId: 'u2', name: 'getSiteContent', input: { type: 'FINANCING' } } },
+                ],
+              },
+            },
+          };
+        }
+        return {
+          stopReason: 'end_turn',
+          output: { message: { role: 'assistant', content: [{ text: 'Here you go.' }] } },
+        };
+      },
+    });
+
+    const res = await handler(apiEvent({
+      sessionId: 'abc',
+      messages: [{ role: 'user', content: 'haul my kubota skidsteer, and do you finance?' }],
+    }));
+
+    assert.equal(res.statusCode, 200);
+    assert.equal(JSON.parse(res.body).reply, 'Here you go.');
+    assert.equal(bedrockCalls.length, 2);
+
+    // Bedrock rejects the next Converse call unless EVERY toolUse id in the
+    // assistant turn has a matching toolResult in the following user message.
+    const secondMessages = bedrockCalls[1].input.messages;
+    const lastMsg = secondMessages[secondMessages.length - 1];
+    assert.equal(lastMsg.role, 'user');
+    const ids = lastMsg.content.map(c => c.toolResult?.toolUseId).sort();
+    assert.deepEqual(ids, ['u1', 'u2']);
+    // Each toolResult must carry a json payload (Bedrock requirement).
+    assert.ok(lastMsg.content.every(c => c.toolResult?.content?.[0]?.json !== undefined));
+  });
+
+  it('runs each requested tool once (one toolResult per toolUse id)', async () => {
+    const toolInputs = [];
+    __setDdbClient({
+      send: async (cmd) => {
+        toolInputs.push(cmd.constructor?.name || 'cmd');
+        return { Items: [] };
+      },
+    });
+
+    let call = 0;
+    __setBedrockClient({
+      send: async () => {
+        call += 1;
+        if (call === 1) {
+          return {
+            stopReason: 'tool_use',
+            output: {
+              message: {
+                role: 'assistant',
+                content: [
+                  { toolUse: { toolUseId: 'a', name: 'searchTrailers', input: {} } },
+                  { toolUse: { toolUseId: 'b', name: 'searchTrailers', input: { query: 'dump' } } },
+                ],
+              },
+            },
+          };
+        }
+        return { stopReason: 'end_turn', output: { message: { role: 'assistant', content: [{ text: 'done' }] } } };
+      },
+    });
+
+    const res = await handler(apiEvent({ sessionId: 'abc', messages: [{ role: 'user', content: 'two searches' }] }));
+    assert.equal(res.statusCode, 200);
+    // Both searchTrailers calls executed (each does one DDB Query).
+    assert.equal(toolInputs.length, 2);
+  });
+});
