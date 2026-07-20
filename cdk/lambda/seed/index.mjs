@@ -177,6 +177,18 @@ export const handler = async (event) => {
         },
       },
       {
+        pk: 'CAREERS', sk: '_',
+        data: {
+          enabled: true,
+          headline: "We're Hiring!",
+          subheadline: 'Join the VanderLeest Trailer Sales team',
+          body: "We're looking for hard-working people who care about doing right by our customers. Tell us a little about yourself and we'll be in touch.",
+          position: 'General Application',
+          ctaLabel: 'Apply Now',
+          email: 'vanderleesttrailers@gmail.com',
+        },
+      },
+      {
         pk: 'FAQ', sk: '_',
         data: [
           { question: 'How do I determine the best trailer for my needs?', answer: "Consider the size, weight capacity, and what you'll be hauling. We're happy to help you figure out the perfect trailer — give us a call or stop by!" },

@@ -4,11 +4,12 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ChatWidgetComponent } from './components/chat-widget/chat-widget.component';
+import { HiringPopupComponent } from './components/hiring-popup/hiring-popup.component';
 import { ContentService } from './services/content.service';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, HeaderComponent, FooterComponent, ChatWidgetComponent],
+    imports: [RouterOutlet, HeaderComponent, FooterComponent, ChatWidgetComponent, HiringPopupComponent],
     template: `
     <app-header />
     <main>
@@ -16,6 +17,7 @@ import { ContentService } from './services/content.service';
     </main>
     <app-footer />
     <app-chat-widget />
+    <app-hiring-popup />
   `,
     styles: [`
     main {
@@ -32,7 +34,7 @@ export class AppComponent implements OnInit {
     const types = [
       'SITE_INFO', 'PAGE_HOME', 'PAGE_ABOUT', 'SERVICES',
       'CUSTOM_TRAILERS', 'FINANCING', 'CONTACT', 'FAQ',
-      'REVIEWS', 'BRANDS', 'CATEGORIES', 'IMAGES',
+      'REVIEWS', 'BRANDS', 'CATEGORIES', 'IMAGES', 'CAREERS',
     ];
     types.forEach(type => this.contentService.getContent(type));
     this.contentService.getTrailers();

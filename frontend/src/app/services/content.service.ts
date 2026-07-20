@@ -29,6 +29,7 @@ export class ContentService {
     BRANDS: staticContent.TRAILER_BRANDS,
     CATEGORIES: staticContent.TRAILER_CATEGORIES,
     IMAGES: staticContent.IMAGES,
+    CAREERS: staticContent.CAREERS_CONTENT,
   };
 
   async getContent<T = any>(type: string): Promise<T> {

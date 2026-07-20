@@ -1,0 +1,73 @@
+@if (enabled) {
+  @if (!open) {
+    <button type="button" class="hiring-fab" (click)="openModal()" aria-haspopup="dialog">
+      <span class="hiring-fab__dot" aria-hidden="true"></span>
+      {{ content.ctaLabel || "We're Hiring" }}
+    </button>
+  }
+
+  @if (open) {
+    <div class="hiring-overlay" (click)="dismiss()">
+      <div class="hiring-modal" role="dialog" aria-modal="true" aria-labelledby="hiring-headline" (click)="$event.stopPropagation()">
+        <button type="button" class="hiring-modal__close" (click)="dismiss()" aria-label="Close">&times;</button>
+
+        @if (submitted) {
+          <div class="hiring-modal__success">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-success, #0f8a3c)" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="16 8 10 16 7 13" />
+            </svg>
+            <h2 id="hiring-headline">Thanks{{ form.name ? ', ' + form.name : '' }}!</h2>
+            <p>We've received your application and will be in touch soon.</p>
+            <button class="btn btn--primary" (click)="open = false">Close</button>
+          </div>
+        } @else {
+          <div class="hiring-modal__header">
+            <span class="hiring-modal__badge">Now Hiring</span>
+            <h2 id="hiring-headline">{{ content.headline }}</h2>
+            @if (content.subheadline) {
+              <p class="hiring-modal__sub">{{ content.subheadline }}</p>
+            }
+          </div>
+
+          @if (content.body) {
+            <p class="hiring-modal__body">{{ content.body }}</p>
+          }
+
+          <form (ngSubmit)="submit()" #applyForm="ngForm">
+            <div class="hiring-field">
+              <label for="hp-name">Name *</label>
+              <input id="hp-name" name="name" [(ngModel)]="form.name" required placeholder="Your full name" />
+            </div>
+            <div class="hiring-field">
+              <label for="hp-email">Email *</label>
+              <input id="hp-email" type="email" name="email" [(ngModel)]="form.email" required placeholder="you@example.com" />
+            </div>
+            <div class="hiring-field">
+              <label for="hp-phone">Phone *</label>
+              <input id="hp-phone" type="tel" name="phone" [(ngModel)]="form.phone" required placeholder="(555) 123-4567" />
+            </div>
+            <div class="hiring-field">
+              <label for="hp-message">Anything you'd like us to know?</label>
+              <textarea id="hp-message" name="message" [(ngModel)]="form.message" rows="3" placeholder="Experience, availability, etc."></textarea>
+            </div>
+
+            <!-- Honeypot: hidden from humans; a filled value silently drops the submission server-side -->
+            <input class="hiring-hp" type="text" name="company" [(ngModel)]="form.company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            @if (error) {
+              <p class="hiring-error">
+                Something went wrong. Please email us directly at
+                <a [href]="'mailto:' + (content.email || 'vanderleesttrailers@gmail.com')">{{ content.email || 'vanderleesttrailers@gmail.com' }}</a>.
+              </p>
+            }
+
+            <button type="submit" class="btn btn--primary hiring-submit" [disabled]="submitting || applyForm.invalid">
+              {{ submitting ? 'Sending…' : (content.ctaLabel || 'Apply Now') }}
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+  }
+}

@@ -23,6 +23,7 @@ export class AdminDashboardComponent {
     { label: 'Reviews', description: 'Customer testimonials', route: '/admin/edit/REVIEWS', icon: '&#9734;' },
     { label: 'Brands', description: 'Trailer brand names', route: '/admin/edit/BRANDS', icon: '&#9670;' },
     { label: 'Categories', description: 'Inventory category names and images', route: '/admin/edit/CATEGORIES', icon: '&#9776;' },
+    { label: 'Careers / Hiring', description: 'Hiring popup: headline, text, on/off switch', route: '/admin/edit/CAREERS', icon: '&#128188;' },
   ];
 
   constructor(private auth: AuthService, private router: Router) {}

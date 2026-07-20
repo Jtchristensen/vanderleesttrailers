@@ -388,3 +388,13 @@ export const IMAGES = {
     '/uploads/site/reviews/review-3.jpg',
   ],
 };
+
+export const CAREERS_CONTENT = {
+  enabled: true,
+  headline: "We're Hiring!",
+  subheadline: 'Join the VanderLeest Trailer Sales team',
+  body: "We're looking for hard-working people who care about doing right by our customers. Tell us a little about yourself and we'll be in touch.",
+  position: 'General Application',
+  ctaLabel: 'Apply Now',
+  email: 'vanderleesttrailers@gmail.com',
+};
