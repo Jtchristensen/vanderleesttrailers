@@ -35,6 +35,7 @@ export class ContentEditorComponent implements OnInit {
     BRANDS: 'Brands',
     CATEGORIES: 'Categories',
     IMAGES: 'Images',
+    CAREERS: 'Careers / Hiring',
   };
 
   constructor(
@@ -78,6 +79,8 @@ export class ContentEditorComponent implements OnInit {
           value: val,
           type: typeof val === 'number' ? 'number' : (val as string).length > 100 ? 'textarea' : 'text',
         });
+      } else if (typeof val === 'boolean') {
+        fields.push({ path, label: path, value: val, type: 'boolean' });
       }
     }
     return fields;

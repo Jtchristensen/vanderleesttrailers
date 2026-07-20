@@ -30,6 +30,11 @@
                 <textarea [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" rows="3"></textarea>
               } @else if (field.type === 'number') {
                 <input type="number" [ngModel]="field.value" (ngModelChange)="updateField(field.path, +$event)" />
+              } @else if (field.type === 'boolean') {
+                <label class="admin-checkbox">
+                  <input type="checkbox" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
+                  <span>{{ field.value ? 'On' : 'Off' }}</span>
+                </label>
               } @else {
                 <input type="text" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
               }
@@ -48,6 +53,11 @@
                 <label>{{ field.path }}</label>
                 @if (field.type === 'textarea') {
                   <textarea [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" rows="3"></textarea>
+                } @else if (field.type === 'boolean') {
+                  <label class="admin-checkbox">
+                    <input type="checkbox" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
+                    <span>{{ field.value ? 'On' : 'Off' }}</span>
+                  </label>
                 } @else {
                   <input type="text" [ngModel]="field.value" (ngModelChange)="updateField(field.path, $event)" />
                 }
