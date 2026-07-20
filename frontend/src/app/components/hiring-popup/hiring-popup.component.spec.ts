@@ -35,7 +35,13 @@ async function ready(fixture: ComponentFixture<HiringPopupComponent>) {
 }
 
 describe('HiringPopupComponent', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    // Suppress the 6s auto-open timer: while it is pending, fixture.whenStable()
+    // never settles (Angular waits on all zone macrotasks). These tests drive
+    // the modal explicitly, so we opt out of the timed auto-open.
+    localStorage.setItem('vlt-hiring-dismissed', '1');
+  });
 
   it('renders the reopen button when enabled', async () => {
     const { fixture } = setup({ enabled: true, headline: 'Hi', ctaLabel: 'Apply' });
