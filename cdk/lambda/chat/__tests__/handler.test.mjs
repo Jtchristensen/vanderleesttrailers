@@ -347,4 +347,25 @@ describe('handler — parallel tool use (Claude Haiku)', () => {
     // Both searchTrailers calls executed (each does one DDB Query).
     assert.equal(toolInputs.length, 2);
   });
+
+  it('returns immediately (no loop) when stopReason=tool_use but no toolUse block is present', async () => {
+    __setDdbClient({ send: async () => ({ Items: [] }) });
+    let calls = 0;
+    __setBedrockClient({
+      send: async () => {
+        calls += 1;
+        // Malformed: model signalled tool_use but emitted only text, no toolUse.
+        return {
+          stopReason: 'tool_use',
+          output: { message: { role: 'assistant', content: [{ text: 'here is your answer' }] } },
+        };
+      },
+    });
+
+    const res = await handler(apiEvent({ sessionId: 'abc', messages: [{ role: 'user', content: 'x' }] }));
+    assert.equal(res.statusCode, 200);
+    // The guard bails out on the first hop instead of looping to MAX_TOOL_HOPS.
+    assert.equal(calls, 1);
+    assert.equal(JSON.parse(res.body).reply, 'here is your answer');
+  });
 });

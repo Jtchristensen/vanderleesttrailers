@@ -144,8 +144,11 @@ async function submitLead(input, ctx) {
   const now = new Date().toISOString();
   const leadId = randomId();
   const item = {
+    // leadId keeps the sort key unique even when the model fires two submitLead
+    // calls in the same turn (parallel tool use) at the same millisecond —
+    // without it the second Put would silently clobber the first.
     pk: 'LEAD',
-    sk: `${now}#${ctx.sessionId}`,
+    sk: `${now}#${ctx.sessionId}#${leadId}`,
     leadId,
     name,
     phone,

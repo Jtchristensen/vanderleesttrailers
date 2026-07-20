@@ -150,11 +150,16 @@ export const handler = async (event) => {
         let result;
         try {
           result = await runTool(tu, ctx);
-          console.log(`[CHAT] tool=${tu.name} result (first 300 chars): ${JSON.stringify(result).slice(0, 300)}`);
         } catch (err) {
           console.error(`[CHAT] Tool "${tu?.name}" failed:`, err.message);
           result = { error: err.message };
         }
+        // Logging is best-effort and must never affect the result — isolate the
+        // (rare) chance that stringifying a result throws so it can't turn a
+        // good tool result into an error.
+        try {
+          console.log(`[CHAT] tool=${tu.name} result (first 300 chars): ${JSON.stringify(result).slice(0, 300)}`);
+        } catch { /* ignore log serialization issues */ }
         return {
           toolResult: {
             toolUseId: tu.toolUseId,
