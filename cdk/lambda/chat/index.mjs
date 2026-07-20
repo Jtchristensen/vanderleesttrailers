@@ -47,10 +47,6 @@ function extractText(res) {
   return raw.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
 }
 
-function findToolUse(message) {
-  return message?.content?.find(p => p.toolUse)?.toolUse;
-}
-
 /** Builds an extra system block telling the model the shopper's saved tow
  * vehicle, so it can factor towing fit into recommendations from
  * searchTrailers results (which already include each trailer's gvwr) without
@@ -129,31 +125,50 @@ export const handler = async (event) => {
         return { statusCode: 200, headers, body: JSON.stringify({ reply }) };
       }
 
-      const toolUse = findToolUse(res.output?.message);
-      console.log(`[CHAT] tool=${toolUse?.name} input=${JSON.stringify(toolUse?.input)}`);
-      let toolResult;
-      try {
-        toolResult = await runTool(toolUse, ctx);
-        const summary = JSON.stringify(toolResult).slice(0, 300);
-        console.log(`[CHAT] tool=${toolUse?.name} result (first 300 chars): ${summary}`);
-      } catch (err) {
-        console.error(`[CHAT] Tool "${toolUse?.name}" failed:`, err.message);
-        toolResult = { error: err.message };
+      // Claude Haiku uses parallel tool calls: one assistant turn can request
+      // several tools at once. Bedrock's Converse API requires that EVERY
+      // toolUse id in that turn have a matching toolResult in the immediately
+      // following user message — answering only the first (as we did for Nova
+      // Micro) makes the next Converse call fail with "Expected toolResult
+      // blocks…". So run all of them and return one toolResult per id.
+      const toolUses = (res.output?.message?.content || [])
+        .map(p => p.toolUse)
+        .filter(Boolean);
+      console.log(`[CHAT] tools requested (${toolUses.length}): ${toolUses.map(t => t.name).join(', ')}`);
+
+      if (toolUses.length === 0) {
+        // stopReason was tool_use but no toolUse block was present — bail out
+        // gracefully rather than sending an empty (invalid) user turn.
+        const reply = extractText(res) || "Sorry — I didn't catch that. Could you try again?";
+        return { statusCode: 200, headers, body: JSON.stringify({ reply }) };
       }
 
-      convo = [
-        ...convo,
-        res.output.message,
-        {
-          role: 'user',
-          content: [{
-            toolResult: {
-              toolUseId: toolUse.toolUseId,
-              content: [{ json: toolResult }],
-            },
-          }],
-        },
-      ];
+      // Tools are independent, so run them concurrently. Each id gets exactly
+      // one toolResult; a tool failure becomes an { error } payload so the
+      // model can recover instead of the whole request 500ing.
+      const toolResults = await Promise.all(toolUses.map(async (tu) => {
+        let result;
+        try {
+          result = await runTool(tu, ctx);
+        } catch (err) {
+          console.error(`[CHAT] Tool "${tu?.name}" failed:`, err.message);
+          result = { error: err.message };
+        }
+        // Logging is best-effort and must never affect the result — isolate the
+        // (rare) chance that stringifying a result throws so it can't turn a
+        // good tool result into an error.
+        try {
+          console.log(`[CHAT] tool=${tu.name} result (first 300 chars): ${JSON.stringify(result).slice(0, 300)}`);
+        } catch { /* ignore log serialization issues */ }
+        return {
+          toolResult: {
+            toolUseId: tu.toolUseId,
+            content: [{ json: result }],
+          },
+        };
+      }));
+
+      convo = [...convo, res.output.message, { role: 'user', content: toolResults }];
     }
   } catch (err) {
     console.error('[CHAT] Fatal error:', err.name, err.message);

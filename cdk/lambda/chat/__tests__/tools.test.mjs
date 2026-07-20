@@ -212,7 +212,10 @@ describe('submitLead', () => {
     assert.equal(writes.length, 1);
     const item = writes[0].input.Item;
     assert.equal(item.pk, 'LEAD');
-    assert.match(item.sk, /^\d{4}-\d{2}-\d{2}T.+#session-abc$/);
+    // sk = <iso timestamp>#<sessionId>#<leadId> — the leadId suffix keeps it
+    // unique when two submitLead calls land in the same turn/millisecond.
+    assert.match(item.sk, /^\d{4}-\d{2}-\d{2}T.+#session-abc#.+$/);
+    assert.ok(item.sk.endsWith(`#${res.leadId}`), `sk should end with leadId: ${item.sk}`);
     assert.equal(item.name, 'John Doe');
     assert.equal(item.phone, '920-555-0134');
     assert.equal(item.sessionId, 'session-abc');
