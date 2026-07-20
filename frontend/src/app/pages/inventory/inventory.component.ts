@@ -111,6 +111,10 @@ export class InventoryComponent implements OnInit {
       const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
       const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
       if (aOrder !== bOrder) return aOrder - bOrder;
+      // Default order mirrors the source site: newest published first.
+      const aDate = a.publishedAt || '';
+      const bDate = b.publishedAt || '';
+      if (aDate !== bDate) return bDate.localeCompare(aDate);
       return (a.name || '').localeCompare(b.name || '');
     });
 
