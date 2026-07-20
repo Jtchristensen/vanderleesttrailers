@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 const client = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(client);
@@ -13,17 +13,6 @@ export const handler = async (event) => {
   }
 
   try {
-    // Check if table already has data
-    const existing = await ddb.send(new ScanCommand({
-      TableName: TABLE,
-      Limit: 1,
-    }));
-
-    if (existing.Items && existing.Items.length > 0) {
-      console.log('Table already has data, skipping seed');
-      return { Status: 'SUCCESS', PhysicalResourceId: 'seed-data' };
-    }
-
     // Seed all content
     const seedItems = [
       {
@@ -246,11 +235,30 @@ export const handler = async (event) => {
       },
     ];
 
+    // Conditionally insert each item: only write rows that don't already
+    // exist. This lets newly-added seed rows (e.g. CAREERS) land on an
+    // already-populated table on a later deploy, without ever clobbering
+    // content Matt has edited through the admin CMS.
+    let inserted = 0;
+    let skipped = 0;
     for (const item of seedItems) {
-      await ddb.send(new PutCommand({ TableName: TABLE, Item: item }));
+      try {
+        await ddb.send(new PutCommand({
+          TableName: TABLE,
+          Item: item,
+          ConditionExpression: 'attribute_not_exists(pk)',
+        }));
+        inserted++;
+      } catch (err) {
+        if (err.name === 'ConditionalCheckFailedException') {
+          skipped++;
+        } else {
+          throw err;
+        }
+      }
     }
 
-    console.log(`Seeded ${seedItems.length} items`);
+    console.log(`Seed complete: ${inserted} inserted, ${skipped} already present`);
     return { Status: 'SUCCESS', PhysicalResourceId: 'seed-data' };
   } catch (err) {
     console.error('Seed error:', err);

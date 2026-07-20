@@ -29,8 +29,15 @@ export const handler = async (event) => {
         ExpressionAttributeValues: { ':pk': type },
       }));
 
-      // If single item (sk = '_'), return the item directly
+      // Unknown / unseeded content type — return 404 so the client falls back
+      // to its bundled static content instead of receiving an empty array and
+      // rendering against a blank object (which silently disables UI like the
+      // hiring popup).
       const items = result.Items || [];
+      if (items.length === 0) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
+      }
+      // If single item (sk = '_'), return the item directly
       if (items.length === 1 && items[0].sk === '_') {
         return { statusCode: 200, headers, body: JSON.stringify(items[0].data) };
       }
