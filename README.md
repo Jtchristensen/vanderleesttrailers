@@ -305,6 +305,19 @@ Everything deploys as a **single CDK stack** (`VanderLeestTrailersStack`).
 - If empty, writes all initial content from the original website
 - Skips if data already exists (safe to redeploy)
 
+**`apply`** (public, no auth) — job applications
+- `POST /api/apply` — Validates a "We're Hiring" popup submission, records it to
+  the leads table (best-effort), and emails it to the shop via Amazon SES with
+  the applicant set as `Reply-To`. A hidden honeypot field silently traps bots.
+- **One-time setup:** in the SES console for the stack's region, verify the
+  identity `vanderleesttrailers@gmail.com` (click the link Amazon emails).
+  Because the message is sent from and to that same verified address, this works
+  in the SES sandbox with **no** production-access request. The send-to address
+  is the Lambda env var `APPLY_TO_EMAIL`. Until the identity is verified,
+  `/api/apply` returns 502 and the popup shows an "email us directly" fallback.
+- Popup copy and an on/off switch are editable in the admin panel under
+  **Careers / Hiring** (the `CAREERS` content type).
+
 ---
 
 ## Content Data Model
@@ -324,7 +337,9 @@ Single DynamoDB table: `VanderLeestContent`
 | `REVIEWS` | `_` | Array of review objects |
 | `BRANDS` | `_` | Array of brand objects |
 | `CATEGORIES` | `_` | Array of category objects |
+| `CAREERS` | `_` | Hiring popup content (enabled flag, headline, body, CTA, email) |
 | `IMAGES` | `_` | Hero/icon/logo image URLs |
+| `APPLICATION` | `{timestamp}#{rand}` | Submitted job applications (in the separate `VanderLeestLeads` table) |
 | `TRAILER` | `{slug}` | Individual trailer (name, category, brand, price, images, etc.) |
 
 ---

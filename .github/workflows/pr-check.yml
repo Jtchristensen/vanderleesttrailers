@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Lambda unit tests
         working-directory: cdk
-        run: node --test lambda/chat/__tests__/*.test.mjs
+        run: node --test lambda/*/__tests__/*.test.mjs
 
   build:
     runs-on: ubuntu-latest
