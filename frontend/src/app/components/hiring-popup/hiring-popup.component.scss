@@ -1,0 +1,130 @@
+:host { display: contents; } // the host box is inert; children position themselves fixed
+
+.hiring-fab {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 8900; // below the chat launcher (9000)
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-primary, #0f8a3c);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(0, 0, 0, 0.38); }
+  &__dot {
+    width: 9px; height: 9px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    animation: hiring-pulse 2s infinite;
+  }
+}
+
+@keyframes hiring-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.hiring-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9500; // above the chat panel
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  animation: hiring-fade 0.2s ease;
+}
+
+.hiring-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--color-surface, #12171e);
+  color: var(--color-text, #eef0f2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 28px 26px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: hiring-rise 0.25s ease;
+
+  &__close {
+    position: absolute; top: 12px; right: 14px;
+    background: none; border: none; color: inherit;
+    font-size: 1.6rem; line-height: 1; cursor: pointer; opacity: 0.7;
+    &:hover { opacity: 1; }
+  }
+
+  &__badge {
+    display: inline-block;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--color-primary, #0f8a3c);
+    background: rgba(15, 138, 60, 0.12);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+  }
+
+  &__header h2 { margin: 0 0 4px; font-size: 1.5rem; }
+  &__sub { margin: 0 0 8px; opacity: 0.85; }
+  &__body { margin: 0 0 18px; opacity: 0.8; font-size: 0.95rem; line-height: 1.5; }
+
+  &__success { text-align: center; padding: 10px 0; }
+  &__success h2 { margin: 12px 0 6px; }
+  &__success p { opacity: 0.8; margin-bottom: 18px; }
+}
+
+.hiring-field {
+  margin-bottom: 14px;
+  display: flex; flex-direction: column; gap: 6px;
+
+  label { font-size: 0.85rem; font-weight: 600; opacity: 0.9; }
+  input, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: inherit;
+    font: inherit;
+    &:focus { outline: none; border-color: var(--color-primary, #0f8a3c); }
+  }
+}
+
+// Honeypot — off-screen, never shown, not announced.
+.hiring-hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hiring-error {
+  color: var(--color-error, #e5534b);
+  font-size: 0.88rem;
+  margin: 4px 0 12px;
+  a { color: inherit; text-decoration: underline; }
+}
+
+.hiring-submit { width: 100%; margin-top: 4px; justify-content: center; }
+
+@keyframes hiring-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hiring-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 640px) {
+  .hiring-fab { left: 12px; bottom: 12px; font-size: 0.82rem; padding: 10px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hiring-overlay, .hiring-modal, .hiring-fab, .hiring-fab__dot { animation: none; transition: none; }
+}
