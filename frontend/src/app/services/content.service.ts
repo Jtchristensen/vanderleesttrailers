@@ -15,6 +15,13 @@ export class ContentService {
     return (ContentService.fallbackMap[type] ?? {}) as T;
   }
 
+  /** True for an empty array or an object with no own keys — the shapes the
+   * content API returns for a missing content row. */
+  private static isBlank(data: any): boolean {
+    if (Array.isArray(data)) return data.length === 0;
+    return !data || (typeof data === 'object' && Object.keys(data).length === 0);
+  }
+
   /** Static fallback map — used when API is unreachable (local dev) */
   private static fallbackMap: Record<string, any> = {
     SITE_INFO: staticContent.SITE_INFO,
@@ -42,6 +49,13 @@ export class ContentService {
       const res = await fetch(`${this.apiUrl}/content/${type}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+      // A missing/unseeded row can come back as [] or {} — treat that as
+      // "no data" and fall back to the bundled static content, so components
+      // never render against a blank object (which silently disables UI like
+      // the hiring popup).
+      if (ContentService.isBlank(data) && ContentService.fallbackMap[type]) {
+        return ContentService.fallbackMap[type] as T;
+      }
       this.cache.set(type, { data, timestamp: Date.now() });
       return data as T;
     } catch {

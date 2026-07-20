@@ -67,6 +67,29 @@ describe('ContentService', () => {
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
 
+    it('falls back to static content when the API returns an empty array (missing row)', async () => {
+      globalThis.fetch = jasmine.createSpy('fetch').and.resolveTo(new Response('[]', { status: 200 }));
+      const result = await service.getContent('CAREERS');
+      expect(result).toBe(staticContent.CAREERS_CONTENT);
+    });
+
+    it('falls back to static content when the API returns an empty object', async () => {
+      globalThis.fetch = jasmine.createSpy('fetch').and.resolveTo(new Response('{}', { status: 200 }));
+      const result = await service.getContent('SITE_INFO');
+      expect(result).toBe(staticContent.SITE_INFO);
+    });
+
+    it('does not cache a blank response, so a later good response is used', async () => {
+      const fetchSpy = jasmine.createSpy('fetch')
+        .and.resolveTo(new Response('[]', { status: 200 }));
+      globalThis.fetch = fetchSpy;
+      await service.getContent('CAREERS');
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      // second call must hit the network again rather than serve a cached blank
+      await service.getContent('CAREERS');
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+    });
+
     it('throws for an unknown type when the API fails and no fallback exists', async () => {
       globalThis.fetch = jasmine.createSpy('fetch').and.rejectWith(new Error('down'));
       await expectAsync(service.getContent('NO_SUCH_TYPE')).toBeRejected();
