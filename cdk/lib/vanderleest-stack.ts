@@ -219,6 +219,31 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       })
     );
 
+    // Apply Lambda — emails job applications to the shop via SES and records
+    // them to the leads table as a durable backup. The send-to address is a
+    // server-side env var so a CMS mis-edit can't redirect real applications.
+    const applyLambda = new lambda.Function(this, "ApplyApi", {
+      runtime: lambda.Runtime.NODEJS_24_X,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/apply")),
+      environment: {
+        LEADS_TABLE: leadsTable.tableName,
+        APPLY_TO_EMAIL: "vanderleesttrailers@gmail.com",
+        APPLY_FROM_EMAIL: "vanderleesttrailers@gmail.com",
+      },
+      timeout: cdk.Duration.seconds(15),
+      memorySize: 256,
+    });
+    leadsTable.grantWriteData(applyLambda);
+    applyLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["ses:SendEmail", "ses:SendRawEmail"],
+        resources: [
+          `arn:aws:ses:${this.region}:${this.account}:identity/*`,
+        ],
+      })
+    );
+
     // ============================================================
     // API GATEWAY
     // ============================================================
@@ -250,6 +275,10 @@ export class VanderLeestTrailersStack extends cdk.Stack {
           "/api/chat/POST": {
             throttlingRateLimit: 5,
             throttlingBurstLimit: 10,
+          },
+          "/api/apply/POST": {
+            throttlingRateLimit: 2,
+            throttlingBurstLimit: 5,
           },
         },
       },
@@ -298,6 +327,12 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     );
     const reviewsResource = apiResource.addResource("reviews");
     reviewsResource.addMethod("GET", reviewsIntegration);
+
+    // Apply route (public) — job applications. Served by the existing /api/*
+    // CloudFront catch-all (uncached POST), so no distribution change needed.
+    const applyIntegration = new apigateway.LambdaIntegration(applyLambda);
+    const applyResource = apiResource.addResource("apply");
+    applyResource.addMethod("POST", applyIntegration);
 
     // Admin routes (Cognito-protected)
     const adminResource = apiResource.addResource("admin");
