@@ -62,10 +62,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.images = images;
     this.loaded = true;
 
-    // Fetched separately so a slow/uncached trailers call can't delay the
-    // rest of the page's (cached) content from rendering.
-    this.contentService.getTrailers().then((trailers) => {
-      this.trailerCount = trailers.length || null;
-    });
+    // Awaited after the above (rather than folded into that Promise.all) so
+    // this slow/uncached call can't delay the rest of the page's cached
+    // content from rendering.
+    const trailers = await this.contentService.getTrailers();
+    this.trailerCount = trailers.length || null;
   }
 }
