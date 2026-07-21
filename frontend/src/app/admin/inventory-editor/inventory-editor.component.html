@@ -71,6 +71,9 @@
                 }
                 <td>
                   <strong style="color: var(--color-text)">{{ trailer.name }}</strong>
+                  @if (trailer.hidden) {
+                    <span style="margin-left: var(--space-xs); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; padding: 2px 6px; border-radius: 4px; background: var(--color-border, #e2e2e2); color: var(--color-text-muted, #666);">Hidden</span>
+                  }
                 </td>
                 <td>{{ trailer.category }}</td>
                 <td>{{ trailer.brand }}</td>
@@ -78,6 +81,7 @@
                 <td>
                   <div class="admin-actions">
                     <a [routerLink]="'/admin/inventory/edit/' + trailer.slug" class="btn btn--outline btn--sm">Edit</a>
+                    <button class="btn btn--outline btn--sm" (click)="toggleHidden(trailer)">{{ trailer.hidden ? 'Show' : 'Hide' }}</button>
                     <button class="btn btn--danger btn--sm" (click)="deleteTrailer(trailer.slug, trailer.name)">Delete</button>
                   </div>
                 </td>

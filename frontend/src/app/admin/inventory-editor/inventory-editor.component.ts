@@ -134,6 +134,17 @@ export class InventoryEditorComponent implements OnInit {
     }
   }
 
+  async toggleHidden(trailer: any) {
+    const next = !trailer.hidden;
+    try {
+      await this.adminApi.updateTrailer(trailer.slug, { ...trailer, hidden: next });
+      trailer.hidden = next;
+      this.showToast(next ? 'Hidden from public site' : 'Now visible on site', false);
+    } catch {
+      this.showToast('Failed to update visibility', true);
+    }
+  }
+
   private showToast(message: string, isError: boolean) {
     this.toast = message;
     this.toastError = isError;
