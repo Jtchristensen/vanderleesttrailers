@@ -102,10 +102,17 @@ export class ContentService {
   }
 
   async getTrailers(): Promise<any[]> {
+    const cached = this.cache.get('TRAILERS');
+    if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
+      return cached.data as any[];
+    }
+
     try {
       const res = await fetch(`${this.apiUrl}/trailers`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
+      const data = await res.json();
+      this.cache.set('TRAILERS', { data, timestamp: Date.now() });
+      return data;
     } catch {
       return []; // No static trailer fallback
     }

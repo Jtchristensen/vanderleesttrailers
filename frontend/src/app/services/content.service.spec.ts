@@ -102,5 +102,31 @@ describe('ContentService', () => {
       const result = await service.getTrailers();
       expect(result).toEqual([]);
     });
+
+    it('returns an empty array when the API responds with malformed JSON', async () => {
+      globalThis.fetch = jasmine.createSpy('fetch').and.resolveTo(new Response('not json', { status: 200 }));
+      const result = await service.getTrailers();
+      expect(result).toEqual([]);
+    });
+
+    it('returns API data on success', async () => {
+      const apiPayload = [{ slug: 'a' }, { slug: 'b' }];
+      globalThis.fetch = jasmine.createSpy('fetch').and.resolveTo(
+        new Response(JSON.stringify(apiPayload), { status: 200 }),
+      );
+      const result = await service.getTrailers();
+      expect(result).toEqual(apiPayload);
+    });
+
+    it('caches successful responses so repeat calls skip the network', async () => {
+      const apiPayload = [{ slug: 'a' }];
+      const fetchSpy = jasmine.createSpy('fetch').and.resolveTo(
+        new Response(JSON.stringify(apiPayload), { status: 200 }),
+      );
+      globalThis.fetch = fetchSpy;
+      await service.getTrailers();
+      await service.getTrailers();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
   });
 });
