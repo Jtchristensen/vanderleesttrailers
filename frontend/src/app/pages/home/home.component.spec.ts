@@ -34,7 +34,9 @@ describe('HomeComponent trailer count', () => {
       'getGoogleReviews',
       'getTrailers',
     ]);
-    contentServiceStub.getContent.and.resolveTo({});
+    contentServiceStub.getContent.and.callFake((type: string) =>
+      Promise.resolve(ContentService.getContentSync(type)),
+    );
     contentServiceStub.getGoogleReviews.and.resolveTo({
       rating: 5,
       userRatingCount: null,
