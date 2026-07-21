@@ -25,11 +25,36 @@ describe('HomeComponent', () => {
     expect(Array.isArray(c.services)).toBeTrue();
     expect(Array.isArray(c.reviews)).toBeTrue();
   });
+});
+
+describe('HomeComponent trailer count', () => {
+  function createFixture(trailers: any[]): ComponentFixture<HomeComponent> {
+    const contentServiceStub = jasmine.createSpyObj<ContentService>('ContentService', [
+      'getContent',
+      'getGoogleReviews',
+      'getTrailers',
+    ]);
+    contentServiceStub.getContent.and.resolveTo({});
+    contentServiceStub.getGoogleReviews.and.resolveTo({
+      rating: 5,
+      userRatingCount: null,
+      googleMapsUri: '',
+      openNow: null,
+      hours: [],
+      links: { directions: '', writeReview: '', reviews: '', photos: '' },
+      reviews: [],
+    });
+    contentServiceStub.getTrailers.and.resolveTo(trailers);
+
+    TestBed.configureTestingModule({
+      imports: [HomeComponent],
+      providers: [provideRouter([]), { provide: ContentService, useValue: contentServiceStub }],
+    });
+    return TestBed.createComponent(HomeComponent);
+  }
 
   it('sets trailerCount to the live inventory length once loaded', async () => {
-    const contentService = TestBed.inject(ContentService);
-    spyOn(contentService, 'getTrailers').and.resolveTo([{}, {}, {}]);
-
+    const fixture = createFixture([{}, {}, {}]);
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -39,9 +64,7 @@ describe('HomeComponent', () => {
   });
 
   it('falls back to "100+" when the trailer fetch resolves empty', async () => {
-    const contentService = TestBed.inject(ContentService);
-    spyOn(contentService, 'getTrailers').and.resolveTo([]);
-
+    const fixture = createFixture([]);
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
