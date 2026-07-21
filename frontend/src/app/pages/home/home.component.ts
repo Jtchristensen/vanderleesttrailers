@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   reviewCount: number | null = null;
   site: any = ContentService.getContentSync('SITE_INFO');
   images: any = ContentService.getContentSync('IMAGES');
+  trailerCount: number | null = null;
   loaded = false;
 
   constructor(private contentService: ContentService) {}
@@ -60,5 +61,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.reviewCount = google.userRatingCount;
     this.images = images;
     this.loaded = true;
+
+    // Awaited after the above (rather than folded into that Promise.all) so
+    // this slow/uncached call can't delay the rest of the page's cached
+    // content from rendering.
+    const trailers = await this.contentService.getTrailers();
+    this.trailerCount = trailers.length || null;
   }
 }
