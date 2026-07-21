@@ -60,7 +60,12 @@ export const handler = async (event) => {
         statusCode: 200,
         headers,
         body: JSON.stringify(
-          (result.Items?.map(i => i.data) || []).sort((a, b) => {
+          (result.Items?.map(i => i.data) || [])
+            // Hide units flagged as not-yet-photographed (only manufacturer stock
+            // imagery). They stay in DynamoDB and remain visible in the admin so the
+            // dealer can un-hide once they add their own photos.
+            .filter(t => !t.hidden)
+            .sort((a, b) => {
             const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
             const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
             if (aOrder !== bOrder) return aOrder - bOrder;
@@ -82,7 +87,7 @@ export const handler = async (event) => {
         Key: { pk: 'TRAILER', sk: slug },
       }));
 
-      if (!result.Item) {
+      if (!result.Item || result.Item.data?.hidden) {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Trailer not found' }) };
       }
       return { statusCode: 200, headers, body: JSON.stringify(result.Item.data) };
