@@ -244,6 +244,32 @@ export class VanderLeestTrailersStack extends cdk.Stack {
       })
     );
 
+    // Contact Lambda — emails contact-form messages to the shop via SES and
+    // records them to the leads table as a durable backup. The send-to
+    // address is a server-side env var so a CMS mis-edit can't redirect
+    // real messages.
+    const contactLambda = new lambda.Function(this, "ContactApi", {
+      runtime: lambda.Runtime.NODEJS_24_X,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/contact")),
+      environment: {
+        LEADS_TABLE: leadsTable.tableName,
+        CONTACT_TO_EMAIL: "vanderleesttrailers@gmail.com",
+        CONTACT_FROM_EMAIL: "vanderleesttrailers@gmail.com",
+      },
+      timeout: cdk.Duration.seconds(15),
+      memorySize: 256,
+    });
+    leadsTable.grantWriteData(contactLambda);
+    contactLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["ses:SendEmail", "ses:SendRawEmail"],
+        resources: [
+          `arn:aws:ses:${this.region}:${this.account}:identity/*`,
+        ],
+      })
+    );
+
     // ============================================================
     // API GATEWAY
     // ============================================================
@@ -277,6 +303,10 @@ export class VanderLeestTrailersStack extends cdk.Stack {
             throttlingBurstLimit: 10,
           },
           "/api/apply/POST": {
+            throttlingRateLimit: 2,
+            throttlingBurstLimit: 5,
+          },
+          "/api/contact/POST": {
             throttlingRateLimit: 2,
             throttlingBurstLimit: 5,
           },
@@ -333,6 +363,12 @@ export class VanderLeestTrailersStack extends cdk.Stack {
     const applyIntegration = new apigateway.LambdaIntegration(applyLambda);
     const applyResource = apiResource.addResource("apply");
     applyResource.addMethod("POST", applyIntegration);
+
+    // Contact route (public) — contact form messages. Served by the existing
+    // /api/* CloudFront catch-all (uncached POST), so no distribution change needed.
+    const contactIntegration = new apigateway.LambdaIntegration(contactLambda);
+    const contactResource = apiResource.addResource("contact");
+    contactResource.addMethod("POST", contactIntegration);
 
     // Admin routes (Cognito-protected)
     const adminResource = apiResource.addResource("admin");

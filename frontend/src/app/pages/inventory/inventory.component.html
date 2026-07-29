@@ -36,6 +36,48 @@
           </button>
         }
       </div>
+      <div class="inv-filter__ranges">
+        <div class="inv-filter__range">
+          <label class="inv-filter__range-label">Price</label>
+          <input
+            type="number"
+            class="inv-filter__range-input"
+            placeholder="Min $"
+            min="0"
+            [value]="priceMin ?? ''"
+            (input)="onPriceMinChange($any($event.target).value)"
+          />
+          <span class="inv-filter__range-sep">–</span>
+          <input
+            type="number"
+            class="inv-filter__range-input"
+            placeholder="Max $"
+            min="0"
+            [value]="priceMax ?? ''"
+            (input)="onPriceMaxChange($any($event.target).value)"
+          />
+        </div>
+        <div class="inv-filter__range">
+          <label class="inv-filter__range-label">GVWR</label>
+          <input
+            type="number"
+            class="inv-filter__range-input"
+            placeholder="Min lbs"
+            min="0"
+            [value]="gvwrMin ?? ''"
+            (input)="onGvwrMinChange($any($event.target).value)"
+          />
+          <span class="inv-filter__range-sep">–</span>
+          <input
+            type="number"
+            class="inv-filter__range-input"
+            placeholder="Max lbs"
+            min="0"
+            [value]="gvwrMax ?? ''"
+            (input)="onGvwrMaxChange($any($event.target).value)"
+          />
+        </div>
+      </div>
     </div>
     <div class="inv-filter__tabs">
       <a routerLink="/inventory"
@@ -70,7 +112,7 @@
       </div>
       @if (filteredTrailers.length > 0) {
         <div class="inv-grid__cards" style="margin-bottom: var(--space-2xl);">
-          @for (trailer of filteredTrailers; track trailer.slug) {
+          @for (trailer of pagedTrailers; track trailer.slug) {
             <a [routerLink]="'/trailer/' + trailer.slug" class="inv-card card">
               <div class="inv-card__img">
                 <button
@@ -135,6 +177,17 @@
             </a>
           }
         </div>
+        @if (totalPages > 1) {
+          <div class="inv-pagination">
+            <button type="button" class="inv-pagination__btn" [disabled]="currentPage === 1" (click)="prevPage()">
+              Previous
+            </button>
+            <span class="inv-pagination__status">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button type="button" class="inv-pagination__btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+              Next
+            </button>
+          </div>
+        }
       } @else {
         <div class="inv-category__empty">
           <p>No trailers found matching "{{ searchQuery }}". Try a different search or browse by category.</p>
@@ -194,7 +247,7 @@
       <!-- Trailers in this category -->
       @if (filteredTrailers.length > 0) {
         <div class="inv-grid__cards" style="margin-bottom: var(--space-2xl);">
-          @for (trailer of filteredTrailers; track trailer.slug) {
+          @for (trailer of pagedTrailers; track trailer.slug) {
             <a [routerLink]="'/trailer/' + trailer.slug" class="inv-card card">
               <div class="inv-card__img">
                 <button
@@ -259,6 +312,17 @@
             </a>
           }
         </div>
+        @if (totalPages > 1) {
+          <div class="inv-pagination">
+            <button type="button" class="inv-pagination__btn" [disabled]="currentPage === 1" (click)="prevPage()">
+              Previous
+            </button>
+            <span class="inv-pagination__status">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button type="button" class="inv-pagination__btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+              Next
+            </button>
+          </div>
+        }
       } @else {
         <div class="inv-category__featured">
           <div class="inv-category__image-large">
