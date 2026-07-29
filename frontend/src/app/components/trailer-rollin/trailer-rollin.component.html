@@ -1,0 +1,71 @@
+<!-- Sits inside .hero, after .hero__grain, before .hero__content -->
+<div class="rollin" aria-hidden="true">
+  <svg viewBox="0 0 1000 380" preserveAspectRatio="xMidYMax meet" style="width: 100%; height: 100%; color: var(--color-accent);">
+    <defs>
+      <linearGradient id="vlBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(46,163,242,0.30)"></stop>
+        <stop offset="100%" stop-color="rgba(46,163,242,0.06)"></stop>
+      </linearGradient>
+      <radialGradient id="vlShadow">
+        <stop offset="0%" stop-color="rgba(0,0,0,0.7)"></stop>
+        <stop offset="100%" stop-color="rgba(0,0,0,0)"></stop>
+      </radialGradient>
+    </defs>
+
+    <line x1="-400" y1="300" x2="1400" y2="300" stroke="currentColor" stroke-width="1.5" style="opacity: 0.35;"></line>
+    <g stroke="currentColor" stroke-width="1.2" style="opacity: 0.18;">
+      <path d="M-320 312 h30 M-190 318 h24 M-80 310 h28 M60 312 h34 M140 318 h22 M240 310 h30 M330 320 h18 M430 312 h26 M540 318 h30 M650 310 h20 M760 320 h34 M880 312 h24 M1010 318 h30 M1140 310 h26"></path>
+    </g>
+
+    <g fill="#12161c" stroke="var(--color-accent)" stroke-width="2">
+      <path d="M-260 122 H118 V252 H-260 Z"></path>
+      <path d="M118 230 H154 V250 H118 Z" fill="#0a0d10" stroke-width="1.5"></path>
+    </g>
+    <path d="M-260 114 H118" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" style="opacity: 0.8;"></path>
+    <path d="M100 148 H114 V188 H100 Z" fill="var(--color-accent)" style="opacity: 0.35;"></path>
+    <path d="M-64 252 q44 -50 88 0" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.6;"></path>
+    <circle cx="-20" cy="272" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
+    <circle cx="-20" cy="272" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
+    <path d="M132 250 H162" stroke="var(--color-accent)" stroke-width="6" stroke-linecap="round"></path>
+    <path d="M162 250 V244" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round"></path>
+    <circle cx="162" cy="240" r="9" fill="var(--color-accent)"></circle>
+
+    <g style="transform: translate(calc((1 - var(--roll, 0)) * 880px), calc((1 - var(--drop, 0)) * -22px));">
+      <g stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round" style="opacity: calc((1 - var(--roll, 0)) * 0.85);">
+        <path d="M800 130 h120" style="opacity: 0.9;"></path>
+        <path d="M820 168 h150"></path>
+        <path d="M810 206 h110" style="opacity: 0.7;"></path>
+        <path d="M830 244 h140" style="opacity: 0.5;"></path>
+      </g>
+
+      <ellipse cx="480" cy="302" rx="290" ry="14" fill="url(#vlShadow)" style="opacity: 0.8;"></ellipse>
+
+      <path d="M740 264 V116 H352 L288 168 V264 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
+      <path d="M352 108 H740" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" style="opacity: 0.8;"></path>
+      <path d="M400 116 V264 M456 116 V264 M512 116 V264 M568 116 V264 M624 116 V264 M680 116 V264" stroke="var(--color-accent)" stroke-width="1" style="opacity: 0.22;"></path>
+      <path d="M718 254 V128" stroke="var(--color-accent)" stroke-width="1.5" style="opacity: 0.45;"></path>
+      <path d="M288 226 L172 242 L172 254 L288 250 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
+      <path d="M172 236 H150 V258 H172 Z" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2"></path>
+      <path d="M232 250 V286 M220 286 H244" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
+
+      <g style="transform-box: view-box; transform-origin: 512px 282px; transform: rotate(calc(var(--spin, 0) * -1deg));">
+        <circle cx="512" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
+        <circle cx="512" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
+        <path d="M512 251 V269 M512 295 V313 M481 282 H499 M525 282 H543" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
+      </g>
+      <g style="transform-box: view-box; transform-origin: 604px 282px; transform: rotate(calc(var(--spin, 0) * -1deg));">
+        <circle cx="604" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
+        <circle cx="604" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
+        <path d="M604 251 V269 M604 295 V313 M573 282 H591 M617 282 H635" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
+      </g>
+      <path d="M470 264 q42 -46 84 0 M562 264 q42 -46 84 0" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.6;"></path>
+    </g>
+  </svg>
+</div>
+
+<div class="rollin__badge">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+    <path d="M20 6L9 17l-5-5" />
+  </svg>
+  Hitched · Ready To Haul
+</div>
