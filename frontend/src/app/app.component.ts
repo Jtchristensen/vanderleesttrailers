@@ -6,6 +6,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { ChatWidgetComponent } from './components/chat-widget/chat-widget.component';
 import { HiringPopupComponent } from './components/hiring-popup/hiring-popup.component';
 import { ContentService } from './services/content.service';
+import { SeoService } from './services/seo.service';
 
 @Component({
     selector: 'app-root',
@@ -27,7 +28,7 @@ import { ContentService } from './services/content.service';
   `]
 })
 export class AppComponent implements OnInit {
-  constructor(private contentService: ContentService) {}
+  constructor(private contentService: ContentService, private seoService: SeoService) {}
 
   ngOnInit() {
     // Preload all content into cache so page navigation is instant

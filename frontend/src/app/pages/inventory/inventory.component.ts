@@ -29,6 +29,16 @@ export class InventoryComponent implements OnInit {
   /** Trailer count after category/search but before the tow-fit filter, for the bar's "X of Y" summary. */
   preTowFilterCount = 0;
 
+  /** Price/GVWR range filters — each side independently optional (null = no bound). */
+  priceMin: number | null = null;
+  priceMax: number | null = null;
+  gvwrMin: number | null = null;
+  gvwrMax: number | null = null;
+
+  /** Pagination over filteredTrailers. */
+  pageSize = 12;
+  currentPage = 1;
+
   constructor(
     private route: ActivatedRoute,
     private contentService: ContentService,
@@ -86,10 +96,39 @@ export class InventoryComponent implements OnInit {
     this.applyFilters();
   }
 
+  onPriceMinChange(value: string) {
+    this.priceMin = value === '' ? null : Number(value);
+    this.applyFilters();
+  }
+
+  onPriceMaxChange(value: string) {
+    this.priceMax = value === '' ? null : Number(value);
+    this.applyFilters();
+  }
+
+  onGvwrMinChange(value: string) {
+    this.gvwrMin = value === '' ? null : Number(value);
+    this.applyFilters();
+  }
+
+  onGvwrMaxChange(value: string) {
+    this.gvwrMax = value === '' ? null : Number(value);
+    this.applyFilters();
+  }
+
   /** Unknown-GVWR trailers are always kept — we never want to hide a trailer we can't rate. */
   private isTowable(trailer: any): boolean {
     const check = this.towCheck.check(trailer?.gvwr);
     return !check || check.verdict !== 'over';
+  }
+
+  /** Range check that mirrors isTowable's stance: unknown/NaN values are always kept, never hidden. */
+  private inRange(rawValue: any, min: number | null, max: number | null): boolean {
+    const value = Number(rawValue);
+    if (Number.isNaN(value)) return true;
+    if (min !== null && value < min) return false;
+    if (max !== null && value > max) return false;
+    return true;
   }
 
   applyFilters() {
@@ -105,6 +144,14 @@ export class InventoryComponent implements OnInit {
         (t.name || '').toLowerCase().includes(q) ||
         (t.brand || '').toLowerCase().includes(q)
       );
+    }
+
+    if (this.priceMin !== null || this.priceMax !== null) {
+      result = result.filter((t: any) => this.inRange(t.price, this.priceMin, this.priceMax));
+    }
+
+    if (this.gvwrMin !== null || this.gvwrMax !== null) {
+      result = result.filter((t: any) => this.inRange(t.gvwr, this.gvwrMin, this.gvwrMax));
     }
 
     result = result.sort((a: any, b: any) => {
@@ -125,5 +172,29 @@ export class InventoryComponent implements OnInit {
     }
 
     this.filteredTrailers = result;
+    this.currentPage = 1;
+  }
+
+  /** Total pages for the current filtered set, always at least 1. */
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredTrailers.length / this.pageSize));
+  }
+
+  /** The slice of filteredTrailers to render for the current page. */
+  get pagedTrailers(): any[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredTrailers.slice(start, start + this.pageSize);
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage -= 1;
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage += 1;
+    }
   }
 }

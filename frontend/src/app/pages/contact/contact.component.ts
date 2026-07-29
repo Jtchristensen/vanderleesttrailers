@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from '../../services/content.service';
+import { ContactFormService } from '../../services/contact-form.service';
 
 @Component({
     selector: 'app-contact',
@@ -20,12 +21,18 @@ export class ContactComponent implements OnInit {
     phone: '',
     email: '',
     message: '',
+    company: '', // honeypot — always empty for real users
   };
 
   isSubmitted = false;
   isSubmitting = false;
+  error = false;
 
-  constructor(private contentService: ContentService, private sanitizer: DomSanitizer) {}
+  constructor(
+    private contentService: ContentService,
+    private sanitizer: DomSanitizer,
+    private contactForm: ContactFormService,
+  ) {}
 
   get mapUrl(): SafeResourceUrl | null {
     const coords = this.site?.mapCoords;
@@ -44,12 +51,24 @@ export class ContactComponent implements OnInit {
     this.loaded = true;
   }
 
-  onSubmit() {
+  async onSubmit() {
+    if (this.isSubmitting) return;
     this.isSubmitting = true;
-    setTimeout(() => {
-      this.isSubmitting = false;
+    this.error = false;
+    try {
+      await this.contactForm.submit({
+        name: this.formData.name,
+        email: this.formData.email,
+        phone: this.formData.phone,
+        message: this.formData.message,
+        company: this.formData.company,
+      });
       this.isSubmitted = true;
-      this.formData = { name: '', phone: '', email: '', message: '' };
-    }, 1000);
+      this.formData = { name: '', phone: '', email: '', message: '', company: '' };
+    } catch {
+      this.error = true;
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 }

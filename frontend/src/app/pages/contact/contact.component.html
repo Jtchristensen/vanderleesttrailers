@@ -131,6 +131,16 @@
                 <textarea id="message" [(ngModel)]="formData.message" name="message" required rows="5" placeholder="How can we help you?"></textarea>
               </div>
 
+              <!-- Honeypot: hidden from humans; a filled value silently drops the submission server-side -->
+              <input class="contact-hp" type="text" name="company" [(ngModel)]="formData.company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+              @if (error) {
+                <p class="contact-error">
+                  Something went wrong. Please email us directly at
+                  <a [href]="'mailto:' + (site.email || 'vanderleesttrailers@gmail.com')">{{ site.email || 'vanderleesttrailers@gmail.com' }}</a>.
+                </p>
+              }
+
               <button type="submit" class="btn btn--primary contact__submit" [disabled]="isSubmitting">
                 @if (isSubmitting) {
                   Sending...
