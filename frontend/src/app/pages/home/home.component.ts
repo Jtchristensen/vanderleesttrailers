@@ -3,11 +3,12 @@ import { DecimalPipe } from '@angular/common';
 
 import { RouterLink } from '@angular/router';
 import { FaqComponent } from '../../components/faq/faq.component';
+import { TrailerRollinComponent } from '../../components/trailer-rollin/trailer-rollin.component';
 import { ContentService } from '../../services/content.service';
 
 @Component({
     selector: 'app-home',
-    imports: [RouterLink, FaqComponent, DecimalPipe],
+    imports: [RouterLink, FaqComponent, TrailerRollinComponent, DecimalPipe],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })
