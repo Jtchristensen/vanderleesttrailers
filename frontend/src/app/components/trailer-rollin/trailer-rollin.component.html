@@ -2,10 +2,6 @@
 <div class="rollin" aria-hidden="true">
   <svg viewBox="0 0 1000 380" preserveAspectRatio="xMidYMax meet" style="width: 100%; height: 100%; color: var(--color-accent);">
     <defs>
-      <linearGradient id="vlBody" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="rgba(46,163,242,0.30)"></stop>
-        <stop offset="100%" stop-color="rgba(46,163,242,0.06)"></stop>
-      </linearGradient>
       <radialGradient id="vlShadow">
         <stop offset="0%" stop-color="rgba(0,0,0,0.7)"></stop>
         <stop offset="100%" stop-color="rgba(0,0,0,0)"></stop>
@@ -21,7 +17,7 @@
       <path d="M-320 312 h30 M-190 318 h24 M-80 310 h28 M60 312 h34 M140 318 h22 M240 310 h30 M330 320 h18 M430 312 h26 M540 318 h30 M650 310 h20 M760 320 h34 M880 312 h24 M1010 318 h30 M1140 310 h26"></path>
     </g>
 
-    <ellipse cx="680" cy="302" rx="290" ry="14" fill="url(#vlShadow)" style="opacity: 0.8;"></ellipse>
+    <ellipse cx="560" cy="304" rx="205" ry="13" fill="url(#vlShadow)" style="opacity: 0.8;"></ellipse>
 
     <!-- Backing guideline: spans ball to coupler, closing as the truck arrives.
          Drawn full length and scaled about the coupler end, so it always ends
@@ -46,25 +42,15 @@
       <circle cx="362" cy="272" r="8" fill="var(--color-accent)"></circle>
     </g>
 
-    <!-- Tongue jack: planted on the ground, the trailer lowers down it -->
-    <path d="M432 248 V300 M420 300 H444 M424 244 h16" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
-
-    <!-- Parked trailer: nose held up on the jack, then seated on the ball -->
-    <g style="transform-box: view-box; transform-origin: 758px 282px; transform: rotate(calc((1 - var(--drop, 0)) * 5deg));">
-      <path d="M940 264 V116 H552 L488 168 V264 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
-      <path d="M552 108 H940" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" style="opacity: 0.8;"></path>
-      <path d="M600 116 V264 M656 116 V264 M712 116 V264 M768 116 V264 M824 116 V264 M880 116 V264" stroke="var(--color-accent)" stroke-width="1" style="opacity: 0.22;"></path>
-      <path d="M918 254 V128" stroke="var(--color-accent)" stroke-width="1.5" style="opacity: 0.45;"></path>
-      <path d="M488 244 L372 274 L372 286 L488 268 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
-      <path d="M372 270 H350 V292 H372 Z" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2"></path>
-
-      <circle cx="712" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
-      <circle cx="712" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
-      <path d="M712 251 V269 M712 295 V313 M681 282 H699 M725 282 H743" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
-      <circle cx="804" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
-      <circle cx="804" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
-      <path d="M804 251 V269 M804 295 V313 M773 282 H791 M817 282 H835" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
-      <path d="M670 264 q42 -46 84 0 M762 264 q42 -46 84 0" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.6;"></path>
+    <!-- Parked trailer: nose up on its own jack, then seated on the ball.
+         Photo scale (417x145 for a 777x270 source) is what makes the coupler
+         land on the ball at y=272 with the tires on the same contact line as
+         the truck's — the source's own coupler/tire geometry fixes it.
+         The nose-up tilt pivots on the tandem's contact patch, not its axle, so
+         real tires don't sink through the ground line; 3.5deg still lifts the
+         coupler ~18 units clear of the ball. -->
+    <g style="transform-box: view-box; transform-origin: 651px 316px; transform: rotate(calc((1 - var(--drop, 0)) * 3.5deg));">
+      <image class="rollin__trailer" href="/assets/hero-trailer.png" x="350" y="173" width="417" height="145"></image>
     </g>
   </svg>
 </div>
