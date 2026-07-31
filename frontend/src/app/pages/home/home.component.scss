@@ -70,10 +70,7 @@
     width: calc(100% + 40px);
     height: calc(100% + 40px);
     object-fit: cover;
-    filter:
-      brightness(calc(0.3 - var(--dim, 0) * 0.15))
-      saturate(calc(0.6 - var(--dim, 0) * 0.18));
-    will-change: filter;
+    filter: brightness(0.3) saturate(0.6);
     transform: scale(1.05);
   }
 
