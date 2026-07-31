@@ -60,6 +60,19 @@ export const TOOL_SPECS = [
 
 const MAX_SEARCH_RESULTS = 10;
 
+/**
+ * Dollars off list, or 0 when there's no discount worth mentioning — no price,
+ * no MSRP, or an MSRP that isn't above the selling price. Mirrors the frontend
+ * rule in frontend/src/app/utils/pricing.ts.
+ */
+function discount(d) {
+  const price = Number(String(d?.price ?? '').replace(/[$,\s]/g, ''));
+  const msrp = Number(String(d?.msrp ?? '').replace(/[$,\s]/g, ''));
+  if (!Number.isFinite(price) || !Number.isFinite(msrp)) return 0;
+  if (!price || !msrp || msrp <= price) return 0;
+  return msrp - price;
+}
+
 function slim(trailer) {
   const d = trailer.data || trailer;
   return {
@@ -74,6 +87,10 @@ function slim(trailer) {
     // otherwise identical units, so the assistant needs it to tell them apart.
     variant:  d.variant || '',
     price:    d.price,
+    // Only surfaced when it beats the selling price, so the model never quotes
+    // a "discount" that isn't one. Mirrors frontend/src/app/utils/pricing.ts.
+    msrp:     discount(d) ? d.msrp : undefined,
+    savings:  discount(d) || undefined,
     gvwr:     d.gvwr,
     image:    d.images?.[0] || d.image || '',
   };

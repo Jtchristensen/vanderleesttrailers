@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { SavingsBadgeComponent } from '../../components/savings-badge/savings-badge.component';
+import { hasSavings } from '../../utils/pricing';
 
 interface Recommendation {
   slug: string;
@@ -12,6 +14,8 @@ interface Recommendation {
   make: string;
   model: string;
   price: string;
+  /** Optional manufacturer list price; only set when above `price`. */
+  msrp?: string;
   gvwr: string;
   payload: string;
   image: string;
@@ -20,11 +24,14 @@ interface Recommendation {
 
 @Component({
     selector: 'app-trailer-finder',
-    imports: [FormsModule, RouterLink],
+    imports: [FormsModule, RouterLink, SavingsBadgeComponent],
     templateUrl: './trailer-finder.component.html',
     styleUrls: ['./trailer-finder.component.scss']
 })
 export class TrailerFinderComponent {
+  /** Template hook for the MSRP strikethrough — see utils/pricing. */
+  readonly hasSavings = hasSavings;
+
   step = 0;
   loading = false;
   error = '';

@@ -173,6 +173,10 @@
                   @if (rec.price) {
                     <span class="finder__result-price">${{ rec.price }}</span>
                   }
+                  @if (hasSavings(rec)) {
+                    <span class="finder__result-msrp">${{ rec.msrp }}</span>
+                  }
+                  <app-savings-badge [trailer]="rec" />
                   @if (rec.gvwr) {
                     <span>{{ rec.gvwr }} lbs GVWR</span>
                   }

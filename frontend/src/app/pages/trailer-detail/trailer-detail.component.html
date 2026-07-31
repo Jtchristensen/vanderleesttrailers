@@ -80,7 +80,15 @@
             }
 
             @if (trailer.price) {
-              <div class="detail__price">${{ trailer.price }}</div>
+              <div class="detail__pricing">
+                <div class="detail__price-row">
+                  <span class="detail__price">${{ trailer.price }}</span>
+                  @if (hasSavings(trailer)) {
+                    <span class="detail__msrp">${{ trailer.msrp }}</span>
+                  }
+                </div>
+                <app-savings-badge [trailer]="trailer" [large]="true" />
+              </div>
             }
 
             <!-- Specs -->

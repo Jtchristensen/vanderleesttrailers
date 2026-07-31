@@ -8,14 +8,19 @@ import { TowCheckService } from '../../services/tow-check.service';
 import { TowFitBarComponent } from '../../components/tow-fit-bar/tow-fit-bar.component';
 import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
 import { TrailerTitlePipe, trailerTitle } from '../../pipes/trailer-title.pipe';
+import { SavingsBadgeComponent } from '../../components/savings-badge/savings-badge.component';
+import { hasSavings } from '../../utils/pricing';
 
 @Component({
     selector: 'app-inventory',
-    imports: [RouterLink, TowFitBarComponent, TowFitBadgeComponent, TrailerTitlePipe],
+    imports: [RouterLink, TowFitBarComponent, TowFitBadgeComponent, TrailerTitlePipe, SavingsBadgeComponent],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent implements OnInit {
+  /** Template hook for the MSRP strikethrough — see utils/pricing. */
+  readonly hasSavings = hasSavings;
+
   categories: any[] = ContentService.getContentSync<any[]>('CATEGORIES') ?? [];
   trailers: any[] = [];
   filteredTrailers: any[] = [];

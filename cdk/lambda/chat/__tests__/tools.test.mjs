@@ -93,6 +93,26 @@ describe('searchTrailers', () => {
     const res = await runTool({ name: 'searchTrailers', toolUseId: 't8', input: { make: 'black rhino' } }, mockCtx());
     assert.equal(res.trailers[0].title, 'Black Rhino EXS Hauler');
   });
+
+  it('surfaces msrp + savings only when MSRP is above the selling price', async () => {
+    const items = [
+      { pk: 'TRAILER', sk: 'discounted', data: { slug: 'discounted', name: 'Discounted', category: 'dump-trailers', make: 'Maxx-D', price: '8495', msrp: '9995' } },
+      { pk: 'TRAILER', sk: 'no-msrp', data: { slug: 'no-msrp', name: 'No MSRP', category: 'dump-trailers', make: 'Maxx-D', price: '8495' } },
+      { pk: 'TRAILER', sk: 'msrp-below', data: { slug: 'msrp-below', name: 'MSRP Below', category: 'dump-trailers', make: 'Maxx-D', price: '8495', msrp: '7000' } },
+      { pk: 'TRAILER', sk: 'msrp-equal', data: { slug: 'msrp-equal', name: 'MSRP Equal', category: 'dump-trailers', make: 'Maxx-D', price: '8495', msrp: '8495' } },
+      { pk: 'TRAILER', sk: 'no-price', data: { slug: 'no-price', name: 'No Price', category: 'dump-trailers', make: 'Maxx-D', price: '', msrp: '9995' } },
+    ];
+    const ctx = { contentTable: 'fake', ddb: { send: async () => ({ Items: items }) } };
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 't9', input: {} }, ctx);
+    const bySlug = Object.fromEntries(res.trailers.map(t => [t.slug, t]));
+
+    assert.equal(bySlug.discounted.msrp, '9995');
+    assert.equal(bySlug.discounted.savings, 1500);
+    for (const slug of ['no-msrp', 'msrp-below', 'msrp-equal', 'no-price']) {
+      assert.equal(bySlug[slug].msrp, undefined, `${slug} should not advertise an MSRP`);
+      assert.equal(bySlug[slug].savings, undefined, `${slug} should not advertise savings`);
+    }
+  });
 });
 
 describe('getSiteContent', () => {

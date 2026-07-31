@@ -57,7 +57,15 @@
                   <p class="fav-card__brand">{{ trailer.make }}</p>
                 }
                 @if (trailer.price) {
-                  <p class="fav-card__price">${{ trailer.price }}</p>
+                  <div class="fav-card__pricing">
+                    <div class="fav-card__price-row">
+                      <span class="fav-card__price">${{ trailer.price }}</span>
+                      @if (hasSavings(trailer)) {
+                        <span class="fav-card__msrp">${{ trailer.msrp }}</span>
+                      }
+                    </div>
+                    <app-savings-badge [trailer]="trailer" />
+                  </div>
                 }
                 @if (trailer.gvwr) {
                   <p class="fav-card__spec">GVWR: {{ trailer.gvwr }} lbs</p>

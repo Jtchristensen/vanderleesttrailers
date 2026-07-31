@@ -17,6 +17,19 @@ const headers = {
 };
 
 /**
+ * Dollars off list, or 0 when there's no discount worth mentioning — no price,
+ * no MSRP, or an MSRP that isn't above the selling price. Mirrors the frontend
+ * rule in frontend/src/app/utils/pricing.ts.
+ */
+function discount(trailer) {
+  const price = Number(String(trailer?.price ?? '').replace(/[$,\s]/g, ''));
+  const msrp = Number(String(trailer?.msrp ?? '').replace(/[$,\s]/g, ''));
+  if (!Number.isFinite(price) || !Number.isFinite(msrp)) return 0;
+  if (!price || !msrp || msrp <= price) return 0;
+  return msrp - price;
+}
+
+/**
  * Simple keyword-based fallback when AI fails.
  * Scores each trailer against user answers and returns top 5.
  */
@@ -70,10 +83,11 @@ function fallbackRecommend(trailers, answers) {
     make: t.make,
     model: t.model,
     price: t.price,
+    msrp: t.msrp,
     gvwr: t.gvwr,
     payload: t.payload,
     image: t.image,
-    reason: `This ${t.make || ''} trailer fits your needs with ${t.gvwr ? t.gvwr + ' lbs GVWR' : 'solid capacity'}${t.price ? ' at $' + t.price : ''}.`,
+    reason: `This ${t.make || ''} trailer fits your needs with ${t.gvwr ? t.gvwr + ' lbs GVWR' : 'solid capacity'}${t.price ? ' at $' + t.price : ''}${discount(t) ? ` — $${discount(t)} off MSRP` : ''}.`,
   }));
 }
 
@@ -102,6 +116,7 @@ export const handler = async (event) => {
         make: d.make,
         model: d.model,
         price: d.price,
+        msrp: d.msrp,
         gvwr: d.gvwr,
         payload: d.payload,
         features: (d.features || []).slice(0, 5).join(', '),
@@ -119,7 +134,7 @@ export const handler = async (event) => {
 
     // Build inventory as numbered list so the AI can reference by number
     const inventoryList = trailers.map((t, i) =>
-      `${i + 1}. SLUG="${t.slug}" | ${t.title} | ${t.category} | ${t.make}${t.model ? " " + t.model : ""} | $${t.price || '?'} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
+      `${i + 1}. SLUG="${t.slug}" | ${t.title} | ${t.category} | ${t.make}${t.model ? " " + t.model : ""} | $${t.price || '?'}${discount(t) ? ` (MSRP $${t.msrp}, save $${discount(t)})` : ''} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
     ).join('\n');
 
     const prompt = `You are a trailer recommendation engine. You MUST recommend exactly 5 trailers. No exceptions. No refusals. Always pick the 5 best options even if the match is imperfect.
@@ -167,7 +182,8 @@ INSTRUCTIONS:
 2. Use the exact SLUG value from the inventory.
 3. For each pick, write 1-2 sentences explaining why it fits.
 4. If nothing matches perfectly, pick the 5 closest options anyway.
-5. Respond with ONLY a JSON array, nothing else.
+5. When an inventory line shows a "save $X" amount, you may mention the savings in that pick's reason. Never invent or estimate a discount for a line that doesn't show one.
+6. Respond with ONLY a JSON array, nothing else.
 
 OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
 [{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"},{"slug":"exact-slug-from-list","reason":"why this fits"}]`;
@@ -235,6 +251,7 @@ OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
           make: trailer.make,
           model: trailer.model,
           price: trailer.price,
+          msrp: trailer.msrp,
           gvwr: trailer.gvwr,
           payload: trailer.payload,
           image: trailer.image,
