@@ -164,11 +164,11 @@
               <div class="finder__result-rank">#{{ i + 1 }}</div>
               @if (rec.image) {
                 <div class="finder__result-img">
-                  <img [src]="rec.image" [alt]="rec.name" loading="lazy" />
+                  <img [src]="rec.image" [alt]="rec.title" loading="lazy" />
                 </div>
               }
               <div class="finder__result-body">
-                <h3>{{ rec.name }}</h3>
+                <h3>{{ rec.title }}</h3>
                 <div class="finder__result-specs">
                   @if (rec.price) {
                     <span class="finder__result-price">${{ rec.price }}</span>

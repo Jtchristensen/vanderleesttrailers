@@ -39,7 +39,7 @@
                   class="detail__image-trigger"
                   (click)="openLightbox()"
                   [attr.aria-label]="'Enlarge photo ' + (activeImage + 1)">
-                  <img [src]="trailer.images[activeImage]" [alt]="trailer.name" />
+                  <img [src]="trailer.images[activeImage]" [alt]="trailer | trailerTitle" />
                 </button>
                 @if (trailer.images.length > 1) {
                   <button class="detail__nav detail__nav--prev" (click)="prevImage(); $event.stopPropagation()">
@@ -73,10 +73,10 @@
 
           <!-- Info Panel -->
           <div class="detail__info">
-            <h1>{{ trailer.name }}</h1>
+            <h1>{{ trailer | trailerTitle }}</h1>
 
             @if (trailer.make) {
-              <span class="detail__brand">{{ trailer.make }}{{ trailer.model ? ' \u00b7 ' + trailer.model : '' }}</span>
+              <span class="detail__brand">{{ trailer.make }}{{ trailer.model ? ' · ' + trailer.model : '' }}</span>
             }
 
             @if (trailer.price) {
@@ -85,6 +85,24 @@
 
             <!-- Specs -->
             <div class="detail__specs">
+              @if (trailer.year) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Year</span>
+                  <span class="detail__spec-value">{{ trailer.year }}</span>
+                </div>
+              }
+              @if (trailer.size) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Size</span>
+                  <span class="detail__spec-value">{{ trailer.size }}</span>
+                </div>
+              }
+              @if (trailer.variant) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Variant</span>
+                  <span class="detail__spec-value">{{ trailer.variant }}</span>
+                </div>
+              }
               @if (trailer.gvwr) {
                 <div class="detail__spec">
                   <span class="detail__spec-label">GVWR</span>
@@ -183,7 +201,7 @@
         <path d="M18 6L6 18M6 6l12 12"/>
       </svg>
     </button>
-    <img class="lightbox__image" [src]="trailer.images[activeImage]" [alt]="trailer.name" (click)="$event.stopPropagation()" />
+    <img class="lightbox__image" [src]="trailer.images[activeImage]" [alt]="trailer | trailerTitle" (click)="$event.stopPropagation()" />
     @if (trailer.images.length > 1) {
       <button class="lightbox__nav lightbox__nav--prev" (click)="prevImage(); $event.stopPropagation()" aria-label="Previous photo">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

@@ -22,9 +22,16 @@
           <h3>Basic Information</h3>
         </div>
 
+        <!-- The listing title is built from the fields below, never typed by hand,
+             so the heading, the URL, and the chat assistant always agree. -->
         <div class="admin-field">
-          <label>Trailer Name *</label>
-          <input type="text" [(ngModel)]="trailer.name" placeholder="e.g. MAXX-D 83x22 EHX Equipment Trailer 14K GVWR" />
+          <label>Listing Title</label>
+          <p class="title-preview" [class.title-preview--empty]="!title">
+            {{ title || 'Fill in the fields below and the title will appear here' }}
+          </p>
+          <small class="admin-field__hint">
+            Built automatically from year, make, model, size, category, and GVWR.
+          </small>
         </div>
 
         <div class="admin-field--inline">
@@ -49,9 +56,29 @@
           </div>
         </div>
 
+        <div class="admin-field--inline">
+          <div class="admin-field">
+            <label>Model</label>
+            <input type="text" [(ngModel)]="trailer.model" placeholder="e.g. H8X, EXS, Elite Tandem, GT-XT" />
+          </div>
+
+          <div class="admin-field">
+            <label>Year</label>
+            <input type="text" [(ngModel)]="trailer.year" placeholder="e.g. 2025" />
+          </div>
+
+          <div class="admin-field">
+            <label>Size</label>
+            <input type="text" [(ngModel)]="trailer.size" placeholder="e.g. 83x22" />
+          </div>
+        </div>
+
         <div class="admin-field">
-          <label>Model</label>
-          <input type="text" [(ngModel)]="trailer.model" placeholder="e.g. H8X, EXS, Elite Tandem, GT-XT" />
+          <label>Variant</label>
+          <input type="text" [(ngModel)]="trailer.variant" placeholder="e.g. Charcoal PolyCore Blackout, Bi-Fold Ramp, Army Green" />
+          <small class="admin-field__hint">
+            Colour, package or options — whatever tells this unit apart from an otherwise identical one.
+          </small>
         </div>
 
         <div class="admin-field--inline">

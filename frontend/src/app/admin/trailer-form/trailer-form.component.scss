@@ -1,5 +1,27 @@
 @import '../admin.styles';
 
+/* Read-only echo of the derived listing title. Styled as the heading customers
+   will actually see, so a wrong-looking title is obvious before saving. */
+.title-preview {
+  margin: 0;
+  padding: 0.75rem var(--space-md);
+  background: var(--color-bg-elevated, var(--color-bg-card));
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+
+  &--empty {
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+}
+
 .trailer-images {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

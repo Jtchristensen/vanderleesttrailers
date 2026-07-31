@@ -1,8 +1,9 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand, DeleteCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, GetCommand, DeleteCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import crypto from 'crypto';
+import { composeTitle } from './trailer-title.mjs';
 
 const ddbClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(ddbClient);
@@ -45,23 +46,41 @@ export const handler = async (event) => {
 
     // POST /api/admin/trailers — create trailer
     if (resource === '/api/admin/trailers' && httpMethod === 'POST') {
-      const slug = parsed.data?.slug || generateSlug(parsed.data?.name || 'trailer');
+      const title = applyTitle(parsed.data);
+      if (!title) return badTitle();
+      const slug = await uniqueSlug(parsed.data?.slug || generateSlug(title));
+      if (!slug) {
+        return { statusCode: 409, headers, body: JSON.stringify({ error: 'A trailer with this title already exists' }) };
+      }
       parsed.data.slug = slug;
-      await ddb.send(new PutCommand({
-        TableName: TABLE,
-        Item: {
-          pk: 'TRAILER',
-          sk: slug,
-          data: parsed.data,
-          updatedAt: new Date().toISOString(),
-        },
-      }));
+      try {
+        await ddb.send(new PutCommand({
+          TableName: TABLE,
+          Item: {
+            pk: 'TRAILER',
+            sk: slug,
+            data: parsed.data,
+            updatedAt: new Date().toISOString(),
+          },
+          // Two units of the same make/model/size/spec compose to the same title
+          // and therefore the same slug. Without this the second create silently
+          // overwrites the first and still returns 201.
+          ConditionExpression: 'attribute_not_exists(sk)',
+        }));
+      } catch (err) {
+        // Lost the race against a concurrent create on the same slug.
+        if (err.name === 'ConditionalCheckFailedException') {
+          return { statusCode: 409, headers, body: JSON.stringify({ error: 'A trailer with this title already exists' }) };
+        }
+        throw err;
+      }
       return { statusCode: 201, headers, body: JSON.stringify({ success: true, slug }) };
     }
 
     // PUT /api/admin/trailers/{slug} — update trailer
     if (resource === '/api/admin/trailers/{slug}' && httpMethod === 'PUT') {
       const slug = pathParameters.slug;
+      if (!applyTitle(parsed.data)) return badTitle();
       parsed.data.slug = slug;
       await ddb.send(new PutCommand({
         TableName: TABLE,
@@ -147,7 +166,8 @@ export const handler = async (event) => {
             const aDate = a.publishedAt || '';
             const bDate = b.publishedAt || '';
             if (aDate !== bDate) return bDate.localeCompare(aDate);
-            return (a.name || '').localeCompare(b.name || '');
+            // `name` is the pre-title field; records keep it until the migration contracts.
+            return (a.title || a.name || '').localeCompare(b.title || b.name || '');
           })
         ),
       };
@@ -159,6 +179,51 @@ export const handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: 'Internal server error' }) };
   }
 };
+
+/**
+ * Stores the derived title on the record.
+ *
+ * Persisting it keeps the read paths simple — the public API, the chat
+ * assistant, and the slug all read one string instead of each re-deriving it
+ * from seven fields. Returns the title so callers can reject an empty one.
+ *
+ * It deliberately does NOT drop the legacy `name`. Dropping it is the migration's
+ * job: until expand has run, `name` is the only place a record's size and colour
+ * exist, and the admin list PUTs a whole record back for something as ordinary as
+ * the Hide button — which would compose a title from the not-yet-populated fields
+ * and delete the only copy of the words needed to fill them in. Saves from the
+ * trailer form omit `name` anyway, so it falls away there without help.
+ */
+function applyTitle(data) {
+  if (!data) return '';
+  const title = composeTitle(data);
+  data.title = title;
+  return title;
+}
+
+/**
+ * Appends -2, -3, … when a slug is taken, so two units that compose to the same
+ * title can both exist. Returns '' if even the suffixed slugs are exhausted.
+ */
+async function uniqueSlug(base) {
+  for (let n = 1; n <= 20; n++) {
+    const candidate = n === 1 ? base : `${base.slice(0, 76)}-${n}`;
+    const existing = await ddb.send(new GetCommand({
+      TableName: TABLE,
+      Key: { pk: 'TRAILER', sk: candidate },
+    }));
+    if (!existing.Item) return candidate;
+  }
+  return '';
+}
+
+function badTitle() {
+  return {
+    statusCode: 400,
+    headers,
+    body: JSON.stringify({ error: 'Trailer needs at least a year, make, model, size or variant — the title is built from those' }),
+  };
+}
 
 function generateSlug(name) {
   return name

@@ -73,7 +73,8 @@ export const handler = async (event) => {
             const aDate = a.publishedAt || '';
             const bDate = b.publishedAt || '';
             if (aDate !== bDate) return bDate.localeCompare(aDate);
-            return (a.name || '').localeCompare(b.name || '');
+            // `name` is the pre-title field; records keep it until the migration contracts.
+            return (a.title || a.name || '').localeCompare(b.title || b.name || '');
           })
         ),
       };

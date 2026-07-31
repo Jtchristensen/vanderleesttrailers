@@ -4,10 +4,11 @@ import { TowCheckComponent } from '../../components/tow-check/tow-check.componen
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { TrailerTitlePipe } from '../../pipes/trailer-title.pipe';
 
 @Component({
     selector: 'app-trailer-detail',
-    imports: [RouterLink, TowCheckComponent],
+    imports: [RouterLink, TowCheckComponent, TrailerTitlePipe],
     templateUrl: './trailer-detail.component.html',
     styleUrls: ['./trailer-detail.component.scss']
 })
