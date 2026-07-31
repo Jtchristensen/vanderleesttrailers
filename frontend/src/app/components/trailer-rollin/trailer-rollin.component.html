@@ -10,6 +10,10 @@
         <stop offset="0%" stop-color="rgba(0,0,0,0.7)"></stop>
         <stop offset="100%" stop-color="rgba(0,0,0,0)"></stop>
       </radialGradient>
+      <radialGradient id="vlBackup">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.8)"></stop>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"></stop>
+      </radialGradient>
     </defs>
 
     <line x1="-400" y1="300" x2="1400" y2="300" stroke="currentColor" stroke-width="1.5" style="opacity: 0.35;"></line>
@@ -17,50 +21,48 @@
       <path d="M-320 312 h30 M-190 318 h24 M-80 310 h28 M60 312 h34 M140 318 h22 M240 310 h30 M330 320 h18 M430 312 h26 M540 318 h30 M650 310 h20 M760 320 h34 M880 312 h24 M1010 318 h30 M1140 310 h26"></path>
     </g>
 
-    <g fill="#12161c" stroke="var(--color-accent)" stroke-width="2">
-      <path d="M-260 252 V208 L-232 178 L-168 150 L-150 98 H-46 L-28 146 L6 172 H100 L118 208 V252 Z"></path>
-      <path d="M118 230 H154 V250 H118 Z" fill="#0a0d10" stroke-width="1.5"></path>
+    <ellipse cx="480" cy="302" rx="290" ry="14" fill="url(#vlShadow)" style="opacity: 0.8;"></ellipse>
+
+    <!-- Backing guideline: spans ball to coupler, closing as the truck arrives.
+         Drawn full length and scaled about the coupler end, so it always ends
+         exactly on the ball. -->
+    <g style="transform-box: view-box; transform-origin: 162px 272px; transform: scaleX(calc(1 - var(--roll, 0))); opacity: calc((1 - var(--roll, 0)) * 0.5);">
+      <path d="M-738 272 H162" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="16 14" vector-effect="non-scaling-stroke"></path>
     </g>
-    <path d="M-150 90 H-46" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" style="opacity: 0.8;"></path>
-    <path d="M-158 142 L-148 104 L-56 104 L-40 140 Z" fill="var(--color-accent)" style="opacity: 0.3;"></path>
-    <path d="M-258 212 H-244 V224 H-258 Z" fill="var(--color-accent)" style="opacity: 0.6;"></path>
-    <path d="M-234 252 q44 -50 88 0 M-24 252 q44 -50 88 0" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.6;"></path>
-    <circle cx="-190" cy="272" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
-    <circle cx="-190" cy="272" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
-    <circle cx="20" cy="272" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
-    <circle cx="20" cy="272" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
-    <path d="M132 250 H162" stroke="var(--color-accent)" stroke-width="6" stroke-linecap="round"></path>
-    <path d="M162 250 V244" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round"></path>
-    <circle cx="162" cy="240" r="9" fill="var(--color-accent)"></circle>
 
-    <g style="transform: translate(calc((1 - var(--roll, 0)) * 880px), calc((1 - var(--drop, 0)) * -22px));">
-      <g stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round" style="opacity: calc((1 - var(--roll, 0)) * 0.85);">
-        <path d="M800 130 h120" style="opacity: 0.9;"></path>
-        <path d="M820 168 h150"></path>
-        <path d="M810 206 h110" style="opacity: 0.7;"></path>
-        <path d="M830 244 h140" style="opacity: 0.5;"></path>
-      </g>
+    <!-- Tow vehicle backing in from the left. Sized so the tires meet the
+         trailer's contact line and the ball lands under the coupler. -->
+    <g style="transform: translate(calc((1 - var(--roll, 0)) * -900px), 0);">
+      <ellipse cx="-92" cy="311" rx="240" ry="12" fill="url(#vlShadow)" style="opacity: 0.75;"></ellipse>
+      <image href="/assets/truck-side.png" x="-333" y="141" width="483" height="172"></image>
 
-      <ellipse cx="480" cy="302" rx="290" ry="14" fill="url(#vlShadow)" style="opacity: 0.8;"></ellipse>
+      <!-- reverse lamps: light spilling behind the truck while it's backing -->
+      <ellipse cx="176" cy="238" rx="60" ry="30" fill="url(#vlBackup)" style="opacity: calc((1 - var(--roll, 0)) * 0.45);"></ellipse>
 
+      <!-- receiver + ball the coupler seats onto -->
+      <path d="M112 279 H162" stroke="var(--color-accent)" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M162 279 V276" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round"></path>
+      <circle cx="162" cy="272" r="8" fill="var(--color-accent)"></circle>
+    </g>
+
+    <!-- Tongue jack: planted on the ground, the trailer lowers down it -->
+    <path d="M232 248 V300 M220 300 H244 M224 244 h16" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
+
+    <!-- Parked trailer: nose held up on the jack, then seated on the ball -->
+    <g style="transform-box: view-box; transform-origin: 558px 282px; transform: rotate(calc((1 - var(--drop, 0)) * 5deg));">
       <path d="M740 264 V116 H352 L288 168 V264 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
       <path d="M352 108 H740" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" style="opacity: 0.8;"></path>
       <path d="M400 116 V264 M456 116 V264 M512 116 V264 M568 116 V264 M624 116 V264 M680 116 V264" stroke="var(--color-accent)" stroke-width="1" style="opacity: 0.22;"></path>
       <path d="M718 254 V128" stroke="var(--color-accent)" stroke-width="1.5" style="opacity: 0.45;"></path>
-      <path d="M288 226 L172 242 L172 254 L288 250 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
-      <path d="M172 236 H150 V258 H172 Z" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2"></path>
-      <path d="M232 250 V286 M220 286 H244" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
+      <path d="M288 244 L172 274 L172 286 L288 268 Z" fill="url(#vlBody)" stroke="var(--color-accent)" stroke-width="2"></path>
+      <path d="M172 270 H150 V292 H172 Z" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2"></path>
 
-      <g style="transform-box: view-box; transform-origin: 512px 282px; transform: rotate(calc(var(--spin, 0) * -1deg));">
-        <circle cx="512" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
-        <circle cx="512" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
-        <path d="M512 251 V269 M512 295 V313 M481 282 H499 M525 282 H543" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
-      </g>
-      <g style="transform-box: view-box; transform-origin: 604px 282px; transform: rotate(calc(var(--spin, 0) * -1deg));">
-        <circle cx="604" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
-        <circle cx="604" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
-        <path d="M604 251 V269 M604 295 V313 M573 282 H591 M617 282 H635" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
-      </g>
+      <circle cx="512" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
+      <circle cx="512" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
+      <path d="M512 251 V269 M512 295 V313 M481 282 H499 M525 282 H543" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
+      <circle cx="604" cy="282" r="34" fill="#0a0d10" stroke="var(--color-accent)" stroke-width="2.5"></circle>
+      <circle cx="604" cy="282" r="13" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.8;"></circle>
+      <path d="M604 251 V269 M604 295 V313 M573 282 H591 M617 282 H635" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.5;"></path>
       <path d="M470 264 q42 -46 84 0 M562 264 q42 -46 84 0" fill="none" stroke="var(--color-accent)" stroke-width="2" style="opacity: 0.6;"></path>
     </g>
   </svg>
