@@ -27,10 +27,10 @@ describe('runTool dispatch', () => {
 
 describe('searchTrailers', () => {
   const sampleTrailers = [
-    { pk: 'TRAILER', sk: 'maxxd-d7x', data: { slug: 'maxxd-d7x', name: 'Maxx-D D7X 6x12 Dump', category: 'dump-trailers', brand: 'Maxx-D', price: 8495, description: 'Heavy duty dump' } },
-    { pk: 'TRAILER', sk: 'retco-util', data: { slug: 'retco-util', name: 'Retco 7x14 Utility', category: 'utility-trailers', brand: 'Retco', price: 3200, description: 'Lightweight utility' } },
-    { pk: 'TRAILER', sk: 'gator-gn', data: { slug: 'gator-gn', name: 'Gatormade 30ft Gooseneck', category: 'gooseneck', brand: 'Gatormade', price: 22000, description: 'Heavy hauler' } },
-    { pk: 'TRAILER', sk: 'bullx-hauler', data: { slug: 'bullx-hauler', name: 'Black Rhino EXS Hauler', category: 'utility-trailers', brand: 'Black Rhino', price: 4100, description: 'Aluminum utility for landscaping' } },
+    { pk: 'TRAILER', sk: 'maxxd-d7x', data: { slug: 'maxxd-d7x', name: 'Maxx-D D7X 6x12 Dump', category: 'dump-trailers', make: 'Maxx-D', price: 8495, features: ['Heavy duty dump'] } },
+    { pk: 'TRAILER', sk: 'retco-util', data: { slug: 'retco-util', name: 'Retco 7x14 Utility', category: 'utility-trailers', make: 'Retco', price: 3200, features: ['Lightweight utility'] } },
+    { pk: 'TRAILER', sk: 'gator-gn', data: { slug: 'gator-gn', name: 'Gatormade 30ft Gooseneck', category: 'gooseneck', make: 'Gatormade', price: 22000, features: ['Heavy hauler'] } },
+    { pk: 'TRAILER', sk: 'bullx-hauler', data: { slug: 'bullx-hauler', name: 'Black Rhino EXS Hauler', category: 'utility-trailers', make: 'Black Rhino', price: 4100, features: ['Aluminum utility for landscaping'] } },
   ];
 
   function mockCtx() {
@@ -56,8 +56,8 @@ describe('searchTrailers', () => {
     assert.equal(res.trailers[0].slug, 'maxxd-d7x');
   });
 
-  it('filters by brand (case-insensitive)', async () => {
-    const res = await runTool({ name: 'searchTrailers', toolUseId: 't3', input: { brand: 'retco' } }, mockCtx());
+  it('filters by make (case-insensitive)', async () => {
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 't3', input: { make: 'retco' } }, mockCtx());
     assert.deepEqual(res.trailers.map(t => t.slug), ['retco-util']);
   });
 
@@ -74,7 +74,7 @@ describe('searchTrailers', () => {
 
   it('caps results at 10 items', async () => {
     const many = Array.from({ length: 25 }, (_, i) => ({
-      pk: 'TRAILER', sk: `t${i}`, data: { slug: `t${i}`, name: `Trailer ${i}`, category: 'utility-trailers', brand: 'X', price: 1000 + i },
+      pk: 'TRAILER', sk: `t${i}`, data: { slug: `t${i}`, name: `Trailer ${i}`, category: 'utility-trailers', make: 'X', price: 1000 + i },
     }));
     const ctx = { contentTable: 'fake', ddb: { send: async () => ({ Items: many }) } };
     const res = await runTool({ name: 'searchTrailers', toolUseId: 't6', input: {} }, ctx);
@@ -82,10 +82,10 @@ describe('searchTrailers', () => {
     assert.equal(res.count, 25);
   });
 
-  it('strips heavy fields from returned trailers (keeps name, slug, category, brand, price, gvwr, image)', async () => {
+  it('strips heavy fields from returned trailers (keeps name, slug, category, make, model, price, gvwr, image)', async () => {
     const res = await runTool({ name: 'searchTrailers', toolUseId: 't7', input: { category: 'dump-trailers' } }, mockCtx());
     const t = res.trailers[0];
-    assert.ok(t.slug && t.name && t.category && t.brand);
+    assert.ok(t.slug && t.name && t.category && t.make);
     assert.ok(!('description' in t), 'description should be stripped');
   });
 });
@@ -136,8 +136,8 @@ describe('getSiteContent', () => {
 
 describe('searchTrailers — input sanitization', () => {
   const sample = [
-    { pk: 'TRAILER', sk: 'a', data: { slug: 'a', name: 'Maxx-D Dump', category: 'dump-trailers', brand: 'Maxx-D', price: 8000, description: 'dump' } },
-    { pk: 'TRAILER', sk: 'b', data: { slug: 'b', name: 'Retco Utility', category: 'utility-trailers', brand: 'Retco', price: 3000, description: 'utility' } },
+    { pk: 'TRAILER', sk: 'a', data: { slug: 'a', name: 'Maxx-D Dump', category: 'dump-trailers', make: 'Maxx-D', price: 8000, features: ['dump'] } },
+    { pk: 'TRAILER', sk: 'b', data: { slug: 'b', name: 'Retco Utility', category: 'utility-trailers', make: 'Retco', price: 3000, features: ['utility'] } },
   ];
   function ctx() {
     return { contentTable: 'fake', ddb: { send: async () => ({ Items: sample }) } };
@@ -153,14 +153,14 @@ describe('searchTrailers — input sanitization', () => {
     assert.equal(res.count, 2);
   });
 
-  it('treats single-character brand as "no filter"', async () => {
-    const res = await runTool({ name: 'searchTrailers', toolUseId: 's3', input: { brand: '.' } }, ctx());
+  it('treats single-character make as "no filter"', async () => {
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 's3', input: { make: '.' } }, ctx());
     assert.equal(res.count, 2);
   });
 
   it('ignores all four placeholder-style fields together', async () => {
     const res = await runTool(
-      { name: 'searchTrailers', toolUseId: 's4', input: { category: '.', brand: '.', maxPrice: 0, query: '' } },
+      { name: 'searchTrailers', toolUseId: 's4', input: { category: '.', make: '.', maxPrice: 0, query: '' } },
       ctx(),
     );
     assert.equal(res.count, 2);

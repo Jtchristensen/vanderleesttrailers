@@ -8,7 +8,8 @@ interface Recommendation {
   slug: string;
   name: string;
   category: string;
-  brand: string;
+  make: string;
+  model: string;
   price: string;
   gvwr: string;
   payload: string;

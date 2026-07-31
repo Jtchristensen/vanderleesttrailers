@@ -55,7 +55,8 @@ export class InventoryEditorComponent implements OnInit {
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase();
       result = result.filter(t =>
-        t.name?.toLowerCase().includes(q) || t.brand?.toLowerCase().includes(q)
+        t.name?.toLowerCase().includes(q) || t.make?.toLowerCase().includes(q) ||
+        t.model?.toLowerCase().includes(q)
       );
     }
     if (this.categoryFilter) {

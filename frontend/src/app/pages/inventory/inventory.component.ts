@@ -142,7 +142,8 @@ export class InventoryComponent implements OnInit {
       const q = this.searchQuery.toLowerCase();
       result = result.filter((t: any) =>
         (t.name || '').toLowerCase().includes(q) ||
-        (t.brand || '').toLowerCase().includes(q)
+        (t.make || '').toLowerCase().includes(q) ||
+        (t.model || '').toLowerCase().includes(q)
       );
     }
 
