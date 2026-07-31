@@ -1,7 +1,8 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 
 /**
- * Scroll-driven "roll in & hitch" animation layered over the home hero.
+ * Scroll-driven "back up & hitch" animation layered over the home hero: the
+ * truck reverses to the parked trailer, whose nose then drops onto the ball.
  *
  * Progress is the fraction of the hero that has scrolled past the top of the
  * viewport, clamped to 0..1 over PROGRESS_RANGE px. Everything is expressed as
@@ -37,7 +38,7 @@ export class TrailerRollinComponent implements OnInit {
       ? 1
       : clamp(-el.getBoundingClientRect().top / TrailerRollinComponent.PROGRESS_RANGE);
 
-    // roll: easeInOutCubic across the first 70% of the scroll
+    // roll: easeInOutCubic across the first 70% of the scroll (the truck backing up)
     const rt = seg(p, 0, 0.7);
     const roll = rt < 0.5 ? 4 * rt ** 3 : 1 - Math.pow(-2 * rt + 2, 3) / 2;
     const drop = outBack(seg(p, 0.68, 0.86));
@@ -45,7 +46,6 @@ export class TrailerRollinComponent implements OnInit {
 
     const s = this.host.nativeElement.style;
     s.setProperty('--roll', roll.toFixed(4));
-    s.setProperty('--spin', (roll * 1080).toFixed(1)); // 3 full wheel turns
     s.setProperty('--drop', drop.toFixed(4));
     s.setProperty('--lock', lock.toFixed(3));
     s.setProperty('--lockScale', (0.9 + outBack(lock) * 0.1).toFixed(3));
