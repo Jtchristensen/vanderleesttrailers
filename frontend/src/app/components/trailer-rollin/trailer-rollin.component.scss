@@ -23,7 +23,7 @@
 
 .rollin__badge {
   position: absolute;
-  left: 28%;
+  left: 40%; // tracks the coupling point, which sits ~42% across at desktop widths
   bottom: 44px;
   z-index: 4;
   transform: translateX(-50%) scale(var(--lockScale));
