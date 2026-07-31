@@ -65,6 +65,13 @@
 .admin-field {
   margin-bottom: var(--space-lg);
 
+  &__hint {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+  }
+
   label {
     display: block;
     font-family: var(--font-display);

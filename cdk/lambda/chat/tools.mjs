@@ -64,7 +64,9 @@ function slim(trailer) {
   const d = trailer.data || trailer;
   return {
     slug:     d.slug,
-    name:     d.name,
+    // The admin API stores the composed title; `name` is the pre-title field
+    // that records keep until the migration contracts.
+    title:    d.title || d.name || '',
     category: d.category,
     make:     d.make,
     model:    d.model,
@@ -104,7 +106,7 @@ async function searchTrailers(input, ctx) {
     if (mdl && !(t.model || '').toLowerCase().includes(mdl)) return false;
     if (useMaxPrice && Number(t.price) > maxPrice) return false;
     if (q) {
-      const hay = `${t.name || ''} ${t.model || ''} ${(t.features || []).join(' ')}`.toLowerCase();
+      const hay = `${t.title || t.name || ''} ${t.model || ''} ${(t.features || []).join(' ')}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;

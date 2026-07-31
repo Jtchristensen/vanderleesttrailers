@@ -5,10 +5,11 @@ import { ContentService } from '../../services/content.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { TowCheckService } from '../../services/tow-check.service';
 import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
+import { TrailerTitlePipe } from '../../pipes/trailer-title.pipe';
 
 @Component({
     selector: 'app-favorites',
-    imports: [RouterLink, TowFitBadgeComponent],
+    imports: [RouterLink, TowFitBadgeComponent, TrailerTitlePipe],
     templateUrl: './favorites.component.html',
     styleUrls: ['./favorites.component.scss']
 })

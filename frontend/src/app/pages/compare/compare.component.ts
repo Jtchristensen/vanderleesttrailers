@@ -5,6 +5,7 @@ import { ContentService } from '../../services/content.service';
 import { CompareService, COMPARE_LIMIT } from '../../services/compare.service';
 import { TowCheckService } from '../../services/tow-check.service';
 import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
+import { TrailerTitlePipe } from '../../pipes/trailer-title.pipe';
 
 interface SpecRow {
   label: string;
@@ -17,7 +18,7 @@ interface SpecRow {
 
 @Component({
     selector: 'app-compare',
-    imports: [RouterLink, TowFitBadgeComponent],
+    imports: [RouterLink, TowFitBadgeComponent, TrailerTitlePipe],
     templateUrl: './compare.component.html',
     styleUrls: ['./compare.component.scss']
 })
@@ -29,6 +30,8 @@ export class CompareComponent implements OnInit {
   limit = COMPARE_LIMIT;
 
   specRows: SpecRow[] = [
+    { label: 'Year', field: 'year' },
+    { label: 'Size', field: 'size' },
     { label: 'Price', field: 'price', prefix: '$', best: 'min' },
     { label: 'GVWR', field: 'gvwr', unit: 'lbs', best: 'max' },
     { label: 'Empty Weight', field: 'emptyWeight', unit: 'lbs', best: 'min' },

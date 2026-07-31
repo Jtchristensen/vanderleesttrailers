@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminApiService } from '../../services/admin-api.service';
 import { ContentService } from '../../services/content.service';
+import { trailerTitle, extractSize } from '../../pipes/trailer-title.pipe';
 
 @Component({
     selector: 'app-trailer-form',
@@ -20,16 +21,22 @@ export class TrailerFormComponent implements OnInit {
   toastError = false;
 
   trailer: any = {
-    name: '',
     slug: '',
     category: '',
+    year: '',
     make: '',
     model: '',
+    size: '',
     price: '',
     gvwr: '',
     features: '',
     images: [],
   };
+
+  /** Live preview of the heading customers will see — the title is derived, never typed. */
+  get title(): string {
+    return trailerTitle(this.trailer);
+  }
 
   categories = [
     'aluminum-trailers', 'aluminum-enclosed-trailers', 'car-equipment-haulers',
@@ -64,6 +71,14 @@ export class TrailerFormComponent implements OnInit {
         }
         delete this.trailer.brand;
         delete this.trailer.description;
+        // The title is composed from year/make/model/size/category/GVWR now.
+        // Keep the legacy free-text name only so the size parser below can read
+        // it; it is stripped before save so the record stops carrying it.
+        if (!this.trailer.size && this.trailer.name) {
+          this.trailer.size = extractSize(this.trailer.name);
+        }
+        delete this.trailer.name;
+        delete this.trailer.title;
         if (typeof this.trailer.features === 'object') {
           this.trailer.features = (this.trailer.features as string[]).join('\n');
         }
@@ -93,6 +108,13 @@ export class TrailerFormComponent implements OnInit {
   }
 
   async save() {
+    // An empty title means an empty heading on the site and an empty slug in the
+    // URL, so refuse the save rather than publish a broken listing.
+    if (!this.title) {
+      this.showToast('Add at least a make, model, or size — the title is built from those', true);
+      return;
+    }
+
     this.saving = true;
     try {
       const data = {

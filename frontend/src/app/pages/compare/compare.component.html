@@ -43,19 +43,19 @@
               <div class="compare__label"></div>
               @for (t of trailers; track t.slug) {
                 <div class="compare__cell compare__head-cell">
-                  <button type="button" class="compare__remove" (click)="remove(t.slug)" [attr.aria-label]="'Remove ' + t.name">
+                  <button type="button" class="compare__remove" (click)="remove(t.slug)" [attr.aria-label]="'Remove ' + (t | trailerTitle)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                       <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                   </button>
                   <a [routerLink]="'/trailer/' + t.slug" class="compare__img">
                     @if (t.images?.length) {
-                      <img [src]="t.images[0]" [alt]="t.name" loading="lazy" />
+                      <img [src]="t.images[0]" [alt]="t | trailerTitle" loading="lazy" />
                     } @else {
-                      <img src="/uploads/site/categories/steel-utility.jpeg" [alt]="t.name" loading="lazy" />
+                      <img src="/uploads/site/categories/steel-utility.jpeg" [alt]="t | trailerTitle" loading="lazy" />
                     }
                   </a>
-                  <a [routerLink]="'/trailer/' + t.slug" class="compare__name">{{ t.name }}</a>
+                  <a [routerLink]="'/trailer/' + t.slug" class="compare__name">{{ t | trailerTitle }}</a>
                 </div>
               }
               @if (trailers.length < limit) {

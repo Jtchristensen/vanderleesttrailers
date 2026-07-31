@@ -27,10 +27,10 @@ describe('runTool dispatch', () => {
 
 describe('searchTrailers', () => {
   const sampleTrailers = [
-    { pk: 'TRAILER', sk: 'maxxd-d7x', data: { slug: 'maxxd-d7x', name: 'Maxx-D D7X 6x12 Dump', category: 'dump-trailers', make: 'Maxx-D', price: 8495, features: ['Heavy duty dump'] } },
-    { pk: 'TRAILER', sk: 'retco-util', data: { slug: 'retco-util', name: 'Retco 7x14 Utility', category: 'utility-trailers', make: 'Retco', price: 3200, features: ['Lightweight utility'] } },
-    { pk: 'TRAILER', sk: 'gator-gn', data: { slug: 'gator-gn', name: 'Gatormade 30ft Gooseneck', category: 'gooseneck', make: 'Gatormade', price: 22000, features: ['Heavy hauler'] } },
-    { pk: 'TRAILER', sk: 'bullx-hauler', data: { slug: 'bullx-hauler', name: 'Black Rhino EXS Hauler', category: 'utility-trailers', make: 'Black Rhino', price: 4100, features: ['Aluminum utility for landscaping'] } },
+    { pk: 'TRAILER', sk: 'maxxd-d7x', data: { slug: 'maxxd-d7x', title: 'Maxx-D D7X 6x12 Dump', category: 'dump-trailers', make: 'Maxx-D', price: 8495, features: ['Heavy duty dump'] } },
+    { pk: 'TRAILER', sk: 'retco-util', data: { slug: 'retco-util', title: 'Retco 7x14 Utility', category: 'utility-trailers', make: 'Retco', price: 3200, features: ['Lightweight utility'] } },
+    { pk: 'TRAILER', sk: 'gator-gn', data: { slug: 'gator-gn', title: 'Gatormade 30ft Gooseneck', category: 'gooseneck', make: 'Gatormade', price: 22000, features: ['Heavy hauler'] } },
+    { pk: 'TRAILER', sk: 'bullx-hauler', data: { slug: 'bullx-hauler', name: 'Black Rhino EXS Hauler' /* legacy, pre-title */, category: 'utility-trailers', make: 'Black Rhino', price: 4100, features: ['Aluminum utility for landscaping'] } },
   ];
 
   function mockCtx() {
@@ -82,11 +82,16 @@ describe('searchTrailers', () => {
     assert.equal(res.count, 25);
   });
 
-  it('strips heavy fields from returned trailers (keeps name, slug, category, make, model, price, gvwr, image)', async () => {
+  it('strips heavy fields from returned trailers (keeps title, slug, category, make, model, price, gvwr, image)', async () => {
     const res = await runTool({ name: 'searchTrailers', toolUseId: 't7', input: { category: 'dump-trailers' } }, mockCtx());
     const t = res.trailers[0];
-    assert.ok(t.slug && t.name && t.category && t.make);
+    assert.ok(t.slug && t.title && t.category && t.make);
     assert.ok(!('description' in t), 'description should be stripped');
+  });
+
+  it('falls back to the pre-title `name` for records the migration has not reached', async () => {
+    const res = await runTool({ name: 'searchTrailers', toolUseId: 't8', input: { make: 'black rhino' } }, mockCtx());
+    assert.equal(res.trailers[0].title, 'Black Rhino EXS Hauler');
   });
 });
 

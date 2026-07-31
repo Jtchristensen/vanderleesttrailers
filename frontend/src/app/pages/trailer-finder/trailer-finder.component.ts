@@ -6,7 +6,8 @@ import { environment } from '../../../environments/environment';
 
 interface Recommendation {
   slug: string;
-  name: string;
+  /** Composed by the recommend lambda from the same fields the site displays. */
+  title: string;
   category: string;
   make: string;
   model: string;

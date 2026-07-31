@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminApiService } from '../../services/admin-api.service';
+import { TrailerTitlePipe, trailerTitle } from '../../pipes/trailer-title.pipe';
 
 @Component({
     selector: 'app-inventory-editor',
-    imports: [FormsModule, RouterLink],
+    imports: [FormsModule, RouterLink, TrailerTitlePipe],
     templateUrl: './inventory-editor.component.html',
     styleUrls: ['./inventory-editor.component.scss']
 })
@@ -50,12 +51,17 @@ export class InventoryEditorComponent implements OnInit {
     return !!this.categoryFilter && !this.searchQuery;
   }
 
+  /** The derived listing title — what the row shows, so search and sort match it. */
+  title(trailer: any): string {
+    return trailerTitle(trailer);
+  }
+
   applyFilters() {
     let result = [...this.trailers];
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase();
       result = result.filter(t =>
-        t.name?.toLowerCase().includes(q) || t.make?.toLowerCase().includes(q) ||
+        this.title(t).toLowerCase().includes(q) || t.make?.toLowerCase().includes(q) ||
         t.model?.toLowerCase().includes(q)
       );
     }
@@ -70,7 +76,7 @@ export class InventoryEditorComponent implements OnInit {
       const aDate = a.publishedAt || '';
       const bDate = b.publishedAt || '';
       if (aDate !== bDate) return bDate.localeCompare(aDate);
-      return (a.name || '').localeCompare(b.name || '');
+      return this.title(a).localeCompare(this.title(b));
     });
     this.filteredTrailers = result;
     this.orderChanged = false;
@@ -123,8 +129,8 @@ export class InventoryEditorComponent implements OnInit {
     this.savingOrder = false;
   }
 
-  async deleteTrailer(slug: string, name: string) {
-    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  async deleteTrailer(slug: string, title: string) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
     try {
       await this.adminApi.deleteTrailer(slug);
       this.trailers = this.trailers.filter(t => t.slug !== slug);

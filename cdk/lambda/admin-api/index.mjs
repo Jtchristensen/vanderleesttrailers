@@ -3,6 +3,7 @@ import { DynamoDBDocumentClient, PutCommand, DeleteCommand, QueryCommand, Update
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import crypto from 'crypto';
+import { composeTitle } from './trailer-title.mjs';
 
 const ddbClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(ddbClient);
@@ -45,7 +46,9 @@ export const handler = async (event) => {
 
     // POST /api/admin/trailers — create trailer
     if (resource === '/api/admin/trailers' && httpMethod === 'POST') {
-      const slug = parsed.data?.slug || generateSlug(parsed.data?.name || 'trailer');
+      const title = applyTitle(parsed.data);
+      if (!title) return badTitle();
+      const slug = parsed.data?.slug || generateSlug(title);
       parsed.data.slug = slug;
       await ddb.send(new PutCommand({
         TableName: TABLE,
@@ -62,6 +65,7 @@ export const handler = async (event) => {
     // PUT /api/admin/trailers/{slug} — update trailer
     if (resource === '/api/admin/trailers/{slug}' && httpMethod === 'PUT') {
       const slug = pathParameters.slug;
+      if (!applyTitle(parsed.data)) return badTitle();
       parsed.data.slug = slug;
       await ddb.send(new PutCommand({
         TableName: TABLE,
@@ -147,7 +151,8 @@ export const handler = async (event) => {
             const aDate = a.publishedAt || '';
             const bDate = b.publishedAt || '';
             if (aDate !== bDate) return bDate.localeCompare(aDate);
-            return (a.name || '').localeCompare(b.name || '');
+            // `name` is the pre-title field; records keep it until the migration contracts.
+            return (a.title || a.name || '').localeCompare(b.title || b.name || '');
           })
         ),
       };
@@ -159,6 +164,29 @@ export const handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: 'Internal server error' }) };
   }
 };
+
+/**
+ * Stores the derived title on the record and drops the legacy free-text name.
+ *
+ * Persisting it keeps the read paths simple — the public API, the chat
+ * assistant, and the slug all read one string instead of each re-deriving it
+ * from six fields. Returns the title so callers can reject an empty one.
+ */
+function applyTitle(data) {
+  if (!data) return '';
+  const title = composeTitle(data);
+  data.title = title;
+  delete data.name;
+  return title;
+}
+
+function badTitle() {
+  return {
+    statusCode: 400,
+    headers,
+    body: JSON.stringify({ error: 'Trailer needs at least a year, make, model, or size — the title is built from those' }),
+  };
+}
 
 function generateSlug(name) {
   return name

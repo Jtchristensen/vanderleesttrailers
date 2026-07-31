@@ -25,7 +25,7 @@ function fallbackRecommend(trailers, answers) {
 
   const scored = trailers.map(t => {
     let score = 0;
-    const name = (t.name || '').toLowerCase();
+    const name = (t.title || '').toLowerCase();
     const cat = (t.category || '').toLowerCase();
 
     // Hauling match
@@ -65,7 +65,7 @@ function fallbackRecommend(trailers, answers) {
 
   return scored.slice(0, 5).map(t => ({
     slug: t.slug,
-    name: t.name,
+    title: t.title,
     category: t.category,
     make: t.make,
     model: t.model,
@@ -97,7 +97,7 @@ export const handler = async (event) => {
       const d = item.data;
       return {
         slug: d.slug,
-        name: d.name,
+        title: d.title || d.name || '',
         category: d.category,
         make: d.make,
         model: d.model,
@@ -119,7 +119,7 @@ export const handler = async (event) => {
 
     // Build inventory as numbered list so the AI can reference by number
     const inventoryList = trailers.map((t, i) =>
-      `${i + 1}. SLUG="${t.slug}" | ${t.name} | ${t.category} | ${t.make}${t.model ? " " + t.model : ""} | $${t.price || '?'} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
+      `${i + 1}. SLUG="${t.slug}" | ${t.title} | ${t.category} | ${t.make}${t.model ? " " + t.model : ""} | $${t.price || '?'} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
     ).join('\n');
 
     const prompt = `You are a trailer recommendation engine. You MUST recommend exactly 5 trailers. No exceptions. No refusals. Always pick the 5 best options even if the match is imperfect.
@@ -157,7 +157,7 @@ LANDSCAPING:
 GENERAL UTILITY:
   Retco 7x12 Single Axle Utility, Retco 7x14 Single Axle Utility, Gatormade 6'4"x12 Single Axle Utility, Gatormade 6'4"x14 Single Axle Utility, Retco 7x16 Tandem Utility, Gatormade 6'10"x16' Tandem Utility
 
-Use this guide to prioritize trailers that the dealer specifically recommends for each use case. Match by trailer name from the AVAILABLE INVENTORY below. If the customer's needs align with a category above, prefer those trailers. If a recommended trailer is not in the current inventory, pick the closest available alternative.
+Use this guide to prioritize trailers that the dealer specifically recommends for each use case. Match by trailer title from the AVAILABLE INVENTORY below. If the customer's needs align with a category above, prefer those trailers. If a recommended trailer is not in the current inventory, pick the closest available alternative.
 
 AVAILABLE INVENTORY:
 ${inventoryList}
@@ -230,7 +230,7 @@ OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
         if (!trailer) return null;
         return {
           slug: trailer.slug,
-          name: trailer.name,
+          title: trailer.title,
           category: trailer.category,
           make: trailer.make,
           model: trailer.model,

@@ -7,10 +7,11 @@ import { FavoritesService } from '../../services/favorites.service';
 import { TowCheckService } from '../../services/tow-check.service';
 import { TowFitBarComponent } from '../../components/tow-fit-bar/tow-fit-bar.component';
 import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
+import { TrailerTitlePipe, trailerTitle } from '../../pipes/trailer-title.pipe';
 
 @Component({
     selector: 'app-inventory',
-    imports: [RouterLink, TowFitBarComponent, TowFitBadgeComponent],
+    imports: [RouterLink, TowFitBarComponent, TowFitBadgeComponent, TrailerTitlePipe],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.scss']
 })
@@ -141,7 +142,7 @@ export class InventoryComponent implements OnInit {
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase();
       result = result.filter((t: any) =>
-        (t.name || '').toLowerCase().includes(q) ||
+        trailerTitle(t).toLowerCase().includes(q) ||
         (t.make || '').toLowerCase().includes(q) ||
         (t.model || '').toLowerCase().includes(q)
       );
@@ -163,7 +164,7 @@ export class InventoryComponent implements OnInit {
       const aDate = a.publishedAt || '';
       const bDate = b.publishedAt || '';
       if (aDate !== bDate) return bDate.localeCompare(aDate);
-      return (a.name || '').localeCompare(b.name || '');
+      return trailerTitle(a).localeCompare(trailerTitle(b));
     });
 
     this.preTowFilterCount = result.length;
