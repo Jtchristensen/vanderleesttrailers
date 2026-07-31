@@ -21,6 +21,16 @@
   overflow: hidden;
 }
 
+/* Lifts the photographed trailer off the dark video — the hero runs its
+   background at brightness 0.3 -> 0.15, and the trailer is dark olive. */
+.rollin__trailer {
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.55))
+          drop-shadow(0 0 2px rgba(46, 163, 242, 0.35))
+          brightness(1.25)
+          saturate(1.08)
+          contrast(1.04);
+}
+
 .rollin__badge {
   position: absolute;
   left: 40%; // tracks the coupling point, which sits ~42% across at desktop widths
