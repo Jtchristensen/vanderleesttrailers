@@ -67,12 +67,13 @@ function fallbackRecommend(trailers, answers) {
     slug: t.slug,
     name: t.name,
     category: t.category,
-    brand: t.brand,
+    make: t.make,
+    model: t.model,
     price: t.price,
     gvwr: t.gvwr,
     payload: t.payload,
     image: t.image,
-    reason: `This ${t.brand || ''} trailer fits your needs with ${t.gvwr ? t.gvwr + ' lbs GVWR' : 'solid capacity'}${t.price ? ' at $' + t.price : ''}.`,
+    reason: `This ${t.make || ''} trailer fits your needs with ${t.gvwr ? t.gvwr + ' lbs GVWR' : 'solid capacity'}${t.price ? ' at $' + t.price : ''}.`,
   }));
 }
 
@@ -98,7 +99,8 @@ export const handler = async (event) => {
         slug: d.slug,
         name: d.name,
         category: d.category,
-        brand: d.brand,
+        make: d.make,
+        model: d.model,
         price: d.price,
         gvwr: d.gvwr,
         payload: d.payload,
@@ -117,7 +119,7 @@ export const handler = async (event) => {
 
     // Build inventory as numbered list so the AI can reference by number
     const inventoryList = trailers.map((t, i) =>
-      `${i + 1}. SLUG="${t.slug}" | ${t.name} | ${t.category} | ${t.brand} | $${t.price || '?'} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
+      `${i + 1}. SLUG="${t.slug}" | ${t.name} | ${t.category} | ${t.make}${t.model ? " " + t.model : ""} | $${t.price || '?'} | GVWR:${t.gvwr || '?'} | Payload:${t.payload || '?'}`
     ).join('\n');
 
     const prompt = `You are a trailer recommendation engine. You MUST recommend exactly 5 trailers. No exceptions. No refusals. Always pick the 5 best options even if the match is imperfect.
@@ -230,7 +232,8 @@ OUTPUT FORMAT (strict JSON, no markdown, no explanation outside the array):
           slug: trailer.slug,
           name: trailer.name,
           category: trailer.category,
-          brand: trailer.brand,
+          make: trailer.make,
+          model: trailer.model,
           price: trailer.price,
           gvwr: trailer.gvwr,
           payload: trailer.payload,

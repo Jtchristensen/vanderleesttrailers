@@ -10,9 +10,10 @@ export const TOOL_SPECS = [
           type: 'object',
           properties: {
             category: { type: 'string', description: 'Optional. Category slug, e.g. "dump-trailers", "utility-trailers". Omit if no preference.' },
-            brand:    { type: 'string', description: 'Optional. Brand name, e.g. "Maxx-D", "Retco". Omit if no preference.' },
+            make:     { type: 'string', description: 'Optional. Trailer make/manufacturer, e.g. "Maxx-D", "Retco". Omit if no preference.' },
+            model:    { type: 'string', description: 'Optional. Model designation, e.g. "H8X", "EXS", "Elite Tandem". Omit if no preference.' },
             maxPrice: { type: 'number', description: 'Optional. Max price in USD (positive number). Omit if no budget limit.' },
-            query:    { type: 'string', description: 'Optional. Free-text search over name and description. Omit for unfiltered listing.' },
+            query:    { type: 'string', description: 'Optional. Free-text search over name, model and features. Omit for unfiltered listing.' },
           },
         },
       },
@@ -65,7 +66,8 @@ function slim(trailer) {
     slug:     d.slug,
     name:     d.name,
     category: d.category,
-    brand:    d.brand,
+    make:     d.make,
+    model:    d.model,
     price:    d.price,
     gvwr:     d.gvwr,
     image:    d.images?.[0] || d.image || '',
@@ -81,7 +83,7 @@ function cleanFilter(s) {
 }
 
 async function searchTrailers(input, ctx) {
-  const { category, brand, maxPrice, query } = input || {};
+  const { category, make, model, maxPrice, query } = input || {};
   const result = await ctx.ddb.send(new QueryCommand({
     TableName: ctx.contentTable,
     KeyConditionExpression: 'pk = :pk',
@@ -90,17 +92,19 @@ async function searchTrailers(input, ctx) {
   const all = (result.Items || []).map(i => i.data || i);
 
   const cat = cleanFilter(category);
-  const br  = cleanFilter(brand);
+  const mk  = cleanFilter(make);
+  const mdl = cleanFilter(model);
   const q   = cleanFilter(query);
   // 0 / negative values mean "no budget" (the model sometimes sends 0 when it means "no filter").
   const useMaxPrice = typeof maxPrice === 'number' && maxPrice > 0;
 
   const filtered = all.filter(t => {
     if (cat && (t.category || '').toLowerCase() !== cat) return false;
-    if (br  && (t.brand || '').toLowerCase() !== br) return false;
+    if (mk  && (t.make || '').toLowerCase() !== mk) return false;
+    if (mdl && !(t.model || '').toLowerCase().includes(mdl)) return false;
     if (useMaxPrice && Number(t.price) > maxPrice) return false;
     if (q) {
-      const hay = `${t.name || ''} ${t.description || ''}`.toLowerCase();
+      const hay = `${t.name || ''} ${t.model || ''} ${(t.features || []).join(' ')}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;

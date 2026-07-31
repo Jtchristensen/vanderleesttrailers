@@ -34,7 +34,8 @@ export class CompareComponent implements OnInit {
     { label: 'Empty Weight', field: 'emptyWeight', unit: 'lbs', best: 'min' },
     { label: 'Payload', field: 'payload', unit: 'lbs', best: 'max' },
     { label: 'Siding', field: 'siding' },
-    { label: 'Brand', field: 'brand' },
+    { label: 'Make', field: 'make' },
+    { label: 'Model', field: 'model' },
     { label: 'Category', field: 'category' },
   ];
 

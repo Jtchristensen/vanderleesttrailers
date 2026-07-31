@@ -176,8 +176,8 @@
                   @if (rec.gvwr) {
                     <span>{{ rec.gvwr }} lbs GVWR</span>
                   }
-                  @if (rec.brand) {
-                    <span>{{ rec.brand }}</span>
+                  @if (rec.make) {
+                    <span>{{ rec.make }}{{ rec.model ? ' \u00b7 ' + rec.model : '' }}</span>
                   }
                 </div>
                 <p class="finder__result-reason">{{ rec.reason }}</p>

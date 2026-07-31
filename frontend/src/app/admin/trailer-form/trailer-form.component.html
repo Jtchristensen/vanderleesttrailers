@@ -39,14 +39,19 @@
           </div>
 
           <div class="admin-field">
-            <label>Brand *</label>
-            <select [(ngModel)]="trailer.brand">
-              <option value="">Select brand</option>
-              @for (brand of brands; track brand) {
-                <option [value]="brand">{{ brand }}</option>
+            <label>Make *</label>
+            <select [(ngModel)]="trailer.make">
+              <option value="">Select make</option>
+              @for (make of makes; track make) {
+                <option [value]="make">{{ make }}</option>
               }
             </select>
           </div>
+        </div>
+
+        <div class="admin-field">
+          <label>Model</label>
+          <input type="text" [(ngModel)]="trailer.model" placeholder="e.g. H8X, EXS, Elite Tandem, GT-XT" />
         </div>
 
         <div class="admin-field--inline">
@@ -62,13 +67,8 @@
         </div>
 
         <div class="admin-field">
-          <label>Description</label>
-          <textarea [(ngModel)]="trailer.description" rows="4" placeholder="Trailer description..."></textarea>
-        </div>
-
-        <div class="admin-field">
           <label>Features (one per line)</label>
-          <textarea [(ngModel)]="trailer.features" rows="6" placeholder="LED lighting&#10;Electric brakes&#10;Tarp kit included"></textarea>
+          <textarea [(ngModel)]="trailer.features" rows="10" placeholder="LED lighting&#10;Electric brakes&#10;Tarp kit included"></textarea>
         </div>
       </div>
 

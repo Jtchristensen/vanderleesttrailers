@@ -23,10 +23,10 @@ export class TrailerFormComponent implements OnInit {
     name: '',
     slug: '',
     category: '',
-    brand: '',
+    make: '',
+    model: '',
     price: '',
     gvwr: '',
-    description: '',
     features: '',
     images: [],
   };
@@ -36,7 +36,10 @@ export class TrailerFormComponent implements OnInit {
     'dump-trailers', 'enclosed-trailers', 'gooseneck-trailers', 'steel-utility-trailers',
   ];
 
-  brands = ['Black Rhino', 'Maxx-D', 'Gatormade', 'Retco', 'DuraBull', 'Rock Solid Cargo'];
+  makes = [
+    'Black Rhino', 'Maxx-D', 'Gatormade', 'Retco', 'DuraBull', 'Rock Solid Cargo',
+    'Southern Utility',
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +56,14 @@ export class TrailerFormComponent implements OnInit {
       try {
         const data = await this.content.getTrailer(slug);
         this.trailer = { ...this.trailer, ...data };
+        // Records written before the make/model split still carry `brand` and a
+        // `description` that only echoed the feature list. Fold them forward so
+        // saving this trailer drops the legacy fields.
+        if (!this.trailer.make && this.trailer.brand) {
+          this.trailer.make = this.trailer.brand;
+        }
+        delete this.trailer.brand;
+        delete this.trailer.description;
         if (typeof this.trailer.features === 'object') {
           this.trailer.features = (this.trailer.features as string[]).join('\n');
         }

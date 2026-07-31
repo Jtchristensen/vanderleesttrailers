@@ -50,3 +50,6 @@ coverage/
 *.tgz
 *.zip
 .superpowers/
+
+# Local DynamoDB backups (pre-migration snapshots)
+backups/

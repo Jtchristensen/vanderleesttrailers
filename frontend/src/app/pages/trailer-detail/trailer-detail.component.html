@@ -75,8 +75,8 @@
           <div class="detail__info">
             <h1>{{ trailer.name }}</h1>
 
-            @if (trailer.brand) {
-              <span class="detail__brand">{{ trailer.brand }}</span>
+            @if (trailer.make) {
+              <span class="detail__brand">{{ trailer.make }}{{ trailer.model ? ' \u00b7 ' + trailer.model : '' }}</span>
             }
 
             @if (trailer.price) {
@@ -169,13 +169,6 @@
               </div>
             }
 
-            <!-- Description -->
-            @if (trailer.description) {
-              <div class="detail__description">
-                <h3>Description</h3>
-                <p>{{ trailer.description }}</p>
-              </div>
-            }
           </div>
         </div>
       </div>
