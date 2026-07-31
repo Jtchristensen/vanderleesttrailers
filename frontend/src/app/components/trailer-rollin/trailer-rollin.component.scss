@@ -8,6 +8,14 @@
   --away: 0;      /* 0 = rig parked and hitched, 1 = hauled off-screen */
   --lock: 0;      /* badge opacity */
   --lockScale: 0.9;
+
+  /* How far the rig sits below where the SVG box alone would put it. The
+     viewBox carries ~70px of empty space under the ground line at desktop
+     scale, which left the rig floating high in the hero; this spends most of
+     that slack. Declared here, not on .rollin, because the badge is a sibling
+     and has to come down by the same amount to stay on the coupling point. */
+  --rigDrop: 32px;
+
   display: contents;
 }
 
@@ -23,7 +31,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: calc(-1 * var(--rigDrop));
   height: 330px;
   z-index: 1; // above .hero__overlay / .hero__grain, below .hero__content (z-index: 2)
   pointer-events: none;
@@ -43,7 +51,7 @@
 .rollin__badge {
   position: absolute;
   left: 40%; // tracks the coupling point, which sits ~42% across at desktop widths
-  bottom: 44px;
+  bottom: calc(44px - var(--rigDrop));
   z-index: 4;
   /* Rides along with the rig on the way out instead of hanging in dead air.
      vw rather than the SVG's user units — it fades before the offset is far
@@ -67,6 +75,16 @@
 }
 
 @media (max-width: 768px) {
+  /* Mobile scales the SVG down much harder, so there is only ~30px of slack
+     under the ground line to spend — drop it proportionally less or the tires
+     go over the bottom edge of the hero. */
+  :host { --rigDrop: 12px; }
+
   .rollin { height: 240px; }
-  .rollin__badge { left: 50%; bottom: 28px; font-size: 0.78rem; padding: 6px 16px; }
+  .rollin__badge {
+    left: 50%;
+    bottom: calc(28px - var(--rigDrop));
+    font-size: 0.78rem;
+    padding: 6px 16px;
+  }
 }
