@@ -6,14 +6,19 @@ import { FavoritesService } from '../../services/favorites.service';
 import { TowCheckService } from '../../services/tow-check.service';
 import { TowFitBadgeComponent } from '../../components/tow-fit-badge/tow-fit-badge.component';
 import { TrailerTitlePipe } from '../../pipes/trailer-title.pipe';
+import { SavingsBadgeComponent } from '../../components/savings-badge/savings-badge.component';
+import { hasSavings } from '../../utils/pricing';
 
 @Component({
     selector: 'app-favorites',
-    imports: [RouterLink, TowFitBadgeComponent, TrailerTitlePipe],
+    imports: [RouterLink, TowFitBadgeComponent, TrailerTitlePipe, SavingsBadgeComponent],
     templateUrl: './favorites.component.html',
     styleUrls: ['./favorites.component.scss']
 })
 export class FavoritesComponent implements OnInit {
+  /** Template hook for the MSRP strikethrough — see utils/pricing. */
+  readonly hasSavings = hasSavings;
+
   site: any = ContentService.getContentSync('SITE_INFO');
   trailers: any[] = [];
   loaded = false;

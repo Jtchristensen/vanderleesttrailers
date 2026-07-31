@@ -5,14 +5,19 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { TrailerTitlePipe } from '../../pipes/trailer-title.pipe';
+import { SavingsBadgeComponent } from '../../components/savings-badge/savings-badge.component';
+import { hasSavings } from '../../utils/pricing';
 
 @Component({
     selector: 'app-trailer-detail',
-    imports: [RouterLink, TowCheckComponent, TrailerTitlePipe],
+    imports: [RouterLink, TowCheckComponent, TrailerTitlePipe, SavingsBadgeComponent],
     templateUrl: './trailer-detail.component.html',
     styleUrls: ['./trailer-detail.component.scss']
 })
 export class TrailerDetailComponent implements OnInit {
+  /** Template hook for the MSRP strikethrough — see utils/pricing. */
+  readonly hasSavings = hasSavings;
+
   trailer: any = null;
   site: any = ContentService.getContentSync('SITE_INFO');
   loaded = false;

@@ -29,6 +29,8 @@ export class TrailerFormComponent implements OnInit {
     size: '',
     variant: '',
     price: '',
+    /** Optional manufacturer list price; shows struck through next to price when higher. */
+    msrp: '',
     gvwr: '',
     features: '',
     images: [],

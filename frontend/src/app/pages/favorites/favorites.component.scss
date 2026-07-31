@@ -173,12 +173,35 @@
     margin-bottom: var(--space-sm);
   }
 
+  // Price, optional struck-through MSRP, optional savings badge. The badge
+  // renders nothing when there's no MSRP, so the gap collapses on its own.
+  &__pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
+  &__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
   &__price {
     font-family: var(--font-display);
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--color-accent);
-    margin-bottom: var(--space-xs);
+  }
+
+  &__msrp {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    text-decoration: line-through;
   }
 
   &__spec {

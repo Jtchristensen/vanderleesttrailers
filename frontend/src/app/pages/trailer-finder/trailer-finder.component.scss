@@ -322,6 +322,11 @@
     background: var(--color-accent-glow) !important;
   }
 
+  // Struck-through MSRP pill; keeps the muted default of &__result-specs span.
+  &__result-msrp {
+    text-decoration: line-through;
+  }
+
   &__result-reason {
     font-size: 0.9rem;
     font-style: italic;

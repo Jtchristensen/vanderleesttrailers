@@ -157,7 +157,15 @@
               <div class="inv-card__body">
                 <h3>{{ trailer | trailerTitle }}</h3>
                 @if (trailer.price) {
-                  <p class="inv-card__price">${{ trailer.price }}</p>
+                  <div class="inv-card__pricing">
+                    <div class="inv-card__price-row">
+                      <span class="inv-card__price">${{ trailer.price }}</span>
+                      @if (hasSavings(trailer)) {
+                        <span class="inv-card__msrp">${{ trailer.msrp }}</span>
+                      }
+                    </div>
+                    <app-savings-badge [trailer]="trailer" />
+                  </div>
                 }
                 @if (trailer.gvwr) {
                   <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>
@@ -292,7 +300,15 @@
               <div class="inv-card__body">
                 <h3>{{ trailer | trailerTitle }}</h3>
                 @if (trailer.price) {
-                  <p class="inv-card__price">${{ trailer.price }}</p>
+                  <div class="inv-card__pricing">
+                    <div class="inv-card__price-row">
+                      <span class="inv-card__price">${{ trailer.price }}</span>
+                      @if (hasSavings(trailer)) {
+                        <span class="inv-card__msrp">${{ trailer.msrp }}</span>
+                      }
+                    </div>
+                    <app-savings-badge [trailer]="trailer" />
+                  </div>
                 }
                 @if (trailer.gvwr) {
                   <p style="font-size: 0.82rem;">GVWR: {{ trailer.gvwr }} lbs</p>

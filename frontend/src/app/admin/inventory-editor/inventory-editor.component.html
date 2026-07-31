@@ -48,6 +48,7 @@
               <th>Category</th>
               <th>Make</th>
               <th>Price</th>
+              <th>MSRP</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -78,6 +79,7 @@
                 <td>{{ trailer.category }}</td>
                 <td>{{ trailer.make }}</td>
                 <td>{{ trailer.price ? ('$' + trailer.price) : '—' }}</td>
+                <td>{{ trailer.msrp ? ('$' + trailer.msrp) : '—' }}</td>
                 <td>
                   <div class="admin-actions">
                     <a [routerLink]="'/admin/inventory/edit/' + trailer.slug" class="btn btn--outline btn--sm">Edit</a>
@@ -89,7 +91,7 @@
             }
             @if (filteredTrailers.length === 0) {
               <tr>
-                <td [attr.colspan]="canReorder ? 6 : 5" style="text-align: center; padding: var(--space-xl); color: var(--color-text-muted);">
+                <td [attr.colspan]="canReorder ? 7 : 6" style="text-align: center; padding: var(--space-xl); color: var(--color-text-muted);">
                   No trailers found. <a routerLink="/admin/inventory/new" style="color: var(--color-accent)">Add one.</a>
                 </td>
               </tr>
