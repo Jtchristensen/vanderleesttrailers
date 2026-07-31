@@ -12,17 +12,21 @@
       </radialGradient>
     </defs>
 
-    <line x1="-400" y1="300" x2="1400" y2="300" stroke="currentColor" stroke-width="1.5" style="opacity: 0.35;"></line>
+    <!-- Horizon. Runs far wider than the viewBox because the SVG is letterboxed:
+         at the rig's size a wide monitor shows several thousand user units
+         either side of the 1000-unit box, and a short line would just stop. -->
+    <line x1="-5000" y1="300" x2="6000" y2="300" stroke="currentColor" stroke-width="1.5" style="opacity: 0.35;"></line>
     <g stroke="currentColor" stroke-width="1.2" style="opacity: 0.18;">
-      <path d="M-320 312 h30 M-190 318 h24 M-80 310 h28 M60 312 h34 M140 318 h22 M240 310 h30 M330 320 h18 M430 312 h26 M540 318 h30 M650 310 h20 M760 320 h34 M880 312 h24 M1010 318 h30 M1140 310 h26"></path>
+      <path d="M-3200 312 h28 M-3080 318 h22 M-2950 310 h30 M-2820 320 h18 M-2700 312 h26 M-2560 318 h32 M-2440 310 h20 M-2300 320 h34 M-2180 312 h24 M-2050 318 h28 M-1920 310 h30 M-1800 320 h18 M-1670 312 h26 M-1540 318 h22 M-1410 310 h34 M-1280 320 h20 M-1150 312 h30 M-1020 318 h24 M-900 310 h28 M-780 320 h32 M-650 312 h18 M-520 318 h26 M-400 310 h22 M-320 312 h30 M-190 318 h24 M-80 310 h28 M60 312 h34 M140 318 h22 M240 310 h30 M330 320 h18 M430 312 h26 M540 318 h30 M650 310 h20 M760 320 h34 M880 312 h24 M1010 318 h30 M1140 310 h26 M1270 320 h22 M1400 312 h28 M1530 318 h32 M1650 310 h18 M1780 320 h26 M1900 312 h30 M2030 318 h20 M2160 310 h34 M2290 320 h24 M2410 312 h28 M2540 318 h22 M2670 310 h30 M2800 320 h18 M2920 312 h26 M3050 318 h32 M3180 310 h20 M3310 320 h28 M3440 312 h24 M3560 318 h30 M3690 310 h22 M3820 320 h34 M3950 312 h18 M4080 318 h26"></path>
     </g>
 
     <!-- Backing guideline: spans ball to coupler, closing as the truck arrives.
-         Drawn full length and scaled about the coupler end, so it always ends
-         exactly on the ball. Peaks mid-approach so it isn't sitting there
+         Drawn 1000 units long and scaled about the coupler end by the truck's
+         actual travel, so it always ends exactly on the ball and always starts
+         where the truck did. Peaks mid-approach so it isn't sitting there
          alone at the top of the page. -->
-    <g style="transform-box: view-box; transform-origin: 362px 272px; transform: scaleX(calc(1 - var(--roll, 0))); opacity: calc(var(--roll, 0) * (1 - var(--roll, 0)) * 1.8);">
-      <path d="M-788 272 H362" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="16 14" vector-effect="non-scaling-stroke"></path>
+    <g style="transform-box: view-box; transform-origin: 362px 272px; transform: scaleX(calc((1 - var(--roll, 0)) * var(--rigTravel, 1500) / 1000)); opacity: calc(var(--roll, 0) * (1 - var(--roll, 0)) * 1.8);">
+      <path d="M-638 272 H362" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="16 14" vector-effect="non-scaling-stroke"></path>
     </g>
 
     <!-- The coupled rig. Once hitched, this whole group hauls out to the left —
@@ -39,7 +43,7 @@
 
       <!-- Tow vehicle backing in from the left. Sized so the tires meet the
            trailer's contact line and the ball lands under the coupler. -->
-      <g style="transform: translate(calc((1 - var(--roll, 0)) * -1150px), 0);">
+      <g style="transform: translate(calc((1 - var(--roll, 0)) * var(--rigTravel, 1500) * -1px), 0);">
         <ellipse cx="108" cy="311" rx="240" ry="12" fill="url(#vlShadow)" style="opacity: 0.75;"></ellipse>
         <image href="/assets/truck-side.png" x="-133" y="141" width="483" height="172"></image>
 
