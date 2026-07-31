@@ -97,6 +97,12 @@
                   <span class="detail__spec-value">{{ trailer.size }}</span>
                 </div>
               }
+              @if (trailer.variant) {
+                <div class="detail__spec">
+                  <span class="detail__spec-label">Variant</span>
+                  <span class="detail__spec-value">{{ trailer.variant }}</span>
+                </div>
+              }
               @if (trailer.gvwr) {
                 <div class="detail__spec">
                   <span class="detail__spec-label">GVWR</span>

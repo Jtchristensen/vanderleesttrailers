@@ -13,7 +13,7 @@ export const TOOL_SPECS = [
             make:     { type: 'string', description: 'Optional. Trailer make/manufacturer, e.g. "Maxx-D", "Retco". Omit if no preference.' },
             model:    { type: 'string', description: 'Optional. Model designation, e.g. "H8X", "EXS", "Elite Tandem". Omit if no preference.' },
             maxPrice: { type: 'number', description: 'Optional. Max price in USD (positive number). Omit if no budget limit.' },
-            query:    { type: 'string', description: 'Optional. Free-text search over name, model and features. Omit for unfiltered listing.' },
+            query:    { type: 'string', description: 'Optional. Free-text search over the listing title (which includes colour and package words), model and features. Omit for unfiltered listing.' },
           },
         },
       },
@@ -70,6 +70,9 @@ function slim(trailer) {
     category: d.category,
     make:     d.make,
     model:    d.model,
+    // Colour / package / options — often the only thing separating two
+    // otherwise identical units, so the assistant needs it to tell them apart.
+    variant:  d.variant || '',
     price:    d.price,
     gvwr:     d.gvwr,
     image:    d.images?.[0] || d.image || '',

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminApiService } from '../../services/admin-api.service';
 import { ContentService } from '../../services/content.service';
-import { trailerTitle, extractSize } from '../../pipes/trailer-title.pipe';
+import { trailerTitle, extractSize, extractVariant } from '../../pipes/trailer-title.pipe';
 
 @Component({
     selector: 'app-trailer-form',
@@ -27,6 +27,7 @@ export class TrailerFormComponent implements OnInit {
     make: '',
     model: '',
     size: '',
+    variant: '',
     price: '',
     gvwr: '',
     features: '',
@@ -71,11 +72,16 @@ export class TrailerFormComponent implements OnInit {
         }
         delete this.trailer.brand;
         delete this.trailer.description;
-        // The title is composed from year/make/model/size/category/GVWR now.
-        // Keep the legacy free-text name only so the size parser below can read
-        // it; it is stripped before save so the record stops carrying it.
+        // The title is composed from year/make/model/size/variant/category/GVWR
+        // now. Keep the legacy free-text name only long enough for the parsers
+        // below to read it; it is stripped before save so the record stops
+        // carrying it. Both are seeded rather than left blank so the dealer edits
+        // a filled-in field instead of retyping what the old name already said.
         if (!this.trailer.size && this.trailer.name) {
           this.trailer.size = extractSize(this.trailer.name);
+        }
+        if (!this.trailer.variant && this.trailer.name) {
+          this.trailer.variant = extractVariant(this.trailer.name, this.trailer);
         }
         delete this.trailer.name;
         delete this.trailer.title;
@@ -111,7 +117,7 @@ export class TrailerFormComponent implements OnInit {
     // An empty title means an empty heading on the site and an empty slug in the
     // URL, so refuse the save rather than publish a broken listing.
     if (!this.title) {
-      this.showToast('Add at least a make, model, or size — the title is built from those', true);
+      this.showToast('Add at least a make, model, size or variant — the title is built from those', true);
       return;
     }
 

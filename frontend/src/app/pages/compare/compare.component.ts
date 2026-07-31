@@ -32,6 +32,7 @@ export class CompareComponent implements OnInit {
   specRows: SpecRow[] = [
     { label: 'Year', field: 'year' },
     { label: 'Size', field: 'size' },
+    { label: 'Variant', field: 'variant' },
     { label: 'Price', field: 'price', prefix: '$', best: 'min' },
     { label: 'GVWR', field: 'gvwr', unit: 'lbs', best: 'max' },
     { label: 'Empty Weight', field: 'emptyWeight', unit: 'lbs', best: 'min' },

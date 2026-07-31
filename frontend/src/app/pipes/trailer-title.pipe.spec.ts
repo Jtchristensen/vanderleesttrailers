@@ -1,4 +1,4 @@
-import { TrailerTitlePipe, trailerTitle, categoryLabel, gvwrLabel, extractSize } from './trailer-title.pipe';
+import { TrailerTitlePipe, trailerTitle, categoryLabel, gvwrLabel, extractSize, extractVariant } from './trailer-title.pipe';
 
 /**
  * Mirror of the case table in cdk/lambda/admin-api/__tests__/trailer-title.test.mjs.
@@ -14,6 +14,16 @@ const TITLE_CASES = [
     expected: '2025 Maxx-D EHX 83x22 Car Equipment Hauler 14K GVWR',
   },
   {
+    why: 'variant sits between the size and the category',
+    trailer: { year: 2025, make: 'Maxx-D', model: 'DKX', size: '83x14', variant: 'Army Green', category: 'dump-trailers', gvwr: 14000 },
+    expected: '2025 Maxx-D DKX 83x14 Army Green Dump Trailer 14K GVWR',
+  },
+  {
+    why: 'variant is what separates two otherwise identical units',
+    trailer: { make: 'Rock Solid Cargo', size: '8.5x24', variant: 'Charcoal Polycore Blackout Package', category: 'enclosed-trailers', gvwr: 10000 },
+    expected: 'Rock Solid Cargo 8.5x24 Charcoal Polycore Blackout Package Enclosed Trailer 10K GVWR',
+  },
+  {
     why: 'no year yet — the dealer has not filled it in',
     trailer: { make: 'Maxx-D', model: 'EHX', size: '83x22', category: 'dump-trailers', gvwr: 14000 },
     expected: 'Maxx-D EHX 83x22 Dump Trailer 14K GVWR',
@@ -24,7 +34,12 @@ const TITLE_CASES = [
     expected: '2024 Retco 7x16 Steel Utility Trailer 7K GVWR',
   },
   {
-    why: 'non-round GVWR keeps its exact figure rather than rounding a towing number',
+    why: 'a rating on a round hundred uses the dealer shorthand the old names did',
+    trailer: { make: 'Maxx-D', model: 'DJX', size: '16ft', category: 'dump-trailers', gvwr: 17500 },
+    expected: 'Maxx-D DJX 16ft Dump Trailer 17.5K GVWR',
+  },
+  {
+    why: 'an odd GVWR keeps its exact figure rather than rounding a towing number',
     trailer: { year: 2025, make: 'Rock Solid Cargo', size: '6x12', category: 'enclosed-trailers', gvwr: 2990 },
     expected: '2025 Rock Solid Cargo 6x12 Enclosed Trailer 2,990 lb GVWR',
   },
@@ -40,7 +55,7 @@ const TITLE_CASES = [
   },
   {
     why: 'whitespace around admin-entered values is trimmed, not preserved',
-    trailer: { year: ' 2025 ', make: ' Maxx-D ', model: '  ', size: '83x22', category: '' },
+    trailer: { year: ' 2025 ', make: ' Maxx-D ', model: '  ', size: '83x22', variant: '  ', category: '' },
     expected: '2025 Maxx-D 83x22',
   },
   {
@@ -101,6 +116,15 @@ describe('extractSize', () => {
     ['Gatormade 8.5x24 Enclosed', '8.5x24'],
     ['Black Rhino 7 X 14 Utility', '7x14'],
     ['Rock Solid Cargo 6X12 Cargo', '6x12'],
+    ['82″x22′ RETCO 7K GVWR CAR HAULER TRAILER', '82x22'],
+    ['81”x14’ BLACK RHINO ALUMINUM LOW-PRO UTILITY TRAILER', '81x14'],
+    ['MAXX-D 102″x32′ LDX Low Profile Gooseneck', '102x32'],
+    ['6’10”x14 GATORMADE TANDEM AXLE 7K', '82x14'],
+    ['6’4”x12′ GATORMADE SINGLE AXLE UTILITY', '76x12'],
+    ['20’ + 5’ Gatormade Elite Tandem 16K GVWR Gooseneck', '20+5'],
+    ['MAXX-D DJX 16′ GOOSENECK DUMP TRAILER', '16ft'],
+    ['MAXX-D DKX 14ft Dump Trailer | 14K', '14ft'],
+    ['DURABULL 23′ INLINE ALUMINUM TRAILER', '23ft'],
   ];
   for (const [name, expected] of cases) {
     it(`${name} -> ${expected}`, () => {
@@ -108,10 +132,55 @@ describe('extractSize', () => {
     });
   }
 
+  it('does not read a dimension out of a model code', () => {
+    expect(extractSize('MAXX-D G6X 83″X20′ EQUIPMENT GRAVITY TILT TRAILER')).toBe('83x20');
+  });
+
   it('returns empty rather than guessing when no size is present', () => {
     expect(extractSize('Gatormade Hydraulic Dovetail Deckover')).toBe('');
     expect(extractSize('')).toBe('');
     expect(extractSize(undefined)).toBe('');
+  });
+});
+
+describe('extractVariant', () => {
+  const cases: [string, any, string][] = [
+    [
+      '8.5×24 Rock Solid Cargo Charcoal PolyCore Blackout Package 10K GVWR',
+      { make: 'Rock Solid Cargo', category: 'enclosed-trailers' },
+      'Charcoal Polycore Blackout Package',
+    ],
+    [
+      '7×14 BLACK RHINO ALUMINUM LSS UTILITY TRAILER 5K AXLE -BIFOLD',
+      { make: 'Black Rhino', model: 'LSS', category: 'aluminum-trailers' },
+      'Bifold',
+    ],
+    [
+      '7×12 BLACK RHINO ALUMINUM UTS UTILITY TRAILER W/BI-FOLD RAMP',
+      { make: 'Black Rhino', model: 'UTS', category: 'aluminum-trailers' },
+      'Bi-Fold Ramp',
+    ],
+    [
+      'MAXX-D DKX 14ft Dump Trailer | 14K 83″ I-BEAM DUMP– ARMY GREEN',
+      { make: 'Maxx-D', model: 'DKX', category: 'dump-trailers' },
+      'I-Beam Army Green',
+    ],
+    [
+      'MAXX-D DJX 16′ GOOSENECK DUMP TRAILER | 15K | 83” I-BEAM DUMP / 2′ SIDES',
+      { make: 'Maxx-D', model: 'DJX', category: 'dump-trailers' },
+      'Gooseneck I-Beam 2ft Sides',
+    ],
+  ];
+  for (const [name, trailer, expected] of cases) {
+    it(`${name.slice(0, 44)}… -> ${expected}`, () => {
+      expect(extractVariant(name, trailer)).toBe(expected);
+    });
+  }
+
+  it('yields empty when nothing distinguishing is left over', () => {
+    expect(extractVariant('7×16 RETCO 7K TANDEM UTILITY TRAILER', { make: 'Retco', category: 'steel-utility-trailers' })).toBe('');
+    expect(extractVariant('', {})).toBe('');
+    expect(extractVariant(undefined, undefined)).toBe('');
   });
 });
 
@@ -121,8 +190,15 @@ describe('gvwrLabel', () => {
     expect(gvwrLabel('14000')).toBe('14K GVWR');
   });
 
-  it('keeps exact non-round figures', () => {
+  it('uses one decimal for the round hundreds the dealer writes as K', () => {
+    expect(gvwrLabel(17500)).toBe('17.5K GVWR');
+    expect(gvwrLabel(24900)).toBe('24.9K GVWR');
+    expect(gvwrLabel(10400)).toBe('10.4K GVWR');
+  });
+
+  it('keeps exact figures that are not round hundreds', () => {
     expect(gvwrLabel(2990)).toBe('2,990 lb GVWR');
+    expect(gvwrLabel(25990)).toBe('25,990 lb GVWR');
   });
 
   it('drops unusable values', () => {

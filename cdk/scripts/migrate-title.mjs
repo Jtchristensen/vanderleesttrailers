@@ -2,14 +2,23 @@
 /**
  * Migrates trailers from a hand-typed `name` to a derived `title`.
  *
- * The title is composed from year/make/model/size/category/GVWR, so the two new
- * inputs are `size` (parsed out of the old name, e.g. "MAXX-D 83x22 EHX" ->
- * "83x22") and `year`, which legacy names almost never carry — that one stays
- * blank for the dealer to fill in from the admin portal.
+ * The title is composed from year/make/model/size/variant/category/GVWR, so the
+ * three new inputs are all read out of the old name:
+ *
+ *   size     "MAXX-D 83x22 EHX"                     -> "83x22"
+ *   variant  "8.5×24 Rock Solid Cargo Charcoal
+ *             PolyCore Blackout Package 10K GVWR"   -> "Charcoal Polycore Blackout Package"
+ *   year     never guessed — legacy names do not carry one, so it stays blank
+ *            for the dealer to fill in from the admin portal.
+ *
+ * `variant` is what keeps two units from becoming one listing: 84 of the 145
+ * live trailers share every other field with at least one sibling and differ
+ * only by colour, package or ramp. Expand reports anything still ambiguous
+ * after extraction so it can be fixed by hand rather than shipped.
  *
  * Runs in two phases so the site is never mid-migration:
- *   expand   — adds `size` and `title`, leaving `name` in place. Safe to run
- *              before the new frontend is deployed; both fields read fine.
+ *   expand   — adds `size`, `variant` and `title`, leaving `name` in place. Safe
+ *              to run before the new frontend is deployed; both fields read fine.
  *   contract — removes the now-unused `name`. Run only after the new frontend
  *              is live, since the old one renders `name` and nothing else.
  *
@@ -20,7 +29,7 @@
  */
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { composeTitle, extractSize } from '../lambda/admin-api/trailer-title.mjs';
+import { composeTitle, extractSize, extractVariant } from '../lambda/admin-api/trailer-title.mjs';
 
 const TABLE = process.env.TABLE_NAME || 'VanderLeestContent';
 const REGION = process.env.AWS_REGION || 'us-east-1';
@@ -56,16 +65,17 @@ async function expand(items) {
   const plan = items.map(it => {
     const d = it.data || {};
     const size = d.size || extractSize(d.name);
+    const variant = d.variant || extractVariant(d.name, d);
     // Compose from the record as it will exist after this write, not as it is.
-    const title = composeTitle({ ...d, size });
-    return { sk: it.sk, name: d.name || '', size, title, year: d.year || '' };
+    const title = composeTitle({ ...d, size, variant });
+    return { sk: it.sk, name: d.name || '', size, variant, title, year: d.year || '' };
   });
 
   const noSize = plan.filter(p => !p.size);
   const noYear = plan.filter(p => !p.year);
   const echoesName = plan.filter(p => p.title === p.name);
 
-  console.log(`\n${plan.length} trailers | size parsed: ${plan.length - noSize.length} | year present: ${plan.length - noYear.length}`);
+  console.log(`\n${plan.length} trailers | size parsed: ${plan.length - noSize.length} | variant derived: ${plan.filter(p => p.variant).length} | year present: ${plan.length - noYear.length}`);
 
   console.log('\nTITLE PREVIEW (old name -> new title)');
   for (const p of plan) {
@@ -74,9 +84,29 @@ async function expand(items) {
   }
 
   if (noSize.length) {
-    console.log(`\nNO SIZE PARSED (${noSize.length}) — these names carry no NNxNN pattern:`);
+    console.log(`\nNO SIZE PARSED (${noSize.length}) — these names carry no recognisable dimension:`);
     for (const p of noSize) console.log(`    ${p.name}`);
   }
+
+  // The whole point of `variant` is that two units are never reduced to one
+  // heading. Anything still sharing a title needs a human — usually because the
+  // records are genuine duplicates, or because a spec field is wrong.
+  const byTitle = new Map();
+  for (const p of plan) {
+    if (!byTitle.has(p.title)) byTitle.set(p.title, []);
+    byTitle.get(p.title).push(p);
+  }
+  const collisions = [...byTitle.entries()].filter(([, group]) => group.length > 1);
+  if (collisions.length) {
+    console.log(`\nSTILL AMBIGUOUS (${collisions.length}) — these trailers compose to the same title.`);
+    console.log('They will get distinct slugs, but customers see identical headings. Give each a');
+    console.log('different Variant in the admin portal, or delete the duplicate record:');
+    for (const [title, group] of collisions) {
+      console.log(`\n  "${title}"  x${group.length}`);
+      for (const p of group) console.log(`      ${p.sk}\n        <- ${p.name}`);
+    }
+  }
+
   if (echoesName.length) {
     console.log(`\nWARNING — ${echoesName.length} trailers have no make/model/size/category/GVWR at all.`);
     console.log('Their titles still fall back to the old name. Fill those in from the admin portal');
@@ -94,13 +124,13 @@ async function expand(items) {
     await ddb.send(new UpdateCommand({
       TableName: TABLE,
       Key: { pk: 'TRAILER', sk: p.sk },
-      UpdateExpression: 'SET #d.#size = :size, #d.#title = :title, updatedAt = :now',
-      ExpressionAttributeNames: { '#d': 'data', '#size': 'size', '#title': 'title' },
-      ExpressionAttributeValues: { ':size': p.size, ':title': p.title, ':now': new Date().toISOString() },
+      UpdateExpression: 'SET #d.#size = :size, #d.#variant = :variant, #d.#title = :title, updatedAt = :now',
+      ExpressionAttributeNames: { '#d': 'data', '#size': 'size', '#variant': 'variant', '#title': 'title' },
+      ExpressionAttributeValues: { ':size': p.size, ':variant': p.variant, ':title': p.title, ':now': new Date().toISOString() },
     }));
     n++;
   }
-  console.log(`\nEXPAND COMPLETE — ${n} trailers now carry size + title.`);
+  console.log(`\nEXPAND COMPLETE — ${n} trailers now carry size + variant + title.`);
 }
 
 async function contract(items) {
