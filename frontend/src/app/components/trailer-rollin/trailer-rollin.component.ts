@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit } from '@angular/core';
 
 /**
  * Scroll-driven "back up, hitch & haul out" animation layered over the home
@@ -17,7 +17,7 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
     templateUrl: './trailer-rollin.component.html',
     styleUrls: ['./trailer-rollin.component.scss']
 })
-export class TrailerRollinComponent implements OnInit {
+export class TrailerRollinComponent implements OnInit, AfterViewInit {
   /** bounds for the px of scroll the whole sequence plays over */
   private static readonly MIN_RANGE = 560;
   private static readonly MAX_RANGE = 900;
@@ -28,11 +28,50 @@ export class TrailerRollinComponent implements OnInit {
 
   ngOnInit(): void {
     this.reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  }
+
+  ngAfterViewInit(): void {
+    this.measure();
     this.update();
   }
 
-  @HostListener('window:scroll')
   @HostListener('window:resize')
+  onResize(): void {
+    this.measure();
+    this.update();
+  }
+
+  /**
+   * Geometry that depends on the viewport, not on scroll — so it is read here
+   * on resize rather than in update(), which runs on every scroll event.
+   *
+   * The SVG is letterboxed (preserveAspectRatio="meet"), so shrinking it does
+   * not just make the rig smaller: it widens how much of the user-coordinate
+   * space is on screen either side of the 1000-unit viewBox. Distances that
+   * have to reach off-screen therefore can't be constants.
+   */
+  private measure(): void {
+    const box = this.host.nativeElement.querySelector<HTMLElement>('.rollin');
+    if (!box) return;
+
+    const w = box.clientWidth;
+    const scale = Math.min(w / 1000, box.clientHeight / 380);
+    if (!(scale > 0)) return;
+
+    // user units visible beyond each side of the viewBox
+    const overhang = (w / scale - 1000) / 2;
+
+    const s = this.host.nativeElement.style;
+    // Far enough for the rig's tail (x ~950 including the draft streaks) to
+    // clear the visible edge. Shared by the approach and the pull-out: the
+    // truck alone needs less, and starting further out costs nothing.
+    s.setProperty('--rigTravel', Math.round(950 + overhang + 60).toString());
+    // Keeps the badge on the coupler (x=362) — as the overhang grows, the
+    // centred viewBox content drifts toward the middle of the screen.
+    s.setProperty('--couplerX', `${((362 + overhang) / (1000 + 2 * overhang)) * 100}%`);
+  }
+
+  @HostListener('window:scroll')
   update(): void {
     const el = this.host.nativeElement.parentElement; // the .hero section
     if (!el) return;
