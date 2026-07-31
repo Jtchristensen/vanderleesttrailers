@@ -1,13 +1,22 @@
 /* Driven by CSS custom properties written onto :host by the component
-   (--roll, --drop, --lock/--lockScale) plus --dim, which the hero
+   (--roll, --drop, --away, --lock/--lockScale) plus --dim, which the hero
    uses to darken the video underneath. */
 
 :host {
   --roll: 0;      /* 0 = truck off-screen left, 1 = backed up to the coupler */
   --drop: 0;      /* 0 = trailer nose up on the jack, 1 = seated on the ball */
+  --away: 0;      /* 0 = rig parked and hitched, 1 = hauled off-screen */
   --lock: 0;      /* badge opacity */
   --lockScale: 0.9;
   display: contents;
+}
+
+/* The hitched rig pulling out. Left, because the truck reversed rightward to
+   reach the trailer — so its nose points the way it leaves. 1500 units clears
+   the trailer's tail past the left edge even on wide, letterboxed viewports. */
+.rollin__rig {
+  transform: translate(calc(var(--away) * -1500px), 0);
+  will-change: transform;
 }
 
 .rollin {
@@ -36,7 +45,10 @@
   left: 40%; // tracks the coupling point, which sits ~42% across at desktop widths
   bottom: 44px;
   z-index: 4;
-  transform: translateX(-50%) scale(var(--lockScale));
+  /* Rides along with the rig on the way out instead of hanging in dead air.
+     vw rather than the SVG's user units — it fades before the offset is far
+     enough along for the difference to read. */
+  transform: translateX(calc(-50% + var(--away) * -130vw)) scale(var(--lockScale));
   opacity: var(--lock);
   display: flex;
   align-items: center;
