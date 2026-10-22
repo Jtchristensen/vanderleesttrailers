@@ -1,6 +1,8 @@
-process.env.CHROME_BIN = require('puppeteer').executablePath();
+// puppeteer >= 25 resolves executablePath() asynchronously; the Angular karma
+// builder parses this config with promiseConfig, so an async factory is fine.
+module.exports = async function (config) {
+  process.env.CHROME_BIN = await require('puppeteer').executablePath();
 
-module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
