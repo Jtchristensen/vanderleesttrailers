@@ -1,0 +1,40 @@
+{
+  "_readme": "Human decisions for sync_inventory.py. Every entry carries its reason. See .claude/skills/update-inventory/SKILL.md.",
+
+  "year_from_title": true,
+  "clear_siding_when_flag_no": true,
+
+  "ignore_wp_posts": {
+    "240878": "Duplicate post of 240864 (DuraBull 7x16 charcoal-gray blackout); duplicate removed from the new site 2026-07-21",
+    "241315": "Duplicate post of 240302 (Maxx-D H8X buggy hauler, drive-over fenders); duplicate removed from the new site 2026-07-21"
+  },
+
+  "pins": {
+    "20-5-gatormade-14k-deckover-tandem-trailer": {
+      "gvwr": "14000",
+      "payload": "8600",
+      "_why": "WordPress has gvwr=1500 / payload=10000 (typo: empty weight > GVWR). Corrected values match the 16'+5' sibling."
+    },
+    "black-rhino-7x14-uts-w-bi-fold-gate": {
+      "gvwr": "2990",
+      "_why": "WordPress has 2900; every other single-axle Black Rhino is rated 2990."
+    },
+    "8-5x24-rock-solid-cargo-desert-tan-polycore-blackout-package-10k-gvwr": {
+      "gvwr": "10000",
+      "_why": "WordPress has 9996; every other 8.5x24 Rock Solid Cargo is rated 10000 (and the title says 10K)."
+    },
+    "wp:241627": {
+      "gvwr": "15000",
+      "_why": "Maxx-D H6X buggy hauler: WordPress GVWR field is blank, its title says 15K GVWR."
+    }
+  },
+
+  "decisions": {
+    "240822": "replace-photos",
+    "240807": "replace-photos",
+    "239394": "replace-photos",
+    "240788": "replace-photos",
+    "239438": "new-listing",
+    "_why": "2026-10-22: dealer reused these posts for newly arrived units. Same model -> new photos on the same listing; 239438 now lists an 8.5x16 BLACK unit instead of our charcoal one -> retire + new listing."
+  }
+}
